@@ -902,5 +902,6 @@
   "web_conference": "網路會議",
   "requires_confirmation": "需要確認",
   "add_exchange2013": "連結 Exchange 2013 伺服器",
-  "add_exchange2016": "連結 Exchange 2016 伺服器"
+  "add_exchange2016": "連結 Exchange 2016 伺服器",
+  "attendee_name": "與會者姓名"
 }

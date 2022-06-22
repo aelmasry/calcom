@@ -902,5 +902,6 @@
   "web_conference": "Вебконференція",
   "requires_confirmation": "Потрібне підтвердження",
   "add_exchange2013": "Підключити сервер Exchange 2013",
-  "add_exchange2016": "Підключити сервер Exchange 2016"
+  "add_exchange2016": "Підключити сервер Exchange 2016",
+  "attendee_name": "Ім’я відвідувача"
 }

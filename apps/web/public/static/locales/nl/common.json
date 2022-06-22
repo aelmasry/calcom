@@ -902,5 +902,6 @@
   "web_conference": "Webconferentie",
   "requires_confirmation": "Vereist bevestiging",
   "add_exchange2013": "Verbinding maken met Exchange 2013 Server",
-  "add_exchange2016": "Verbinding maken met Exchange 2016 Server"
+  "add_exchange2016": "Verbinding maken met Exchange 2016 Server",
+  "attendee_name": "Naam deelnemer"
 }

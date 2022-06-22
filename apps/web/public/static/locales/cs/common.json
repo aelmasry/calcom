@@ -902,5 +902,6 @@
   "web_conference": "Webová konference",
   "requires_confirmation": "Vyžaduje potvrzení",
   "add_exchange2013": "Připojit server Exchange 2013",
-  "add_exchange2016": "Připojit server Exchange 2016"
+  "add_exchange2016": "Připojit server Exchange 2016",
+  "attendee_name": "Jméno účastníka"
 }
