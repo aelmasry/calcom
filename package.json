@@ -15,7 +15,7 @@
     "db-seed": "turbo run db-seed",
     "db-studio": "yarn workspace @calcom/prisma db-studio",
     "deploy": "turbo run deploy",
-    "dev": "turbo run dev --scope=\"@calcom/web\"",
+    "dev": "turbo run dev --no-cache --scope=\"@calcom/web\"",
     "dev:all": "turbo run dev --scope=\"@calcom/web\" --scope=\"@calcom/website\" --scope=\"@calcom/console\"",
     "dev:api": "turbo run dev --scope=\"@calcom/web\" --scope=\"@calcom/api\"",
     "dev:console": "turbo run dev --scope=\"@calcom/web\" --scope=\"@calcom/console\"",

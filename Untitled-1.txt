@@ -1,0 +1,32 @@
+endpoints:{
+  createUser(email, name){
+    id,
+    [auth_data]
+  }
+
+  checkToken(token){
+    id
+  }
+
+  refreshToken(refresh){
+    token
+  }
+
+  createEvent([{day,from,to}],title,url,desc,lengthInMinutes,location(url,latlong), guests:emails, candidates:emails){
+    id,
+    eventLink
+  }
+
+  updateEvent(id:required,[{day,from,to}],title,url,desc,lengthInMinutes,location(url,latlong), guests:emails, candidates:emails){
+    id,
+  }
+
+  onInterviewScheduledCallback {
+    meetingID,
+    candidate_email,
+    date time,
+  }
+
+
+
+}
