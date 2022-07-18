@@ -16,6 +16,7 @@ import {
 } from "@heroicons/react/solid";
 import { UserPlan } from "@prisma/client";
 import { SessionContextValue, signOut, useSession } from "next-auth/react";
+import { getCsrfToken, signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { Fragment, ReactNode, useEffect, useState } from "react";
@@ -52,23 +53,41 @@ import pkg from "../package.json";
 import { useViewerI18n } from "./I18nLanguageHandler";
 import Logo from "./Logo";
 
+const jsonwebtoken = require("jsonwebtoken");
+
 function useRedirectToLoginIfUnauthenticated(isPublic = false) {
   const { data: session, status } = useSession();
   const loading = status === "loading";
   const router = useRouter();
 
   useEffect(() => {
+    //get token parameter from window location url
+
     if (isPublic) {
       return;
     }
 
-    if (!loading && !session) {
-      router.replace({
-        pathname: "/auth/login",
-        query: {
-          callbackUrl: `${WEBAPP_URL}${location.pathname}${location.search}`,
-        },
-      });
+    const token = window.location.search.split("token=")[1];
+    const callbackUrl = `${WEBAPP_URL}${location.pathname}${location.search}`;
+
+    if (!loading && token) {
+      const user = jsonwebtoken.decode(token);
+      if (session && session.user.id == user.id) {
+        return;
+      }
+
+      if (token) {
+        signIn<"credentials">("token", {
+          token,
+          callbackUrl: callbackUrl,
+          redirect: false,
+        }).then((res) => {
+          router.replace(callbackUrl);
+        });
+        router.replace(callbackUrl);
+        return;
+      }
+      return;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, session, isPublic]);

@@ -5,15 +5,19 @@ import { hashPassword } from "@lib/auth";
 import prisma from "@lib/prisma";
 import slugify from "@lib/slugify";
 
+const jsonwebtoken = require("jsonwebtoken");
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return;
   }
 
   const data = req.body;
-  const { email, password } = data;
-  const username = slugify(data.username);
+  const { name, email } = data;
   const userEmail = email.toLowerCase();
+  const username = userEmail;
+  //generate a random password
+  const password = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
   if (!username) {
     res.status(422).json({ message: "Invalid username" });
@@ -56,12 +60,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     where: { email: userEmail },
     update: {
       username,
+      name: name,
       password: hashedPassword,
       emailVerified: new Date(Date.now()),
       identityProvider: IdentityProvider.CAL,
     },
     create: {
       username,
+      name: name,
       email: userEmail,
       password: hashedPassword,
       identityProvider: IdentityProvider.CAL,
@@ -80,5 +86,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 
-  res.status(201).json({ message: "Created user" });
+  const jsonSecret = process.env.JWT_SECRET;
+  const token = jsonwebtoken.sign(user, jsonSecret);
+  res.status(201).json({ user, message: "Created user", token });
 }
