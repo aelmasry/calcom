@@ -26,6 +26,8 @@ import slugify from "@lib/slugify";
 
 import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, IS_GOOGLE_LOGIN_ENABLED } from "@server/lib/constants";
 
+const jsonwebtoken = require("jsonwebtoken");
+
 const transporter = nodemailer.createTransport<TransportOptions>({
   ...(serverConfig.transport as TransportOptions),
 } as TransportOptions);
@@ -106,6 +108,44 @@ const providers: Provider[] = [
         email: user.email,
         name: user.name,
         role: user.role,
+      };
+    },
+  }),
+  CredentialsProvider({
+    id: "token",
+    name: "Cal.com",
+    type: "credentials",
+    credentials: {
+      token: { type: "hidden", label: "Token" },
+    },
+    async authorize(credentials) {
+      if (!credentials) {
+        console.error(`For some reason credentials are missing`);
+        throw new Error(ErrorCode.InternalServerError);
+      }
+
+      const jsonSecret = process.env.JWT_SECRET;
+      const token = credentials.token;
+      if (!token) {
+        throw new Error(ErrorCode.InternalServerError);
+      }
+      const decoded = jsonwebtoken.verify(token, jsonSecret);
+      if (!decoded) {
+        throw new Error(ErrorCode.InternalServerError);
+      }
+
+      const jwtUser = jsonwebtoken.decode(token, jsonSecret);
+
+      if (!jwtUser) {
+        throw new Error(ErrorCode.UserNotFound);
+      }
+
+      return {
+        id: jwtUser.id,
+        username: jwtUser.username,
+        email: jwtUser.email,
+        name: jwtUser.name,
+        role: jwtUser.role,
       };
     },
   }),
