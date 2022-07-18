@@ -3,7 +3,6 @@
   "baseBranch": "origin/main",
   "pipeline": {
     "@calcom/prisma#build": {
-      "cache": false,
       "dependsOn": ["post-install", "db-deploy"],
       "outputs": []
     },
@@ -35,9 +34,7 @@
         "$NEXT_PUBLIC_STRIPE_FREE_PLAN_PRICE",
         "$NEXT_PUBLIC_STRIPE_PREMIUM_PLAN_PRICE",
         "$NEXT_PUBLIC_STRIPE_PRO_PLAN_PRICE",
-        "$STRIPE_PRO_PLAN_PRODUCT_ID",
-        "$STRIPE_PREMIUM_PLAN_PRODUCT_ID",
-        "$STRIPE_FREE_PLAN_PRODUCT_ID",
+        "$NEXT_PUBLIC_STRIPE_PRO_PLAN_PRODUCT",
         "$NEXT_PUBLIC_STRIPE_PUBLIC_KEY",
         "$NEXT_PUBLIC_WEBAPP_URL",
         "$NEXT_PUBLIC_WEBSITE_URL"
@@ -56,13 +53,10 @@
     },
     "@calcom/website#build": {
       "dependsOn": [
-        "^build",
         "$NEXT_PUBLIC_STRIPE_FREE_PLAN_PRICE",
         "$NEXT_PUBLIC_STRIPE_PREMIUM_PLAN_PRICE",
         "$NEXT_PUBLIC_STRIPE_PRO_PLAN_PRICE",
-        "$STRIPE_PRO_PLAN_PRODUCT_ID",
-        "$STRIPE_PREMIUM_PLAN_PRODUCT_ID",
-        "$STRIPE_FREE_PLAN_PRODUCT_ID",
+        "$NEXT_PUBLIC_STRIPE_PRO_PLAN_PRODUCT",
         "$NEXT_PUBLIC_STRIPE_PUBLIC_KEY",
         "$NEXT_PUBLIC_WEBAPP_URL",
         "$NEXT_PUBLIC_WEBSITE_URL"
@@ -88,7 +82,6 @@
       "cache": false
     },
     "dev": {
-      "dependsOn": ["//#env-check:common", "//#env-check:app-store"],
       "outputs": [],
       "cache": false
     },
@@ -100,16 +93,11 @@
       "cache": false,
       "outputs": []
     },
-    "lint:fix": {
-      "cache": false,
-      "outputs": []
-    },
     "lint:report": {
       "cache": false,
       "outputs": ["lint-results"]
     },
     "post-install": {
-      "dependsOn": ["$PRISMA_GENERATE_DATAPROXY"],
       "outputs": ["../../node_modules/@prisma/client/**", "../../node_modules/@prisma/admin-client/**"],
       "inputs": ["./schema.prisma", "./prisma/schema.prisma"]
     },
@@ -131,38 +119,27 @@
       "cache": false,
       "outputs": []
     },
-    "@calcom/app-store-cli#build": {
-      "cache": false,
-      "inputs": ["../../app-store/**/**"],
-      "outputs": ["../../app-store/apps.server.generated.ts", "../../app-store/apps.browser.generated.tsx"]
-    },
-    "@calcom/embed-react#type-check": {
-      "dependsOn": ["@calcom/embed-core#build", "@calcom/embed-snippet#build"]
+    "@calcom/embed-core#embed-tests-update-snapshots:ci": {
+      "dependsOn": ["@calcom/web#build"]
     },
     "@calcom/embed-core#build": {
       "cache": false,
       "outputs": ["../../../apps/web/public/embed/**"]
     },
     "embed-tests-update-snapshots:ci": {
-      "cache": false,
-      "dependsOn": [
-        "@calcom/prisma#db-seed",
-        "@calcom/web#build",
-        "@calcom/embed-core#build",
-        "@calcom/embed-react#build",
-        "^embed-tests-update-snapshots:ci"
-      ]
+      "dependsOn": ["^embed-tests-update-snapshots:ci"]
     },
-    "app-e2e-quick": {
+    "@calcom/app-store-cli#build": {
       "cache": false,
-      "dependsOn": ["@calcom/prisma#db-seed", "@calcom/web#build", "^app-e2e-quick"]
+      "inputs": ["../../app-store/**/**"],
+      "outputs": ["../../app-store/apps.server.generated.ts", "../../app-store/apps.browser.generated.tsx"]
     },
     "//#env-check:common": {
-      "inputs": ["./.env.example", "./.env"],
+      "inputs": ["./.env.example"],
       "outputs": ["./.env"]
     },
     "//#env-check:app-store": {
-      "inputs": ["./.env.appStore.example", "./.env.appStore"],
+      "inputs": ["./.env.appStore.example"],
       "outputs": ["./.env.appStore"]
     }
   }
