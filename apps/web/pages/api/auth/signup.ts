@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const data = req.body;
   const { name, email } = data;
   const userEmail = email.toLowerCase();
-  const username = userEmail;
+  const username = slugify(userEmail);
   //generate a random password
   const password = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
