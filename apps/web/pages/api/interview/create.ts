@@ -48,7 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     interview_id: eventType.id,
     interview_link: `/event-types/${eventType.id}`,
     schedule_id: schedule.id,
-    schedule_link: `/schedules/${schedule.id}`,
+    schedule_link: `/availability/${schedule.id}`,
     duration: eventType.length,
     title: eventType.title,
   });
