@@ -4,6 +4,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { hashPassword } from "@lib/auth";
 import prisma from "@lib/prisma";
 import slugify from "@lib/slugify";
+import { resolve } from "path";
 
 const jsonwebtoken = require("jsonwebtoken");
 
@@ -88,5 +89,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const jsonSecret = process.env.JWT_SECRET;
   const token = jsonwebtoken.sign(user, jsonSecret);
-  res.status(201).json({ user, message: "Created user", token });
+  
+  return res.status(201).json({ user, message: "Created user", token });
 }
