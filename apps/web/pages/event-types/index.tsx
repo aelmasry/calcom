@@ -544,7 +544,6 @@ const EventTypesPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Shell
-        heading={t("event_types_page_title") as string}
         subtitle={t("event_types_page_subtitle") as string}
         CTA={<CTA />}
         customLoader={<SkeletonLoader />}>
