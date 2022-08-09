@@ -862,7 +862,26 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                       locations,
                       ...input
                     } = values;
-
+                    parent.postMessage({
+                      type: "eventTypeUpdated",
+                      payload: {
+                        ...input,
+                        locations,
+                        recurringEvent,
+                        periodStartDate: periodDates.startDate,
+                        periodEndDate: periodDates.endDate,
+                        periodCountCalendarDays: periodCountCalendarDays === "1",
+                        id: eventType.id,
+                        beforeEventBuffer: beforeBufferTime,
+                        afterEventBuffer: afterBufferTime,
+                        seatsPerTimeSlot,
+                        metadata: {
+                          ...(smartContractAddress ? { smartContractAddress } : {}),
+                          ...(giphyThankYouPage ? { giphyThankYouPage } : {}),
+                        },
+                      }
+                    }, process.env.PARENT_URL);
+                        
                     updateMutation.mutate({
                       ...input,
                       locations,
