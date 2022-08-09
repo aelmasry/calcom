@@ -880,7 +880,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                           ...(giphyThankYouPage ? { giphyThankYouPage } : {}),
                         },
                       }
-                    }, process.env.PARENT_URL);
+                    }, process.env.PARENT_WINDOW_DOMAIN);
                         
                     updateMutation.mutate({
                       ...input,
