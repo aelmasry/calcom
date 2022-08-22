@@ -65,6 +65,7 @@ async function createEventType(title: any, scheduleId: any, userId: any, slug: a
   const data: Prisma.EventTypeCreateInput = {
     title: title,
     slug: slug,
+    disableGuests:true,
     length: length,
     schedule: {
       connect: {
