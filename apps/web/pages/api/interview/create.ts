@@ -46,6 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const eventType = await createEventType(name, schedule.id, userId, slug);
   res.status(200).json({
     interview_id: eventType.id,
+    interview_slug: slug,
     interview_link: `/event-types/${eventType.id}`,
     schedule_id: schedule.id,
     schedule_link: `/availability/${schedule.id}`,
