@@ -506,6 +506,12 @@ export default function Onboarding(props: inferSSRProps<typeof getServerSideProp
           await updateUser({
             bio: bioRef.current?.value,
           });
+          parent.postMessage({
+            type: "userCompletedProfile",
+            payload: {
+              status: "success"
+            },
+          }, 'https://dev.techiematter.com');
           setSubmitting(false);
         } catch (error) {
           setError(error as Error);
