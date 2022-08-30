@@ -71,9 +71,12 @@ function useRedirectToLoginIfUnauthenticated(isPublic = false) {
     if (!loading && token) {
       const user = jsonwebtoken.decode(token);
       if (session && session.user.id == user.id) {
+        console.log("################## User Found:", user);
         return;
       }
+      console.log("################## Logging in");
       signIn<"credentials">("token", { token, callbackUrl: callbackUrl, redirect: false });
+      console.log("################## Logged in");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, session, isPublic]);
