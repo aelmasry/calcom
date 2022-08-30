@@ -127,11 +127,11 @@ const providers: Provider[] = [
       const jsonSecret = process.env.JWT_SECRET;
       const token = credentials.token;
       if (!token) {
-        throw new Error(ErrorCode.InternalServerError);
+        throw new Error("token not found");
       }
       const decoded = jsonwebtoken.verify(token, jsonSecret);
       if (!decoded) {
-        throw new Error(ErrorCode.InternalServerError);
+        throw new Error("Invalid token");
       }
 
       const jwtUser = jsonwebtoken.decode(token, jsonSecret);

@@ -73,17 +73,11 @@ function useRedirectToLoginIfUnauthenticated(isPublic = false) {
       if (session && session.user.id == user.id) {
         return;
       }
-      (async () => {
-        await signIn<"credentials">("token", { token, callbackUrl: callbackUrl, redirect: false });
-      })();
+      signIn<"credentials">("token", { token, callbackUrl: callbackUrl, redirect: false });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading, isPublic]);
+  }, [loading, session, isPublic]);
 
-  useEffect(() => {
-    const callbackUrl = `${WEBAPP_URL}${location.pathname}${location.search}`;
-    router.replace(callbackUrl);
-  },[session]);
 
   return {
     loading: loading && !session,
