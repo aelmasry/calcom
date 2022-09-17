@@ -18,16 +18,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(401).json({ message: "Invalid token" });
     return;
   }
+  console.log("################TOKEN", token);
   // decode the token
   let decoded;
   try {
-    decoded = jsonwebtoken.verify(token, process.env.JWT_SECRET);
+    decoded = jsonwebtoken.decode(token, process.env.JWT_SECRET);
   } catch (err) {
     res.status(401).json({ message: "Invalid token" });
     return;
   }
-
-  const userId = decoded.id;
+  console.log("################decoded", decoded);
+  const userId = decoded.data;
   const data = req.body;
   const { job_id, job_title } = data;
   const name = job_title + "-" + job_id;
@@ -43,6 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     .replace(/\s/g, "-")
     .concat("-" + Math.floor(Math.random() * 1000000));
   const schedule = await createSchedule(name, userId, slug);
+  console.log("###########schedule", schedule);
   const eventType = await createEventType(name, schedule.id, userId, slug);
   res.status(200).json({
     interview_id: eventType.id,
@@ -55,8 +57,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   });
 }
 
-async function createSchedule(name: string, userId: any, slug:any) {
-  const data = { name: slug , user: { connect: { id: userId } } };
+async function createSchedule(name: string, userId: any, slug: any) {
+  const data = { name: slug, user: { connect: { id: userId } } };
   return await prisma.schedule.create({ data });
 }
 
@@ -66,7 +68,7 @@ async function createEventType(title: any, scheduleId: any, userId: any, slug: a
   const data: Prisma.EventTypeCreateInput = {
     title: title,
     slug: slug,
-    disableGuests:true,
+    disableGuests: true,
     length: length,
     schedule: {
       connect: {

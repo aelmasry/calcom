@@ -841,8 +841,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
   const isAdmin = membership?.role === MembershipRole.OWNER || membership?.role === MembershipRole.ADMIN;
   return (
     <div>
-      <Shell
-        title={t("event_type_title", { eventTypeTitle: eventType.title })}>
+      <Shell title={t("event_type_title", { eventTypeTitle: eventType.title })}>
         <ClientSuspense fallback={<Loader />}>
           <div className="flex flex-col-reverse">
             <div className="w-full max-w-4xl ltr:mr-2 rtl:ml-2 lg:w-9/12">
@@ -862,26 +861,29 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                       locations,
                       ...input
                     } = values;
-                    parent.postMessage({
-                      type: "eventTypeUpdated",
-                      payload: {
-                        ...input,
-                        locations,
-                        recurringEvent,
-                        periodStartDate: periodDates.startDate,
-                        periodEndDate: periodDates.endDate,
-                        periodCountCalendarDays: periodCountCalendarDays === "1",
-                        id: eventType.id,
-                        beforeEventBuffer: beforeBufferTime,
-                        afterEventBuffer: afterBufferTime,
-                        seatsPerTimeSlot,
-                        metadata: {
-                          ...(smartContractAddress ? { smartContractAddress } : {}),
-                          ...(giphyThankYouPage ? { giphyThankYouPage } : {}),
+                    parent.postMessage(
+                      {
+                        type: "eventTypeUpdated",
+                        payload: {
+                          ...input,
+                          locations,
+                          recurringEvent,
+                          periodStartDate: periodDates.startDate,
+                          periodEndDate: periodDates.endDate,
+                          periodCountCalendarDays: periodCountCalendarDays === "1",
+                          id: eventType.id,
+                          beforeEventBuffer: beforeBufferTime,
+                          afterEventBuffer: afterBufferTime,
+                          seatsPerTimeSlot,
+                          metadata: {
+                            ...(smartContractAddress ? { smartContractAddress } : {}),
+                            ...(giphyThankYouPage ? { giphyThankYouPage } : {}),
+                          },
                         },
-                      }
-                    }, 'https://dev.techiematter.com');
-                        
+                      },
+                      "*"
+                    );
+
                     updateMutation.mutate({
                       ...input,
                       locations,

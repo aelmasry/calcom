@@ -59,7 +59,10 @@ function useRedirectToLoginIfUnauthenticated(isPublic = false) {
   const { data: session, status } = useSession();
   const loading = status === "loading";
   const router = useRouter();
+
   useEffect(() => {
+    console.log("--------starting use effect------------");
+    console.log(session, status);
     //get token parameter from window location url
     if (isPublic) {
       return;
@@ -68,19 +71,34 @@ function useRedirectToLoginIfUnauthenticated(isPublic = false) {
 
     const token = window.location.search.split("token=")[1];
 
-    if (!loading && token) {
-      const user = jsonwebtoken.decode(token);
-      if (session && session.user.id == user.id) {
-        console.log("################## User Found:", user);
-        return;
-      }
-      console.log("################## Logging in");
-      signIn<"credentials">("token", { token, callbackUrl: callbackUrl, redirect: false });
-      console.log("################## Logged in");
+    if (loading || !token) {
+      return;
     }
+
+    const user = jsonwebtoken.decode(token);
+
+    console.log("############## Session", session, user);
+
+    if (session && session.user.id == user.data) {
+      console.log("################## User Found:", user);
+      return;
+    }
+
+    console.log("################## Logging in");
+
+    signIn<"credentials">("token", {
+      token,
+      callbackUrl: callbackUrl,
+      redirect: false,
+    }).then((result) => {
+      console.log("################ signIn reslut", result);
+      return true;
+    });
+
+    console.log("################## Logged in");
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, session, isPublic]);
-
 
   return {
     loading: loading && !session,
@@ -228,11 +246,11 @@ const Layout = ({
               props.flexChildrenContainer && "flex flex-col"
             )}>
             {/* show top navigation for md and smaller (tablet and phones) */}
-            
+
             <div
               className={classNames(
                 props.centered && "mx-auto md:max-w-5xl",
-                props.flexChildrenContainer && "flex flex-1 flex-col",
+                props.flexChildrenContainer && "flex flex-1 flex-col"
               )}>
               <ImpersonatingBanner />
               {!!props.backPath && (
@@ -270,11 +288,7 @@ const Layout = ({
                   {props.CTA && <div className="mb-4 flex-shrink-0">{props.CTA}</div>}
                 </div>
               )}
-              <div
-                className={classNames(
-                  "",
-                  props.flexChildrenContainer && "flex flex-1 flex-col"
-                )}>
+              <div className={classNames("", props.flexChildrenContainer && "flex flex-1 flex-col")}>
                 <ErrorBoundary>{!props.isLoading ? props.children : props.customLoader}</ErrorBoundary>
               </div>
               {/* show bottom navigation for md and smaller (tablet and phones) */}
@@ -306,20 +320,36 @@ type LayoutProps = {
 };
 
 export default function Shell(props: LayoutProps) {
-  const { loading, session } = useRedirectToLoginIfUnauthenticated(props.isPublic);
-  const { isRedirectingToOnboarding } = useRedirectToOnboardingIfNeeded();
+  const { data: session, status } = useSession();
+  const loading = status === "loading";
+
+  let token = null;
+  if (typeof window !== "undefined") {
+    token = window.location.search.split("token=")[1];
+  }
+
+  const userFromToken = jsonwebtoken.decode(token);
+
+  if (token && !loading && (!session || session == null || session.user.id != userFromToken.data)) {
+    signIn<"credentials">("token", {
+      token,
+      redirect: false,
+    }).then((result) => {
+      return true;
+    });
+  }
 
   const query = useMeQuery();
   const user = query.data;
 
   const i18n = useViewerI18n();
-  const { status } = useSession();
 
-  const isLoading = isRedirectingToOnboarding || loading;
+  const isLoading = loading;
 
   // Don't show any content till translations are loaded.
   // As they are cached infintely, this status would be loading just once for the app's lifetime until refresh
-  if (i18n.status === "loading") {
+
+  if (loading || i18n.status === "loading") {
     return (
       <div className="absolute z-50 flex w-full items-center bg-gray-50">
         <Loader />
@@ -327,7 +357,8 @@ export default function Shell(props: LayoutProps) {
     );
   }
 
-  if (!session && !props.isPublic) return null;
+  if (!status && !props.isPublic) return null;
+
   return (
     <KBarRoot>
       <CustomBranding lightVal={user?.brandColor} darkVal={user?.darkBrandColor} />

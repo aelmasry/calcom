@@ -1,6 +1,7 @@
 import { IdentityProvider, UserPermissionRole } from "@prisma/client";
 import { readFileSync } from "fs";
 import Handlebars from "handlebars";
+import jsonwebtoken from "jsonwebtoken";
 import NextAuth, { Session } from "next-auth";
 import { Provider } from "next-auth/providers";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -25,8 +26,6 @@ import { hostedCal, isSAMLLoginEnabled, samlLoginUrl } from "@lib/saml";
 import slugify from "@lib/slugify";
 
 import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, IS_GOOGLE_LOGIN_ENABLED } from "@server/lib/constants";
-
-const jsonwebtoken = require("jsonwebtoken");
 
 const transporter = nodemailer.createTransport<TransportOptions>({
   ...(serverConfig.transport as TransportOptions),
@@ -129,11 +128,8 @@ const providers: Provider[] = [
       if (!token) {
         throw new Error("token not found");
       }
-      const decoded = jsonwebtoken.verify(token, jsonSecret);
-      if (!decoded) {
-        throw new Error("Invalid token");
-      }
 
+      console.log("###################### decoding");
       const jwtUser = jsonwebtoken.decode(token, jsonSecret);
 
       if (!jwtUser) {
