@@ -72,9 +72,7 @@ export function QueryCell<TData, TError extends ErrorLike>(
   }
   if (query.status === "error") {
     return (
-      opts.error?.(query) ?? (
-        <Alert severity="error" title="Something went wrong" message={query.error.message} />
-      )
+      <Loader/>
     );
   }
   const StatusLoader = opts.customLoader || <Loader />; // Fixes edge case where this can return null form query cell

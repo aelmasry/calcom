@@ -342,19 +342,7 @@ export default function Shell(props: LayoutProps) {
       return true;
     });
   }
-  useEffect(() => {
-    console.log("checking to redirect")
-    if (token && !loading && (!session || session == null || session.user.id != userFromToken.data)){
-      return;
-    }
-    const next = router.query.next;
-    console.log("will redirect")
-
-    if (next) {
-       router.push(router.query.next);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[session,loading]);
+  
 
   const query = useMeQuery();
   const user = query.data;

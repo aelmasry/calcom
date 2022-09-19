@@ -14,6 +14,8 @@ import { Form } from "@calcom/ui/form/fields";
 import { QueryCell } from "@lib/QueryCell";
 import { HttpError } from "@lib/core/http/error";
 import { inferQueryOutput, trpc } from "@lib/trpc";
+import { SessionContextValue, signOut, useSession } from "next-auth/react";
+import { getCsrfToken, signIn } from "next-auth/react";
 
 import Shell from "@components/Shell";
 import Schedule from "@components/availability/Schedule";
@@ -79,6 +81,27 @@ export function AvailabilityForm(props: inferQueryOutput<"viewer.availability.sc
 export default function Availability() {
   const router = useRouter();
   const { i18n } = useLocale();
+  const jsonwebtoken = require("jsonwebtoken");
+
+  const { data: session, status } = useSession();
+  const loading = status === "loading";
+
+  let token = null;
+  if (typeof window !== "undefined") {
+    token = window.location.search.split("token=")[1];
+  }
+
+  const userFromToken = jsonwebtoken.decode(token);
+
+  if (token && !loading && (!session || session == null || session.user.id != userFromToken.data)) {
+    signIn<"credentials">("token", {
+      token,
+      redirect: false,
+    }).then((result) => {
+      return true;
+    });
+  }
+
   const query = trpc.useQuery([
     "viewer.availability.schedule",
     {
