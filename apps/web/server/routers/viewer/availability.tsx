@@ -39,6 +39,7 @@ export const availabilityRouter = createProtectedRouter()
     }),
     async resolve({ ctx, input }) {
       const { prisma, user } = ctx;
+
       const schedule = await prisma.schedule.findUnique({
         where: {
           id: input.scheduleId,
@@ -51,6 +52,7 @@ export const availabilityRouter = createProtectedRouter()
           timeZone: true,
         },
       });
+      console.log("######schedule",schedule,user);
       if (!schedule || schedule.userId !== user.id) {
         throw new TRPCError({
           code: "UNAUTHORIZED",

@@ -20,6 +20,7 @@ async function getUserFromSession({
   session: Maybe<Session>;
   req: CreateContextOptions["req"];
 }) {
+  console.log("###################context is",session)
   if (!session?.user?.id) {
     return null;
   }
