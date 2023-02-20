@@ -902,6 +902,33 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                     });
                   }}
                   className="space-y-6">
+                  <div className="block items-center sm:flex">
+                    <div className="min-w-48 mb-4 sm:mb-0">
+                      <label htmlFor="eventName" className="flex text-sm font-medium text-neutral-700">
+                        {t("event_name")} <InfoBadge content={t("event_name_tooltip")} />
+                      </label>
+                    </div>
+                    <div className="w-full">
+                      <div className="relative mt-1 rounded-sm">
+                        <input
+                          type="text"
+                          className="block w-full rounded-sm border-gray-300 text-sm "
+                          placeholder={t("meeting_with_user")}
+                          defaultValue={eventType.eventName || ""}
+                          onFocus={() => setDisplayNameTips(true)}
+                          {...formMethods.register("eventName")}
+                        />
+                        {displayNameTips && (
+                          <div className="mt-1 text-gray-500">
+                            <p>{`{HOST} = ${t("your_name")}`}</p>
+                            <p>{`{ATTENDEE} = ${t("attendee_name")}`}</p>
+                            <p>{`{HOST/ATTENDEE} = ${t("dynamically_display_attendee_or_organizer")}`}</p>
+                            <p>{`{LOCATION} = ${t("event_location")}`}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                   <div className="space-y-3">
                     <div className="block items-center sm:flex">
                       <div className="min-w-48 mb-4 sm:mb-0">
@@ -915,9 +942,8 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                       </div>
                       <div className="w-full">
                         <div className="flex rounded-sm">
-                          <span className="inline-flex items-center rounded-l-sm border border-r-0 border-gray-300 bg-gray-50 px-3 text-sm text-gray-500">
-                            {CAL_URL?.replace(/^(https?:|)\/\//, "")}/
-                            {team ? "team/" + team.slug : eventType.users[0].username}/
+                          <span className="max-w-64 inline-flex items-center overflow-ellipsis rounded-l-sm border border-r-0 border-gray-300 bg-gray-50 px-3 text-sm text-gray-500">
+                            /{team ? "team/" + team.slug : eventType.users[0].username}/
                           </span>
                           <input
                             type="text"
@@ -1112,35 +1138,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                             </div>
                           </div>
                         )}
-                        <div className="block items-center sm:flex">
-                          <div className="min-w-48 mb-4 sm:mb-0">
-                            <label htmlFor="eventName" className="flex text-sm font-medium text-neutral-700">
-                              {t("event_name")} <InfoBadge content={t("event_name_tooltip")} />
-                            </label>
-                          </div>
-                          <div className="w-full">
-                            <div className="relative mt-1 rounded-sm">
-                              <input
-                                type="text"
-                                className="block w-full rounded-sm border-gray-300 text-sm "
-                                placeholder={t("meeting_with_user")}
-                                defaultValue={eventType.eventName || ""}
-                                onFocus={() => setDisplayNameTips(true)}
-                                {...formMethods.register("eventName")}
-                              />
-                              {displayNameTips && (
-                                <div className="mt-1 text-gray-500">
-                                  <p>{`{HOST} = ${t("your_name")}`}</p>
-                                  <p>{`{ATTENDEE} = ${t("attendee_name")}`}</p>
-                                  <p>{`{HOST/ATTENDEE} = ${t(
-                                    "dynamically_display_attendee_or_organizer"
-                                  )}`}</p>
-                                  <p>{`{LOCATION} = ${t("event_location")}`}</p>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
+
                         {eventType.isWeb3Active && (
                           <div className="block items-center sm:flex">
                             <div className="min-w-48 mb-4 sm:mb-0">
