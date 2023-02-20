@@ -1,4 +1,6 @@
 import { BadgeCheckIcon } from "@heroicons/react/solid";
+import { SessionContextValue, signOut, useSession } from "next-auth/react";
+import { getCsrfToken, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -14,8 +16,6 @@ import { Form } from "@calcom/ui/form/fields";
 import { QueryCell } from "@lib/QueryCell";
 import { HttpError } from "@lib/core/http/error";
 import { inferQueryOutput, trpc } from "@lib/trpc";
-import { SessionContextValue, signOut, useSession } from "next-auth/react";
-import { getCsrfToken, signIn } from "next-auth/react";
 
 import Shell from "@components/Shell";
 import Schedule from "@components/availability/Schedule";
@@ -71,7 +71,7 @@ export function AvailabilityForm(props: inferQueryOutput<"viewer.availability.sc
           <Schedule name="schedule" />
         </div>
         <div className="space-x-2 text-right">
-          <Button className={classNames("bg-techiepurple rounded-md")}>{t("continue")}</Button>
+          <Button className={classNames("bg-techiepurple mr-4 rounded-md")}>{t("continue")}</Button>
         </div>
       </div>
     </Form>
@@ -81,6 +81,7 @@ export function AvailabilityForm(props: inferQueryOutput<"viewer.availability.sc
 export default function Availability() {
   const router = useRouter();
   const { i18n } = useLocale();
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const jsonwebtoken = require("jsonwebtoken");
 
   const { data: session, status } = useSession();

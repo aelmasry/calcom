@@ -322,7 +322,7 @@
   "troubleshoot_availability": "Troubleshoot your availability to explore why your times are showing as they are.",
   "change_available_times": "Change available times",
   "change_your_available_times": "Change your available times",
-  "change_start_end": "Change the start and end times of your day",
+  "change_start_end": "Change the start and end times of the interviewer's availability for each day",
   "change_start_end_buffer": "Set the start and end time of your day and a minimum buffer between your meetings.",
   "current_start_date": "Currently, your day is set to start at",
   "start_end_changed_successfully": "The start and end times for your day have been changed successfully.",
