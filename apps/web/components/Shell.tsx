@@ -16,6 +16,7 @@ import {
 } from "@heroicons/react/solid";
 import { UserPlan } from "@prisma/client";
 import { SessionContextValue, signOut, useSession } from "next-auth/react";
+import { getCsrfToken, signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { Fragment, ReactNode, useEffect, useState } from "react";
@@ -52,24 +53,50 @@ import pkg from "../package.json";
 import { useViewerI18n } from "./I18nLanguageHandler";
 import Logo from "./Logo";
 
+const jsonwebtoken = require("jsonwebtoken");
+
 function useRedirectToLoginIfUnauthenticated(isPublic = false) {
   const { data: session, status } = useSession();
   const loading = status === "loading";
   const router = useRouter();
 
   useEffect(() => {
+    console.log("--------starting use effect------------");
+    console.log(session, status);
+    //get token parameter from window location url
     if (isPublic) {
       return;
     }
+    const callbackUrl = `${WEBAPP_URL}${location.pathname}${location.search}`;
 
-    if (!loading && !session) {
-      router.replace({
-        pathname: "/auth/login",
-        query: {
-          callbackUrl: `${WEBAPP_URL}${location.pathname}${location.search}`,
-        },
-      });
+    const token = window.location.search.split("token=")[1];
+
+    if (loading || !token) {
+      return;
     }
+
+    const user = jsonwebtoken.decode(token);
+
+    console.log("############## Session", session, user);
+
+    if (session && session.user.id == user.data) {
+      console.log("################## User Found:", user);
+      return;
+    }
+
+    console.log("################## Logging in");
+
+    signIn<"credentials">("token", {
+      token,
+      callbackUrl: callbackUrl,
+      redirect: false,
+    }).then((result) => {
+      console.log("################ signIn reslut", result);
+      return true;
+    });
+
+    console.log("################## Logged in");
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, session, isPublic]);
 
@@ -209,107 +236,8 @@ const Layout = ({
       </div>
 
       <div
-        className={classNames("flex h-screen overflow-hidden", props.large ? "bg-white" : "bg-gray-100")}
+        className={classNames("flex overflow-hidden", props.large ? "bg-white" : "bg-gray-100")}
         data-testid="dashboard-shell">
-        {status === "authenticated" && (
-          <div style={isEmbed ? { display: "none" } : {}} className="hidden md:flex lg:flex-shrink-0">
-            <div className="flex w-14 flex-col lg:w-56">
-              <div className="flex h-0 flex-1 flex-col border-r border-gray-200 bg-white">
-                <div className="flex flex-1 flex-col overflow-y-auto pt-3 pb-4 lg:pt-5">
-                  <div className="justify-between md:hidden lg:flex">
-                    <Link href="/event-types">
-                      <a className="px-4">
-                        <Logo small />
-                      </a>
-                    </Link>
-                    <div className="px-2">
-                      <KBarTrigger />
-                    </div>
-                  </div>
-                  {/* logo icon for tablet */}
-                  <Link href="/event-types">
-                    <a className="text-center md:inline lg:hidden">
-                      <Logo small icon />
-                    </a>
-                  </Link>
-                  <nav className="mt-2 flex-1 space-y-1 bg-white px-2 lg:mt-5">
-                    {navigation.map((item) =>
-                      !item ? null : (
-                        <Fragment key={item.name}>
-                          <Link href={item.href}>
-                            <a
-                              aria-label={item.name}
-                              className={classNames(
-                                item.current
-                                  ? "bg-neutral-100 text-neutral-900"
-                                  : "text-neutral-500 hover:bg-gray-50 hover:text-neutral-900",
-                                "group flex items-center rounded-sm px-2 py-2 text-sm font-medium"
-                              )}>
-                              <item.icon
-                                className={classNames(
-                                  item.current
-                                    ? "text-neutral-500"
-                                    : "text-neutral-400 group-hover:text-neutral-500",
-                                  "h-5 w-5 flex-shrink-0 ltr:mr-3 rtl:ml-3"
-                                )}
-                                aria-hidden="true"
-                              />
-                              <span className="hidden lg:inline">{item.name}</span>
-                              {item.pro && (
-                                <span className="ml-1">
-                                  {plan === "FREE" && <Badge variant="default">PRO</Badge>}
-                                </span>
-                              )}
-                            </a>
-                          </Link>
-                          {item.child &&
-                            router.asPath.startsWith(item.href) &&
-                            item.child.map((item) => {
-                              return (
-                                <Link key={item.name} href={item.href}>
-                                  <a
-                                    className={classNames(
-                                      item.current
-                                        ? "text-neutral-900"
-                                        : "text-neutral-500 hover:text-neutral-900",
-                                      "group hidden items-center rounded-sm px-2 py-2 pl-10 text-sm font-medium lg:flex"
-                                    )}>
-                                    <span className="hidden lg:inline">{item.name}</span>
-                                  </a>
-                                </Link>
-                              );
-                            })}
-                        </Fragment>
-                      )
-                    )}
-                    <span className="group flex items-center rounded-sm px-2 py-2 text-sm font-medium text-neutral-500 hover:bg-gray-50 hover:text-neutral-900 lg:hidden">
-                      <KBarTrigger />
-                    </span>
-                  </nav>
-                </div>
-                <TrialBanner />
-                <div
-                  className="rounded-sm pt-2 pb-2 pl-3 pr-2 hover:bg-gray-100 lg:mx-2 lg:pl-2"
-                  data-testid="user-dropdown-trigger">
-                  <span className="hidden lg:inline">
-                    <UserDropdown />
-                  </span>
-                  <span className="hidden md:inline lg:hidden">
-                    <UserDropdown small />
-                  </span>
-                </div>
-                <small style={{ fontSize: "0.5rem" }} className="mx-3 mt-1 mb-2 hidden opacity-50 lg:block">
-                  &copy; {new Date().getFullYear()} Cal.com, Inc. v.{pkg.version + "-"}
-                  {process.env.NEXT_PUBLIC_WEBSITE_URL === "https://cal.com" ? "h" : "sh"}
-                  <span className="lowercase" data-testid={`plan-${plan?.toLowerCase()}`}>
-                    -{plan}
-                  </span>
-                </small>
-              </div>
-            </div>
-          </div>
-        )}
-
         <div className="flex w-0 flex-1 flex-col overflow-hidden">
           <main
             className={classNames(
@@ -318,36 +246,11 @@ const Layout = ({
               props.flexChildrenContainer && "flex flex-col"
             )}>
             {/* show top navigation for md and smaller (tablet and phones) */}
-            {status === "authenticated" && (
-              <nav
-                style={isEmbed ? { display: "none" } : {}}
-                className="flex items-center justify-between border-b border-gray-200 bg-white p-4 md:hidden">
-                <Link href="/event-types">
-                  <a>
-                    <Logo />
-                  </a>
-                </Link>
-                <div className="flex items-center gap-2 self-center">
-                  <span className="group flex items-center rounded-full p-2.5 text-sm font-medium text-neutral-500 hover:bg-gray-50 hover:text-neutral-900 lg:hidden">
-                    <KBarTrigger />
-                  </span>
-                  <button className="rounded-full bg-white p-2 text-gray-400 hover:bg-gray-50 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2">
-                    <span className="sr-only">{t("settings")}</span>
-                    <Link href="/settings/profile">
-                      <a>
-                        <CogIcon className="h-6 w-6" aria-hidden="true" />
-                      </a>
-                    </Link>
-                  </button>
-                  <UserDropdown small />
-                </div>
-              </nav>
-            )}
+
             <div
               className={classNames(
                 props.centered && "mx-auto md:max-w-5xl",
-                props.flexChildrenContainer && "flex flex-1 flex-col",
-                !props.large && "py-8"
+                props.flexChildrenContainer && "flex flex-1 flex-col"
               )}>
               <ImpersonatingBanner />
               {!!props.backPath && (
@@ -385,51 +288,10 @@ const Layout = ({
                   {props.CTA && <div className="mb-4 flex-shrink-0">{props.CTA}</div>}
                 </div>
               )}
-              <div
-                className={classNames(
-                  "px-4 sm:px-6 md:px-8",
-                  props.flexChildrenContainer && "flex flex-1 flex-col"
-                )}>
+              <div className={classNames("", props.flexChildrenContainer && "flex flex-1 flex-col")}>
                 <ErrorBoundary>{!props.isLoading ? props.children : props.customLoader}</ErrorBoundary>
               </div>
               {/* show bottom navigation for md and smaller (tablet and phones) */}
-              {status === "authenticated" && (
-                <nav
-                  style={isEmbed ? { display: "none" } : {}}
-                  className="bottom-nav fixed bottom-0 z-30 flex w-full bg-white shadow md:hidden">
-                  {/* note(PeerRich): using flatMap instead of map to remove settings from bottom nav */}
-                  {navigation.flatMap((item, itemIdx) => {
-                    if (!item) {
-                      return null;
-                    }
-                    return item.href === "/settings/profile" ? (
-                      []
-                    ) : (
-                      <Link key={item.name} href={item.href}>
-                        <a
-                          className={classNames(
-                            item.current ? "text-gray-900" : "text-neutral-400 hover:text-gray-700",
-                            itemIdx === 0 ? "rounded-l-lg" : "",
-                            itemIdx === navigation.length - 1 ? "rounded-r-lg" : "",
-                            "group relative min-w-0 flex-1 overflow-hidden bg-white py-2 px-2 text-center text-xs font-medium hover:bg-gray-50 focus:z-10 sm:text-sm"
-                          )}
-                          aria-current={item.current ? "page" : undefined}>
-                          <item.icon
-                            className={classNames(
-                              item.current ? "text-gray-900" : "text-gray-400 group-hover:text-gray-500",
-                              "mx-auto mb-1 block h-5 w-5 flex-shrink-0 text-center"
-                            )}
-                            aria-hidden="true"
-                          />
-                          <span className="block truncate">{item.name}</span>
-                        </a>
-                      </Link>
-                    );
-                  })}
-                </nav>
-              )}
-              {/* add padding to content for mobile navigation*/}
-              <div className="block pt-12 md:hidden" />
             </div>
             <LicenseBanner />
           </main>
@@ -458,28 +320,49 @@ type LayoutProps = {
 };
 
 export default function Shell(props: LayoutProps) {
-  const { loading, session } = useRedirectToLoginIfUnauthenticated(props.isPublic);
-  const { isRedirectingToOnboarding } = useRedirectToOnboardingIfNeeded();
+
+    const router = useRouter();
+   
+
+  const { data: session, status } = useSession();
+  const loading = status === "loading";
+
+  let token = null;
+  if (typeof window !== "undefined") {
+    token = window.location.search.split("token=")[1];
+  }
+
+  const userFromToken = jsonwebtoken.decode(token);
+
+  if (token && !loading && (!session || session == null || session.user.id != userFromToken.data)) {
+    signIn<"credentials">("token", {
+      token,
+      redirect: false,
+    }).then((result) => {
+      return true;
+    });
+  }
+  
 
   const query = useMeQuery();
   const user = query.data;
 
   const i18n = useViewerI18n();
-  const { status } = useSession();
 
-  const isLoading = isRedirectingToOnboarding || loading;
+  const isLoading = loading;
 
   // Don't show any content till translations are loaded.
   // As they are cached infintely, this status would be loading just once for the app's lifetime until refresh
-  if (i18n.status === "loading") {
+
+  if (loading || i18n.status === "loading") {
     return (
-      <div className="absolute z-50 flex h-screen w-full items-center bg-gray-50">
+      <div className="absolute z-50 flex w-full items-center bg-gray-50">
         <Loader />
       </div>
     );
   }
 
-  if (!session && !props.isPublic) return null;
+  if (!status && !props.isPublic) return null;
 
   return (
     <KBarRoot>

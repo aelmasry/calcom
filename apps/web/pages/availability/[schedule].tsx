@@ -1,9 +1,12 @@
 import { BadgeCheckIcon } from "@heroicons/react/solid";
+import { SessionContextValue, signOut, useSession } from "next-auth/react";
+import { getCsrfToken, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { DEFAULT_SCHEDULE, availabilityAsString } from "@calcom/lib/availability";
+import classNames from "@calcom/lib/classNames";
 import { useLocale } from "@calcom/lib/hooks/useLocale";
 import showToast from "@calcom/lib/notification";
 import Button from "@calcom/ui/Button";
@@ -35,7 +38,7 @@ export function AvailabilityForm(props: inferQueryOutput<"viewer.availability.sc
   const updateMutation = trpc.useMutation("viewer.availability.schedule.update", {
     onSuccess: async ({ schedule }) => {
       await utils.invalidateQueries(["viewer.availability.schedule"]);
-      await router.push("/availability");
+      await router.push(router.query.next);
       showToast(
         t("availability_updated_successfully", {
           scheduleName: schedule.name,
@@ -68,56 +71,7 @@ export function AvailabilityForm(props: inferQueryOutput<"viewer.availability.sc
           <Schedule name="schedule" />
         </div>
         <div className="space-x-2 text-right">
-          <Button color="secondary" href="/availability" tabIndex={-1}>
-            {t("cancel")}
-          </Button>
-          <Button>{t("save")}</Button>
-        </div>
-      </div>
-      <div className="min-w-40 col-span-3 ml-2 space-y-2 lg:col-span-1">
-        {props.isDefault ? (
-          <div className="inline-block rounded border border-gray-300 bg-gray-200 px-2 py-0.5 pl-1.5 text-sm font-medium text-neutral-800">
-            <span className="flex items-center">
-              <BadgeCheckIcon className="mr-1 h-4 w-4" /> {t("default")}
-            </span>
-          </div>
-        ) : (
-          <Controller
-            name="isDefault"
-            render={({ field: { onChange, value } }) => (
-              <Switch label={t("set_to_default")} onCheckedChange={onChange} checked={value} />
-            )}
-          />
-        )}
-        <div>
-          <label htmlFor="timeZone" className="block text-sm font-medium text-gray-700">
-            {t("timezone")}
-          </label>
-          <div className="mt-1">
-            <Controller
-              name="timeZone"
-              render={({ field: { onChange, value } }) => (
-                <TimezoneSelect
-                  value={value}
-                  className="focus:border-brand mt-1 block w-full rounded-md border-gray-300 sm:text-sm"
-                  onChange={(timezone) => onChange(timezone.value)}
-                />
-              )}
-            />
-          </div>
-        </div>
-        <div className="mt-2 rounded-sm border border-gray-200 px-4 py-5 sm:p-6 ">
-          <h3 className="text-base font-medium leading-6 text-gray-900">
-            {t("something_doesnt_look_right")}
-          </h3>
-          <div className="mt-2 max-w-xl text-sm text-gray-500">
-            <p>{t("troubleshoot_availability")}</p>
-          </div>
-          <div className="mt-5">
-            <Button href="/availability/troubleshoot" color="secondary">
-              {t("launch_troubleshooter")}
-            </Button>
-          </div>
+          <Button className={classNames("bg-techiepurple mr-4 rounded-md")}>{t("continue")}</Button>
         </div>
       </div>
     </Form>
@@ -127,6 +81,28 @@ export function AvailabilityForm(props: inferQueryOutput<"viewer.availability.sc
 export default function Availability() {
   const router = useRouter();
   const { i18n } = useLocale();
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const jsonwebtoken = require("jsonwebtoken");
+
+  const { data: session, status } = useSession();
+  const loading = status === "loading";
+
+  let token = null;
+  if (typeof window !== "undefined") {
+    token = window.location.search.split("token=")[1];
+  }
+
+  const userFromToken = jsonwebtoken.decode(token);
+
+  if (token && !loading && (!session || session == null || session.user.id != userFromToken.data)) {
+    signIn<"credentials">("token", {
+      token,
+      redirect: false,
+    }).then((result) => {
+      return true;
+    });
+  }
+
   const query = trpc.useQuery([
     "viewer.availability.schedule",
     {
@@ -141,7 +117,6 @@ export default function Availability() {
         success={({ data }) => {
           return (
             <Shell
-              heading={<EditableHeading title={data.schedule.name} onChange={setName} />}
               subtitle={data.schedule.availability.map((availability) => (
                 <span key={availability.id}>
                   {availabilityAsString(availability, i18n.language)}

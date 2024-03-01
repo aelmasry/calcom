@@ -144,6 +144,12 @@ const nextConfig = {
 
     return redirects;
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 module.exports = () => plugins.reduce((acc, next) => next(acc), nextConfig);

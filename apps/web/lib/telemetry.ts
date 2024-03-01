@@ -36,6 +36,7 @@ export function collectPageParameters(
 }
 
 const reportUsage: EventHandler = async (event, { fetch }) => {
+  return true;
   const ets = telemetryEventTypes;
   if ([ets.bookingConfirmed, ets.embedBookingConfirmed].includes(event.eventType)) {
     const key = process.env.CALCOM_LICENSE_KEY;

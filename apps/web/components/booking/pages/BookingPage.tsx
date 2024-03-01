@@ -441,6 +441,13 @@ const BookingPage = ({
           selectedLocation === LocationType.Phone ? booking.phone : booking.smsReminderNumber,
       });
     }
+    //redirect to external success url
+    const selectedLocation = getLocationValue(
+      booking.locationType ? booking : { ...booking, locationType: selectedLocation }
+    );
+
+    const url = `https://dev.techiematter.com/thank-you?interview_id=${eventType.id}&dt=${dayjs(date).valueOf()}&location=${selectedLocation}&t=${router.query.t}`;
+    window.location.href = url;
   };
 
   const disableInput = !!rescheduleUid;

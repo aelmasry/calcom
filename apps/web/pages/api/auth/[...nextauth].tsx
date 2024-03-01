@@ -1,6 +1,7 @@
 import { IdentityProvider, UserPermissionRole } from "@prisma/client";
 import { readFileSync } from "fs";
 import Handlebars from "handlebars";
+import jsonwebtoken from "jsonwebtoken";
 import NextAuth, { Session } from "next-auth";
 import { Provider } from "next-auth/providers";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -106,6 +107,41 @@ const providers: Provider[] = [
         email: user.email,
         name: user.name,
         role: user.role,
+      };
+    },
+  }),
+  CredentialsProvider({
+    id: "token",
+    name: "Cal.com",
+    type: "credentials",
+    credentials: {
+      token: { type: "hidden", label: "Token" },
+    },
+    async authorize(credentials) {
+      if (!credentials) {
+        console.error(`For some reason credentials are missing`);
+        throw new Error(ErrorCode.InternalServerError);
+      }
+
+      const jsonSecret = process.env.JWT_SECRET;
+      const token = credentials.token;
+      if (!token) {
+        throw new Error("token not found");
+      }
+
+      console.log("###################### decoding");
+      const jwtUser = jsonwebtoken.decode(token, jsonSecret);
+
+      if (!jwtUser) {
+        throw new Error(ErrorCode.UserNotFound);
+      }
+
+      return {
+        id: jwtUser.id,
+        username: jwtUser.username,
+        email: jwtUser.email,
+        name: jwtUser.name,
+        role: jwtUser.role,
       };
     },
   }),

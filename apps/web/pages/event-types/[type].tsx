@@ -841,46 +841,11 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
   const isAdmin = membership?.role === MembershipRole.OWNER || membership?.role === MembershipRole.ADMIN;
   return (
     <div>
-      <Shell
-        title={t("event_type_title", { eventTypeTitle: eventType.title })}
-        heading={
-          <div className="group relative cursor-pointer" onClick={() => setEditIcon(false)}>
-            {editIcon ? (
-              <>
-                <h1
-                  style={{ fontSize: 22, letterSpacing: "-0.0009em" }}
-                  className="inline pl-0 text-gray-900 focus:text-black group-hover:text-gray-500">
-                  {formMethods.getValues("title") && formMethods.getValues("title") !== ""
-                    ? formMethods.getValues("title")
-                    : eventType.title}
-                </h1>
-                <PencilIcon className="ml-1 -mt-1 inline h-4 w-4 text-gray-700 group-hover:text-gray-500" />
-              </>
-            ) : (
-              <div style={{ marginBottom: -11 }}>
-                <input
-                  type="text"
-                  autoFocus
-                  style={{ top: -6, fontSize: 22 }}
-                  required
-                  className="relative h-10 w-full cursor-pointer border-none bg-transparent pl-0 text-gray-900 hover:text-gray-700 focus:text-black focus:outline-none focus:ring-0"
-                  placeholder={t("quick_chat")}
-                  {...formMethods.register("title")}
-                  defaultValue={eventType.title}
-                  onBlur={() => {
-                    setEditIcon(true);
-                    formMethods.getValues("title") === "" && formMethods.setValue("title", eventType.title);
-                  }}
-                />
-              </div>
-            )}
-          </div>
-        }
-        subtitle={eventType.description || ""}>
+      <Shell title={t("event_type_title", { eventTypeTitle: eventType.title })}>
         <ClientSuspense fallback={<Loader />}>
-          <div className="flex flex-col-reverse lg:flex-row">
+          <div className="flex flex-col-reverse">
             <div className="w-full max-w-4xl ltr:mr-2 rtl:ml-2 lg:w-9/12">
-              <div className="-mx-4 rounded-sm border border-neutral-200 bg-white p-4 py-6 sm:mx-0 sm:px-8">
+              <div className=" rounded-sm border bg-white p-4 py-6">
                 <Form
                   form={formMethods}
                   handleSubmit={async (values) => {
@@ -896,6 +861,28 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                       locations,
                       ...input
                     } = values;
+                    parent.postMessage(
+                      {
+                        type: "eventTypeUpdated",
+                        payload: {
+                          ...input,
+                          locations,
+                          recurringEvent,
+                          periodStartDate: periodDates.startDate,
+                          periodEndDate: periodDates.endDate,
+                          periodCountCalendarDays: periodCountCalendarDays === "1",
+                          id: eventType.id,
+                          beforeEventBuffer: beforeBufferTime,
+                          afterEventBuffer: afterBufferTime,
+                          seatsPerTimeSlot,
+                          metadata: {
+                            ...(smartContractAddress ? { smartContractAddress } : {}),
+                            ...(giphyThankYouPage ? { giphyThankYouPage } : {}),
+                          },
+                        },
+                      },
+                      "*"
+                    );
 
                     updateMutation.mutate({
                       ...input,
@@ -915,6 +902,33 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                     });
                   }}
                   className="space-y-6">
+                  <div className="block items-center sm:flex">
+                    <div className="min-w-48 mb-4 sm:mb-0">
+                      <label htmlFor="eventName" className="flex text-sm font-medium text-neutral-700">
+                        {t("event_name")} <InfoBadge content={t("event_name_tooltip")} />
+                      </label>
+                    </div>
+                    <div className="w-full">
+                      <div className="relative mt-1 rounded-sm">
+                        <input
+                          type="text"
+                          className="block w-full rounded-sm border-gray-300 text-sm "
+                          placeholder={t("meeting_with_user")}
+                          defaultValue={eventType.eventName || ""}
+                          onFocus={() => setDisplayNameTips(true)}
+                          {...formMethods.register("eventName")}
+                        />
+                        {displayNameTips && (
+                          <div className="mt-1 text-gray-500">
+                            <p>{`{HOST} = ${t("your_name")}`}</p>
+                            <p>{`{ATTENDEE} = ${t("attendee_name")}`}</p>
+                            <p>{`{HOST/ATTENDEE} = ${t("dynamically_display_attendee_or_organizer")}`}</p>
+                            <p>{`{LOCATION} = ${t("event_location")}`}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                   <div className="space-y-3">
                     <div className="block items-center sm:flex">
                       <div className="min-w-48 mb-4 sm:mb-0">
@@ -928,9 +942,8 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                       </div>
                       <div className="w-full">
                         <div className="flex rounded-sm">
-                          <span className="inline-flex items-center rounded-l-sm border border-r-0 border-gray-300 bg-gray-50 px-3 text-sm text-gray-500">
-                            {CAL_URL?.replace(/^(https?:|)\/\//, "")}/
-                            {team ? "team/" + team.slug : eventType.users[0].username}/
+                          <span className="max-w-64 inline-flex items-center overflow-ellipsis rounded-l-sm border border-r-0 border-gray-300 bg-gray-50 px-3 text-sm text-gray-500">
+                            /{team ? "team/" + team.slug : eventType.users[0].username}/
                           </span>
                           <input
                             type="text"
@@ -1009,32 +1022,6 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                           defaultValue={asStringOrUndefined(eventType.description)}
                         />
                       </div>
-                    </div>
-                  </div>
-
-                  <hr className="border-neutral-200" />
-                  <div className="space-y-3">
-                    <div className="block sm:flex">
-                      <div className="min-w-48 mb-4 mt-2.5 sm:mb-0">
-                        <label
-                          htmlFor="availability"
-                          className="mt-0 flex text-sm font-medium text-neutral-700">
-                          <ClockIcon className="mt-0.5 h-4 w-4 text-neutral-500 ltr:mr-2 rtl:ml-2" />
-                          {t("availability")} <InfoBadge content={t("you_can_manage_your_schedules")} />
-                        </label>
-                      </div>
-                      <Controller
-                        name="schedule"
-                        control={formMethods.control}
-                        render={({ field }) => (
-                          <AvailabilitySelect
-                            value={field.value}
-                            onBlur={field.onBlur}
-                            name={field.name}
-                            onChange={(selected) => field.onChange(selected?.value || null)}
-                          />
-                        )}
-                      />
                     </div>
                   </div>
 
@@ -1151,35 +1138,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                             </div>
                           </div>
                         )}
-                        <div className="block items-center sm:flex">
-                          <div className="min-w-48 mb-4 sm:mb-0">
-                            <label htmlFor="eventName" className="flex text-sm font-medium text-neutral-700">
-                              {t("event_name")} <InfoBadge content={t("event_name_tooltip")} />
-                            </label>
-                          </div>
-                          <div className="w-full">
-                            <div className="relative mt-1 rounded-sm">
-                              <input
-                                type="text"
-                                className="block w-full rounded-sm border-gray-300 text-sm "
-                                placeholder={t("meeting_with_user")}
-                                defaultValue={eventType.eventName || ""}
-                                onFocus={() => setDisplayNameTips(true)}
-                                {...formMethods.register("eventName")}
-                              />
-                              {displayNameTips && (
-                                <div className="mt-1 text-gray-500">
-                                  <p>{`{HOST} = ${t("your_name")}`}</p>
-                                  <p>{`{ATTENDEE} = ${t("attendee_name")}`}</p>
-                                  <p>{`{HOST/ATTENDEE} = ${t(
-                                    "dynamically_display_attendee_or_organizer"
-                                  )}`}</p>
-                                  <p>{`{LOCATION} = ${t("event_location")}`}</p>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
+
                         {eventType.isWeb3Active && (
                           <div className="block items-center sm:flex">
                             <div className="min-w-48 mb-4 sm:mb-0">
@@ -1917,81 +1876,6 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                     </Button>
                   </div>
                 </Form>
-              </div>
-            </div>
-            <div className="m-0 mt-0 mb-4 w-full lg:w-3/12 lg:px-2 lg:ltr:ml-2 lg:rtl:mr-2">
-              <div className="px-2">
-                <Controller
-                  name="hidden"
-                  control={formMethods.control}
-                  defaultValue={eventType.hidden}
-                  render={({ field }) => (
-                    <Switch
-                      defaultChecked={field.value}
-                      onCheckedChange={(isChecked) => {
-                        formMethods.setValue("hidden", isChecked);
-                      }}
-                      label={t("hide_event_type")}
-                    />
-                  )}
-                />
-              </div>
-              <div className="mt-4 space-y-1.5">
-                <a
-                  href={permalink}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-md inline-flex items-center rounded-sm px-2 py-1 text-sm font-medium text-neutral-700 hover:bg-gray-200 hover:text-gray-900">
-                  <ExternalLinkIcon
-                    className="h-4 w-4 text-neutral-500 ltr:mr-2 rtl:ml-2"
-                    aria-hidden="true"
-                  />
-                  {t("preview")}
-                </a>
-                <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(permalink);
-                    showToast("Link copied!", "success");
-                  }}
-                  type="button"
-                  className="text-md flex items-center rounded-sm px-2 py-1 text-sm font-medium text-gray-700 hover:bg-gray-200 hover:text-gray-900">
-                  <LinkIcon className="h-4 w-4 text-neutral-500 ltr:mr-2 rtl:ml-2" />
-                  {t("copy_link")}
-                </button>
-                {hashedLinkVisible && (
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(placeholderHashedLink);
-                      if (eventType.hashedLink) {
-                        showToast(t("private_link_copied"), "success");
-                      } else {
-                        showToast(t("enabled_after_update_description"), "warning");
-                      }
-                    }}
-                    type="button"
-                    className="text-md flex items-center rounded-sm px-2 py-1 text-sm font-medium text-gray-700 hover:bg-gray-200 hover:text-gray-900">
-                    <LinkIcon className="h-4 w-4 text-neutral-500 ltr:mr-2 rtl:ml-2" />
-                    {t("copy_private_link")}
-                  </button>
-                )}
-                <EmbedButton
-                  className="text-md flex items-center rounded-sm px-2 py-1 text-sm font-medium text-gray-700 hover:bg-gray-200 hover:text-gray-900"
-                  eventTypeId={eventType.id}
-                />
-                <Dialog>
-                  <DialogTrigger className="text-md flex items-center rounded-sm px-2 py-1 text-sm font-medium text-red-500 hover:bg-gray-200">
-                    <TrashIcon className="h-4 w-4 text-red-500 ltr:mr-2 rtl:ml-2" />
-                    {t("delete")}
-                  </DialogTrigger>
-                  <ConfirmationDialogContent
-                    isLoading={deleteMutation.isLoading}
-                    variety="danger"
-                    title={t("delete_event_type")}
-                    confirmBtnText={t("confirm_delete_event_type")}
-                    onConfirm={deleteEventTypeHandler}>
-                    {t("delete_event_type_description")}
-                  </ConfirmationDialogContent>
-                </Dialog>
               </div>
             </div>
           </div>
