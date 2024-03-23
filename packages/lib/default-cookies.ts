@@ -23,9 +23,11 @@ export function defaultCookies(useSecureCookies: boolean): CookiesOptions {
     // To enable cookies on widgets,
     // https://stackoverflow.com/questions/45094712/iframe-not-reading-cookies-in-chrome
     // But we need to set it as `lax` in development
-    sameSite: useSecureCookies ? "none" : "lax",
+    // sameSite: useSecureCookies ? "none" : "lax",
+    sameSite: "none",
     path: "/",
-    secure: useSecureCookies,
+    // secure: useSecureCookies,
+    secure: true,
   };
   return {
     sessionToken: {
