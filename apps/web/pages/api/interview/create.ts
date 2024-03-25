@@ -76,6 +76,12 @@ async function createEventType(title: any, scheduleId: any, userId: any, slug: a
       },
     },
     userId: userId,
+    users: {
+      connect: {
+        id: userId,
+      },
+    },
   };
+
   return await prisma.eventType.create({ data });
 }
