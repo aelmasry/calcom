@@ -415,9 +415,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
     endDate: new Date(eventType.periodEndDate || Date.now()),
   });
 
-  const permalink = `${CAL_URL}/${team ? `team/${team.slug}` : eventType.users[0].username}/${
-    eventType.slug
-  }`;
+  const permalink = `${CAL_URL}/${team ? `team/${team.slug}` : eventType.users[0].name}/${eventType.slug}`;
 
   const placeholderHashedLink = `${CAL_URL}/d/${hashedUrl}/${eventType.slug}`;
 
@@ -467,6 +465,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
   }>({
     resolver: zodResolver(locationFormSchema),
   });
+
   const Locations = () => {
     const { t } = useLocale();
     return (
@@ -916,6 +915,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                           placeholder={t("meeting_with_user")}
                           defaultValue={eventType.eventName || ""}
                           onFocus={() => setDisplayNameTips(true)}
+                          required
                           {...formMethods.register("eventName")}
                         />
                         {displayNameTips && (
@@ -943,7 +943,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                       <div className="w-full">
                         <div className="flex rounded-sm">
                           <span className="max-w-64 inline-flex items-center overflow-ellipsis rounded-l-sm border border-r-0 border-gray-300 bg-gray-50 px-3 text-sm text-gray-500">
-                            /{team ? "team/" + team.slug : eventType.users[0].username}/
+                            /{team ? "team/" + team.slug : eventType.users[0].name}/
                           </span>
                           <input
                             type="text"
@@ -962,7 +962,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                     <Controller
                       name="length"
                       control={formMethods.control}
-                      defaultValue={eventType.length || 15}
+                      defaultValue="30"
                       render={() => (
                         <MinutesField
                           label={
@@ -974,8 +974,8 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                           id="length"
                           required
                           min="1"
-                          placeholder="15"
-                          defaultValue={eventType.length || 15}
+                          placeholder="30"
+                          defaultValue="30"
                           onChange={(e) => {
                             formMethods.setValue("length", Number(e.target.value));
                           }}
@@ -1428,7 +1428,6 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                           />
                         </div>
                         <hr className="my-2 border-neutral-200" />
-
                         <fieldset className="block sm:flex">
                           <div className="min-w-48 mb-4 sm:mb-0">
                             <label
