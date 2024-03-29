@@ -415,7 +415,9 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
     endDate: new Date(eventType.periodEndDate || Date.now()),
   });
 
-  const permalink = `${CAL_URL}/${team ? `team/${team.slug}` : eventType.users[0].name}/${eventType.slug}`;
+  const permalink = `${CAL_URL}/${team ? `team/${team.slug}` : eventType.users[0].username}/${
+    eventType.slug
+  }`;
 
   const placeholderHashedLink = `${CAL_URL}/d/${hashedUrl}/${eventType.slug}`;
 
@@ -943,7 +945,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                       <div className="w-full">
                         <div className="flex rounded-sm">
                           <span className="max-w-64 inline-flex items-center overflow-ellipsis rounded-l-sm border border-r-0 border-gray-300 bg-gray-50 px-3 text-sm text-gray-500">
-                            /{team ? "team/" + team.slug : eventType.users[0].name}/
+                            /{team ? "team/" + team.slug : eventType.users[0].username}/
                           </span>
                           <input
                             type="text"
