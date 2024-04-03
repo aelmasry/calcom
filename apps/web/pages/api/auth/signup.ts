@@ -17,6 +17,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { name, email } = data;
   const userEmail = email.toLowerCase();
   const username = slugify(name.toLowerCase());
+  // If no time zone is provided user's time zone
+  // Declare timeZone outside of the if-else blocks
+  let timezone;
+  if (req.body.timezone === null || req.body.timezone === undefined) {
+    timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  } else {
+    timezone = req.body.timezone;
+  }
+
   //generate a random password
   const password = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
@@ -62,6 +71,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     update: {
       username,
       name: name,
+      timeZone: timezone,
       password: hashedPassword,
       emailVerified: new Date(Date.now()),
       identityProvider: IdentityProvider.CAL,
@@ -69,6 +79,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     create: {
       username,
       name: name,
+      timeZone: timezone,
       email: userEmail,
       password: hashedPassword,
       identityProvider: IdentityProvider.CAL,

@@ -30,8 +30,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   console.log("################decoded", decoded);
   const userId = decoded.data;
   const data = req.body;
-  const { job_id, job_title } = data;
-  const name = job_title + "-" + job_id;
+  console.log(" ############ Create DATA ", data);
+  const { job_id, job_title, comapny_name } = data;
+  const name = comapny_name + " " + job_title;
+  let timezone;
+  if (req.body.timezone === null || req.body.timezone === undefined) {
+    timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  } else {
+    timezone = req.body.timezone;
+  }
+  console.log("### timeZone", timezone);
 
   if (!job_id || !job_title) {
     res.status(400).json({ message: "Missing required fields" });
@@ -43,9 +51,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     .toLowerCase()
     .replace(/\s/g, "-")
     .concat("-" + Math.floor(Math.random() * 1000000));
-  const schedule = await createSchedule(name, userId, slug);
+  const schedule = await createSchedule(name, userId, slug, timezone);
   console.log("###########schedule", schedule);
-  const eventType = await createEventType(name, schedule.id, userId, slug);
+  const eventType = await createEventType(name, schedule.id, userId, slug, timezone);
   res.status(200).json({
     interview_id: eventType.id,
     interview_slug: slug,
@@ -57,17 +65,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   });
 }
 
-async function createSchedule(name: string, userId: any, slug: any) {
-  const data = { name: slug, user: { connect: { id: userId } } };
+async function createSchedule(name: string, userId: any, slug: any, timezone: any) {
+  const data = { name: slug, timeZone: timezone, user: { connect: { id: userId } } };
   return await prisma.schedule.create({ data });
 }
 
-async function createEventType(title: any, scheduleId: any, userId: any, slug: any) {
+async function createEventType(title: any, scheduleId: any, userId: any, slug: any, timezone: any) {
   // make a slug using lowercase title and replace spaces with dashes and add a big random number
   const length = 15;
   const data: Prisma.EventTypeCreateInput = {
     title: title,
     slug: slug,
+    timeZone: timezone,
     disableGuests: true,
     length: length,
     schedule: {
