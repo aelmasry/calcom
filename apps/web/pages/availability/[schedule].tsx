@@ -4,6 +4,8 @@ import { getCsrfToken, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+// import TimezoneSelect from "@components/ui/form/TimezoneSelect";
+import TimezoneSelect, { ITimezone } from "react-timezone-select";
 
 import { DEFAULT_SCHEDULE, availabilityAsString } from "@calcom/lib/availability";
 import classNames from "@calcom/lib/classNames";
@@ -20,7 +22,6 @@ import { inferQueryOutput, trpc } from "@lib/trpc";
 import Shell from "@components/Shell";
 import Schedule from "@components/availability/Schedule";
 import EditableHeading from "@components/ui/EditableHeading";
-import TimezoneSelect from "@components/ui/form/TimezoneSelect";
 
 export function AvailabilityForm(props: inferQueryOutput<"viewer.availability.schedule">) {
   const { t } = useLocale();
@@ -31,7 +32,6 @@ export function AvailabilityForm(props: inferQueryOutput<"viewer.availability.sc
     defaultValues: {
       schedule: props.availability || DEFAULT_SCHEDULE,
       isDefault: !!props.isDefault,
-      timeZone: props.timeZone,
     },
   });
 
@@ -54,6 +54,11 @@ export function AvailabilityForm(props: inferQueryOutput<"viewer.availability.sc
     },
   });
 
+  const [selectedTimeZone, setSelectedTimeZone] = useState<ITimezone>(
+    props.schedule.timeZone ?? Intl.DateTimeFormat().resolvedOptions().timeZone
+  );
+
+  const enteredTimeZone = typeof selectedTimeZone === "string" ? selectedTimeZone : selectedTimeZone.value;
   return (
     <Form
       form={form}
@@ -61,6 +66,7 @@ export function AvailabilityForm(props: inferQueryOutput<"viewer.availability.sc
         updateMutation.mutate({
           scheduleId: parseInt(router.query.schedule as string, 10),
           name: props.schedule.name,
+          timeZone: enteredTimeZone,
           ...values,
         });
       }}
@@ -69,6 +75,24 @@ export function AvailabilityForm(props: inferQueryOutput<"viewer.availability.sc
         <div className="divide-y rounded-sm border border-gray-200 bg-white px-4 py-5 sm:p-6">
           <h3 className="mb-5 text-base font-medium leading-6 text-gray-900">{t("change_start_end")}</h3>
           <Schedule name="schedule" />
+        </div>
+        <div className="divide-y rounded-sm border border-gray-200 bg-white px-4 py-5 sm:p-6">
+          <div className="min-w-48 sm:mb-0">
+            <label htmlFor="timeZone" className="mt-2.5 flex text-sm font-medium text-neutral-700">
+              {t("timezone")}
+            </label>
+          </div>
+          <div className="w-full">
+            <div className="relative mt-1 rounded-sm">
+              <TimezoneSelect
+                id="timeZone"
+                name="timeZone"
+                value={selectedTimeZone}
+                onChange={(v) => v && setSelectedTimeZone(v)}
+                className="block w-full rounded-sm border-gray-300 text-sm"
+              />
+            </div>
+          </div>
         </div>
         <div className="space-x-2 text-right">
           <Button className={classNames("bg-techiepurple mr-4 rounded-md")}>{t("continue")}</Button>

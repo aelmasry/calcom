@@ -24,6 +24,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { Controller, Noop, useForm, UseFormReturn } from "react-hook-form";
 import { FormattedNumber, IntlProvider } from "react-intl";
+import TimezoneSelect, { ITimezone } from "react-timezone-select";
 import short from "short-uuid";
 import { JSONObject } from "superjson/dist/types";
 import { v5 as uuidv5 } from "uuid";
@@ -103,6 +104,7 @@ export type FormValues = {
   slug: string;
   length: number;
   description: string;
+  timeZone: string;
   disableGuests: boolean;
   requiresConfirmation: boolean;
   recurringEvent: RecurringEvent | null;
@@ -420,7 +422,9 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
   }`;
 
   const placeholderHashedLink = `${CAL_URL}/d/${hashedUrl}/${eventType.slug}`;
-
+  const [selectedTimeZone, setSelectedTimeZone] = useState<ITimezone>(
+    eventType.timeZone ?? Intl.DateTimeFormat().resolvedOptions().timeZone
+  );
   const mapUserToValue = ({
     id,
     name,
@@ -841,7 +845,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
 
   const membership = team?.members.find((membership) => membership.user.id === props.session.user.id);
   const isAdmin = membership?.role === MembershipRole.OWNER || membership?.role === MembershipRole.ADMIN;
-
+  const enteredTimeZone = typeof selectedTimeZone === "string" ? selectedTimeZone : selectedTimeZone.value;
   return (
     <div>
       <Shell title={t("event_type_title", { eventTypeTitle: eventType.title })}>
@@ -862,6 +866,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                       seatsPerTimeSlot,
                       recurringEvent,
                       locations,
+                      timeZone,
                       ...input
                     } = values;
                     parent.postMessage(
@@ -869,6 +874,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                         type: "eventTypeUpdated",
                         payload: {
                           ...input,
+                          timeZone: enteredTimeZone,
                           locations,
                           recurringEvent,
                           periodStartDate: periodDates.startDate,
@@ -890,6 +896,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                     updateMutation.mutate({
                       ...input,
                       locations,
+                      timeZone: enteredTimeZone,
                       recurringEvent,
                       periodStartDate: periodDates.startDate,
                       periodEndDate: periodDates.endDate,
@@ -1029,7 +1036,29 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                       </div>
                     </div>
                   </div>
-
+                  <hr />
+                  {/* <div className="space-y-3">
+                    <div className="block sm:flex">
+                      <div className="min-w-48 sm:mb-0">
+                        <label
+                          htmlFor="timeZone"
+                          className="mt-2.5 flex text-sm font-medium text-neutral-700">
+                          {t("timezone")}
+                        </label>
+                      </div>
+                      <div className="w-full">
+                        <div className="relative mt-1 rounded-sm">
+                          <TimezoneSelect
+                            id="timeZone"
+                            name="timeZone"
+                            value={selectedTimeZone}
+                            onChange={(v) => v && setSelectedTimeZone(v)}
+                            className="block w-full rounded-sm border-gray-300 text-sm"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div> */}
                   {team && <hr className="border-neutral-200" />}
                   {team && (
                     <div className="space-y-3">
@@ -1991,6 +2020,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
     id: true,
     avatar: true,
     email: true,
+    timeZone: true,
     plan: true,
     locale: true,
   });
