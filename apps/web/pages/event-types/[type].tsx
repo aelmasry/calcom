@@ -440,6 +440,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
       locations: eventType.locations || [],
       recurringEvent: eventType.recurringEvent || null,
       schedule: eventType.schedule?.id,
+      length: eventType.length?.valueOf() || 30,
       periodDates: {
         startDate: periodDates.startDate,
         endDate: periodDates.endDate,
@@ -840,6 +841,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
 
   const membership = team?.members.find((membership) => membership.user.id === props.session.user.id);
   const isAdmin = membership?.role === MembershipRole.OWNER || membership?.role === MembershipRole.ADMIN;
+
   return (
     <div>
       <Shell title={t("event_type_title", { eventTypeTitle: eventType.title })}>
@@ -964,8 +966,9 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                     <Controller
                       name="length"
                       control={formMethods.control}
-                      defaultValue="30"
-                      render={() => (
+                      defaultValue={eventType.length || 30}
+                      value={eventType.length || 30}
+                      render={({ field }) => (
                         <MinutesField
                           label={
                             <>
@@ -973,11 +976,11 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                               {t("duration")}
                             </>
                           }
+                          {...field}
                           id="length"
                           required
                           min="1"
                           placeholder="30"
-                          defaultValue="30"
                           onChange={(e) => {
                             formMethods.setValue("length", Number(e.target.value));
                           }}

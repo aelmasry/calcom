@@ -49,10 +49,11 @@ export const availabilityRouter = createProtectedRouter()
           userId: true,
           name: true,
           availability: true,
+          eventType: true,
           timeZone: true,
         },
       });
-      console.log("######schedule",schedule,user);
+      // console.log("######schedule", schedule, user);
       if (!schedule || schedule.userId !== user.id) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
