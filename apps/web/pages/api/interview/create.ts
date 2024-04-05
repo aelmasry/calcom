@@ -72,7 +72,7 @@ async function createSchedule(name: string, userId: any, slug: any, timezone: an
 
 async function createEventType(title: any, scheduleId: any, userId: any, slug: any, timezone: any) {
   // make a slug using lowercase title and replace spaces with dashes and add a big random number
-  const length = 15;
+  const length = 30;
   const data: Prisma.EventTypeCreateInput = {
     title: title,
     slug: slug,

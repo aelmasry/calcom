@@ -973,8 +973,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                     <Controller
                       name="length"
                       control={formMethods.control}
-                      defaultValue={eventType.length || 30}
-                      value={eventType.length || 30}
+                      defaultValue={eventType.length ?? 30}
                       render={({ field }) => (
                         <MinutesField
                           label={
@@ -986,6 +985,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                           {...field}
                           id="length"
                           required
+                          defaultValue={eventType.length ?? 30}
                           min="1"
                           placeholder="30"
                           onChange={(e) => {
