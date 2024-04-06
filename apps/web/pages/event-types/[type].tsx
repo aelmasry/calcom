@@ -1901,9 +1901,9 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                     {/* )} */}
                   </Collapsible>
                   <div className="mt-4 flex justify-end space-x-2 rtl:space-x-reverse">
-                    <Button href="/event-types" color="secondary" tabIndex={-1}>
-                      {t("cancel")}
-                    </Button>
+                    {/* <Button href={`/availability/${eventType.schedule.id}`} color="secondary" tabIndex={-1}>
+						{t("cancel")}
+					</Button> */}
                     <Button type="submit" data-testid="update-eventtype" disabled={updateMutation.isLoading}>
                       {t("update")}
                     </Button>
