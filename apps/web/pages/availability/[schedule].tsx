@@ -54,6 +54,10 @@ export function AvailabilityForm(props: inferQueryOutput<"viewer.availability.sc
     },
   });
 
+  if (props.schedule.timeZone === "null" || props.schedule.timeZone === undefined) {
+    props.schedule.timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  }
+
   const [selectedTimeZone, setSelectedTimeZone] = useState<ITimezone>(
     props.schedule.timeZone ?? Intl.DateTimeFormat().resolvedOptions().timeZone
   );
