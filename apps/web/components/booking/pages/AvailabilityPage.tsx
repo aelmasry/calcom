@@ -61,14 +61,14 @@ type Props = AvailabilityTeamPageProps | AvailabilityPageProps | DynamicAvailabi
 
 export const locationKeyToString = (location: LocationObject, t: TFunction) => {
   switch (location.type) {
-    case LocationType.InPerson:
-      return location.address || "In Person"; // If disabled address won't exist on the object
+    // case LocationType.InPerson:
+    //   return location.address || "In Person"; // If disabled address won't exist on the object
     case LocationType.Link:
       return location.link || "Link"; // If disabled link won't exist on the object
-    case LocationType.Phone:
-      return t("your_number");
-    case LocationType.UserPhone:
-      return t("phone_call");
+    // case LocationType.Phone:
+    //   return t("your_number");
+    // case LocationType.UserPhone:
+    //   return t("phone_call");
     case LocationType.GoogleMeet:
       return "Google Meet";
     case LocationType.Zoom:

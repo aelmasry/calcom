@@ -490,7 +490,6 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                   if (
                     newLocationType === LocationType.InPerson ||
                     newLocationType === LocationType.Link ||
-                    newLocationType === LocationType.UserPhone ||
                     newLocationType === LocationType.Whereby ||
                     newLocationType === LocationType.Around ||
                     newLocationType === LocationType.Riverside
@@ -525,7 +524,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                       </span>
                     </div>
                   )}
-                  {location.type === LocationType.UserPhone && (
+                  {/* {location.type === LocationType.UserPhone && (
                     <div className="flex flex-grow items-center">
                       <PhoneIcon className="h-6 w-6" />
                       <span className="w-full border-0 bg-transparent text-sm ltr:ml-2 rtl:mr-2">
@@ -538,7 +537,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                       <PhoneIcon className="h-6 w-6" />
                       <span className="text-sm ltr:ml-2 rtl:mr-2">{t("phone_call")}</span>
                     </div>
-                  )}
+                  )} */}
                   {location.type === LocationType.Whereby && (
                     <div className="flex flex-grow items-center">
                       <img src="/api/app-store/whereby/icon.svg" className="h-6 w-6" alt="whereby logo" />
@@ -811,7 +810,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                         locationFormMethods.setValue("locationType", location.type);
                         locationFormMethods.unregister("locationLink");
                         locationFormMethods.unregister("locationAddress");
-                        locationFormMethods.unregister("locationPhoneNumber");
+                        // locationFormMethods.unregister("locationPhoneNumber");
                         openLocationModal(location.type);
                       }}
                       aria-label={t("edit")}
@@ -1122,11 +1121,12 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                       </div>
                     </div>
                   )}
+
                   <Collapsible
                     open={advancedSettingsVisible}
                     onOpenChange={() => setAdvancedSettingsVisible(!advancedSettingsVisible)}>
                     <>
-                      <CollapsibleTrigger
+                      {/* <CollapsibleTrigger
                         type="button"
                         data-testid="show-advanced-settings"
                         className="flex w-full">
@@ -1138,7 +1138,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                         <span className="text-sm font-medium text-neutral-700">
                           {t("show_advanced_settings")}
                         </span>
-                      </CollapsibleTrigger>
+                      </CollapsibleTrigger> */}
                       <CollapsibleContent data-testid="advanced-settings-content" className="mt-4 space-y-6">
                         {/**
                          * Only display calendar selector if user has connected calendars AND if it's not
