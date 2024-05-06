@@ -32,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const data = req.body;
   console.log(" ############ Create DATA ", data);
   const { job_id, job_title, comapny_name } = data;
-  const name = comapny_name + " " + job_title;
+  const name = job_title;
   let timezone;
   if (req.body.timezone === null || req.body.timezone === undefined) {
     timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
