@@ -283,7 +283,7 @@ export const DayRanges = ({
 
 const ScheduleBlock = ({ name, day, weekday }: ScheduleBlockProps) => {
   const { t } = useLocale();
-
+  console.log(name);
   const form = useFormContext();
   const watchAvailable = form.watch(`${name}.${day}`, []);
 

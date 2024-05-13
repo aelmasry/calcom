@@ -448,13 +448,17 @@ const BookingPage = ({
       booking.locationType ? booking : { ...booking, locationType: selectedLocation }
     );
 
-    const url = `https://staging.techiematter.com/thank-you?interview_id=${eventType.id}&dt=${dayjs(
-      date
-    ).valueOf()}&location=${selectedLocation}&t=${router.query.t}`;
+    console.log(window.location.hostname);
 
-    // const url = `http://techiematter.test/thank-you?interview_id=${eventType.id}&dt=${dayjs(
-    //   date
-    // ).valueOf()}&location=${selectedLocation}&t=${router.query.t}`;
+    if (window.location.hostname == "localhost") {
+      const url = `http://techiematter.test/thank-you?interview_id=${eventType.id}&dt=${dayjs(
+        date
+      ).valueOf()}&location=${selectedLocation}&t=${router.query.t}`;
+    } else {
+      const url = `https://staging.techiematter.com/thank-you?interview_id=${eventType.id}&dt=${dayjs(
+        date
+      ).valueOf()}&location=${selectedLocation}&t=${router.query.t}`;
+    }
 
     window.location.href = url;
   };
