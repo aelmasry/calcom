@@ -448,15 +448,13 @@ const BookingPage = ({
       booking.locationType ? booking : { ...booking, locationType: selectedLocation }
     );
 
-    console.log("techiematter_confirmation_url", process.env.CALCOM_LICENSE_KEY);
-
-    // const url = `https://prelaunch.techiematter.com/thank-you?interview_id=${eventType.id}&dt=${dayjs(
-    //   date
-    // ).valueOf()}&location=${selectedLocation}&t=${router.query.t}`;
-
-    const url = `http://techiematter.test/thank-you?interview_id=${eventType.id}&dt=${dayjs(
+    const url = `https://prelaunch.techiematter.com/thank-you?interview_id=${eventType.id}&dt=${dayjs(
       date
     ).valueOf()}&location=${selectedLocation}&t=${router.query.t}`;
+
+    // const url = `http://techiematter.test/thank-you?interview_id=${eventType.id}&dt=${dayjs(
+    //   date
+    // ).valueOf()}&location=${selectedLocation}&t=${router.query.t}`;
 
     window.location.href = url;
   };
