@@ -122,6 +122,7 @@ async function getUserPageProps(context: GetStaticPropsContext) {
       requiresConfirmation: true,
       schedulingType: true,
       metadata: true,
+      eventName: true,
       seatsPerTimeSlot: true,
       users: {
         select: {

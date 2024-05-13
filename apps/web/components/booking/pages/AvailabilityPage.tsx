@@ -554,12 +554,15 @@ const AvailabilityPage = ({ profile, eventType }: Props) => {
                   size={10}
                   truncateAfter={3}
                 />
-                <h2 className="mt-3 break-words font-medium text-gray-500 dark:text-gray-300">
+                <h1 className="font-cal mb-4 break-words font-medium font-semibold text-gray-500 dark:text-white">
                   {profile.name}
-                </h2>
+                </h1>
                 <h1 className="font-cal mb-4 break-words text-xl font-semibold text-gray-900 dark:text-white">
                   {eventType.title}
                 </h1>
+                <h2 className="mb-4mt-3 break-words font-medium text-gray-500 dark:text-gray-300">
+                  {eventType.eventName}
+                </h2>
                 <div className="flex flex-col space-y-4">
                   {eventType?.description && (
                     <div className="flex text-gray-600 dark:text-white">
