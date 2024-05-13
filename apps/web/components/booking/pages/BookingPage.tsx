@@ -448,7 +448,7 @@ const BookingPage = ({
       booking.locationType ? booking : { ...booking, locationType: selectedLocation }
     );
 
-    const url = `https://prelaunch.techiematter.com/thank-you?interview_id=${eventType.id}&dt=${dayjs(
+    const url = `https://staging.techiematter.com/thank-you?interview_id=${eventType.id}&dt=${dayjs(
       date
     ).valueOf()}&location=${selectedLocation}&t=${router.query.t}`;
 
