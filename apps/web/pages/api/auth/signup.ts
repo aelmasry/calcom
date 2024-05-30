@@ -20,7 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // If no time zone is provided user's time zone
   // Declare timeZone outside of the if-else blocks
   let timezone;
-  if (req.body.timezone === null || req.body.timezone === undefined) {
+  if (req.body.timezone === "" || req.body.timezone === null || req.body.timezone === undefined) {
     timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   } else {
     timezone = req.body.timezone;

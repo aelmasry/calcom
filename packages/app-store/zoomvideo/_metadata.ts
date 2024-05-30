@@ -20,6 +20,7 @@ export const metadata = {
   title: "Zoom Video",
   trending: true,
   email: "help@cal.com",
+  isGlobal: true,
   locationType: LocationType.Zoom,
   locationLabel: "Zoom Video",
 } as App;

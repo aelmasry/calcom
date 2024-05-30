@@ -19,6 +19,7 @@ export const metadata = {
   reviews: 69,
   slug: "google-calendar",
   trending: false,
+  isGlobal: true,
   url: "https://cal.com/",
   verified: true,
   email: "help@cal.com",

@@ -34,12 +34,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { job_id, job_title, comapny_name } = data;
   const name = job_title;
   let timezone;
-  if (req.body.timezone === null || req.body.timezone === undefined) {
+  if (req.body.timezone === "" || req.body.timezone === null || req.body.timezone === undefined) {
     timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   } else {
     timezone = req.body.timezone;
   }
-  console.log("### timeZone", timezone);
 
   if (!job_id || !job_title) {
     res.status(400).json({ message: "Missing required fields" });
