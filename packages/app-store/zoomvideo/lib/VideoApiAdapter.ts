@@ -57,7 +57,6 @@ type ZoomToken = z.infer<typeof zoomTokenSchema>;
 
 const zoomAuth = (credential: Credential) => {
   const credentialKey = zoomTokenSchema.parse(credential.key);
-
   const isTokenValid = (token: ZoomToken) =>
     token && token.token_type && token.access_token && (token.expires_in || token.expiry_date) < Date.now();
 
@@ -198,6 +197,7 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
   const fetchZoomApi = async (endpoint: string, options?: RequestInit) => {
     const auth = zoomAuth(credential);
     const accessToken = await auth.getToken();
+
     const responseBody = await fetch(`https://api.zoom.us/v2/${endpoint}`, {
       method: "GET",
       ...options,
@@ -236,6 +236,7 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
       });
 
       const result = zoomEventResultSchema.parse(response);
+
       if (result.id && result.join_url) {
         return Promise.resolve({
           type: "zoom_video",

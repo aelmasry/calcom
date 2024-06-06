@@ -442,18 +442,17 @@ const BookingPage = ({
       });
     }
 
-    console.log("########## router.query", router.query);
     //redirect to external success url
     const selectedLocation = getLocationValue(
       booking.locationType ? booking : { ...booking, locationType: selectedLocation }
     );
 
-    console.log(window.location.hostname);
-
     if (window.location.hostname == "localhost") {
-      const url = `http://techiematter.test/thank-you?interview_id=${eventType.id}&dt=${dayjs(
-        date
-      ).valueOf()}&location=${selectedLocation}&t=${router.query.t}`;
+      const url =
+        process.env.TECHIEMATTER_CONFIRMATION_URL +
+        `?interview_id=${eventType.id}&dt=${dayjs(date).valueOf()}&location=${selectedLocation}&t=${
+          router.query.t
+        }`;
     } else {
       const url = `https://staging.techiematter.com/thank-you?interview_id=${eventType.id}&dt=${dayjs(
         date

@@ -60,5 +60,7 @@ declare namespace NodeJS {
      * Set it to "1" if you need to run E2E tests locally
      **/
     readonly NEXT_PUBLIC_IS_E2E: "1" | undefined;
+    readonly TECHIEMATTER_CONFIRMATION_URL: string | undefined;
+    readonly ZOOM_CREDENTIAL: string | undefined;
   }
 }

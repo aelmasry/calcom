@@ -764,6 +764,7 @@ async function handler(req: NextApiRequest) {
     evt.description = eventType.description;
 
     results = createManager.results;
+    console.log("## Events manager results", results);
     referencesToCreate = createManager.referencesToCreate;
     if (results.length > 0 && results.every((res) => !res.success)) {
       const error = {

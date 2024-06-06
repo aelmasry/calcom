@@ -35,7 +35,6 @@ const getBusyVideoTimes = (withCredentials: Credential[]) =>
 
 const createMeeting = async (credential: Credential, calEvent: CalendarEvent) => {
   const uid: string = getUid(calEvent);
-
   if (!credential) {
     throw new Error(
       "Credentials must be set! Video platforms are optional, so this method shouldn't even be called when no video credentials are set."
@@ -50,6 +49,7 @@ const createMeeting = async (credential: Credential, calEvent: CalendarEvent) =>
   });
 
   if (!createdMeeting) {
+    console.log("#### !createdMeeting", credential);
     return {
       type: credential.type,
       success: false,
