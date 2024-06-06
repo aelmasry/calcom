@@ -562,9 +562,6 @@ const AvailabilityPage = ({ profile, eventType }: Props) => {
                 </h1>
                 {eventType?.eventName && (
                   <div className="font-cal mb-4 flex break-words font-medium font-semibold text-gray-500 dark:text-white">
-                    <div>
-                      <InformationCircleIcon className="mr-[10px] ml-[2px] -mt-1 inline-block h-4 w-4 text-gray-400" />
-                    </div>
                     <p>{eventType.eventName}</p>
                   </div>
                 )}
