@@ -34,3 +34,5 @@ export const DOCS_URL = "https://docs.cal.com";
 export const SEO_IMG_DEFAULT = `${WEBSITE_URL}/og-image.png`;
 export const SEO_IMG_OGIMG = "https://og-image-one-pi.vercel.app/";
 export const SEO_IMG_OGIMG_VIDEO = `${WEBSITE_URL}/video-og-image.png`;
+export const ZOOM_CREDENTIAL = process.env.ZOOM_CREDENTIAL;
+export const TECHIEMATTER_CONFIRMATION_URL = process.env.TECHIEMATTER_CONFIRMATION_URL;

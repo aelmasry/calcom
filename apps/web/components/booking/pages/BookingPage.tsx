@@ -447,6 +447,10 @@ const BookingPage = ({
       booking.locationType ? booking : { ...booking, locationType: selectedLocation }
     );
 
+    console.log("TECHIEMATTER_CONFIRMATION_URL", TECHIEMATTER_CONFIRMATION_URL);
+
+    console.log("process.env.TECHIEMATTER_CONFIRMATION_URL", process.env.TECHIEMATTER_CONFIRMATION_URL);
+
     if (window.location.hostname == "localhost") {
       const url =
         process.env.TECHIEMATTER_CONFIRMATION_URL +
@@ -481,7 +485,7 @@ const BookingPage = ({
       }
     });
   }
-
+  console.log("eventType.eventName", eventType);
   return (
     <div>
       <Theme />
@@ -538,6 +542,9 @@ const BookingPage = ({
                 <h1 className="text-bookingdark mb-4 text-xl font-semibold dark:text-white">
                   {eventType.title}
                 </h1>
+                <h2 className="font-cal text-bookinglight mb-4 font-medium dark:text-gray-300">
+                  {eventType.eventName}
+                </h2>
                 {!!eventType.seatsPerTimeSlot && (
                   <p
                     className={`${
