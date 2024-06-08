@@ -447,9 +447,9 @@ const BookingPage = ({
       booking.locationType ? booking : { ...booking, locationType: selectedLocation }
     );
 
-    console.log("TECHIEMATTER_CONFIRMATION_URL", TECHIEMATTER_CONFIRMATION_URL);
+    // console.log("TECHIEMATTER_CONFIRMATION_URL", TECHIEMATTER_CONFIRMATION_URL);
 
-    console.log("process.env.TECHIEMATTER_CONFIRMATION_URL", process.env.TECHIEMATTER_CONFIRMATION_URL);
+    // console.log("process.env.TECHIEMATTER_CONFIRMATION_URL", process.env.TECHIEMATTER_CONFIRMATION_URL);
 
     if (window.location.hostname == "localhost") {
       const url =
@@ -485,7 +485,7 @@ const BookingPage = ({
       }
     });
   }
-  console.log("eventType.eventName", eventType);
+
   return (
     <div>
       <Theme />
