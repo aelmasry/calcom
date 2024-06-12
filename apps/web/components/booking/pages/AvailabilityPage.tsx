@@ -407,7 +407,7 @@ const AvailabilityPage = ({ profile, eventType }: Props) => {
                         .filter((user) => user.name !== profile.name)
                         .map((user) => ({
                           title: user.name,
-                          image: `${CAL_URL}/${user.username}/avatar.png`,
+                          image: `${WEBSITE_URL}/${user.username}/avatar.png`,
                           alt: user.name || undefined,
                         })),
                     ].filter((item) => !!item.image) as { image: string; alt?: string; title?: string }[]
