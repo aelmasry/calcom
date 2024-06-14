@@ -7,8 +7,8 @@ export enum DefaultLocationType {
 
 /** If your App has a location option, add it here */
 export enum AppStoreLocationType {
-  GoogleMeet = "integrations:google:meet",
-  Zoom = "integrations:zoom",
+  // GoogleMeet = "integrations:google:meet",
+  // Zoom = "integrations:zoom",
   Daily = "integrations:daily",
   Jitsi = "integrations:jitsi",
   Huddle01 = "integrations:huddle01",

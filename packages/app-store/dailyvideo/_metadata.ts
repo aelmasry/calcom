@@ -19,11 +19,11 @@ export const metadata = {
   reviews: 69, // TODO: placeholder for now, pull this from TrustPilot or G2
   category: "video",
   slug: "daily-video",
-  title: "Cal Video",
+  title: "Online Video call",
   isGlobal: true,
   email: "help@cal.com",
   locationType: LocationType.Daily,
-  locationLabel: "Cal Video",
+  locationLabel: "Online Video call",
   key: { apikey: process.env.DAILY_API_KEY },
 } as App;
 

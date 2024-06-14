@@ -61,7 +61,7 @@ export const BrokenIntegrationEmail = (
     let location = calEvent.location ? getEnumKeyByEnumValue(AppStoreLocationType, calEvent.location) : " ";
 
     if (location === "Daily") {
-      location = "Cal Video";
+      location = "Online Video call";
     }
     if (location === "GoogleMeet") {
       location = location.slice(0, 5) + " " + location.slice(5);

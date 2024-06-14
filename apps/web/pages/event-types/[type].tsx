@@ -662,7 +662,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                           />
                         </g>
                       </svg>
-                      <span className="text-sm ltr:ml-2 rtl:mr-2">Cal.com Video</span>
+                      <span className="text-sm ltr:ml-2 rtl:mr-2">Online Video call</span>
                     </div>
                   )}
                   {location.type === LocationType.Zoom && (

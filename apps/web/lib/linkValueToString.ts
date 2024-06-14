@@ -26,7 +26,7 @@ export const linkValueToString = (
     case LocationType.Zoom:
       return `Zoom: ${t("meeting_url_in_conformation_email")}`;
     case LocationType.Daily:
-      return `Cal Video: ${t("meeting_url_in_conformation_email")}`;
+      return `Online Video call: ${t("meeting_url_in_conformation_email")}`;
     case LocationType.Jitsi:
       return `Jitsi: ${t("meeting_url_in_conformation_email")}`;
     case LocationType.Huddle01:

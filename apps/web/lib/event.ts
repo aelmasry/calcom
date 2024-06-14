@@ -30,7 +30,7 @@ export function getEventName(eventNameObj: EventNameObjectType, forAttendeeView 
         locationString = "Phone";
         break;
       case "integrations:daily":
-        locationString = "Cal Video";
+        locationString = "Online Video call";
         break;
       case "integrations:zoom":
         locationString = "Zoom";
