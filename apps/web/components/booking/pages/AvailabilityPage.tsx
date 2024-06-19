@@ -71,8 +71,8 @@ export const locationKeyToString = (location: LocationObject, t: TFunction) => {
     //   return t("phone_call");
     // case LocationType.GoogleMeet:
     //   return "Google Meet";
-    // case LocationType.Zoom:
-    //   return "Zoom";
+    case LocationType.Zoom:
+      return "Zoom";
     case LocationType.Daily:
       return "Online meeting";
     case LocationType.Jitsi:

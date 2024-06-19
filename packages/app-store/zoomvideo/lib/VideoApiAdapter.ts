@@ -80,14 +80,14 @@ const zoomAuth = (credential: Credential) => {
         responseBody.expiry_date = Math.round(Date.now() + responseBody.expires_in * 1000);
         delete responseBody.expires_in;
         // Store new tokens in database.
-        await prisma.credential.update({
-          where: {
-            id: credential.id,
-          },
-          data: {
-            key: responseBody,
-          },
-        });
+        // await prisma.credential.update({
+        //   where: {
+        //     id: credential.id,
+        //   },
+        //   data: {
+        //     key: responseBody,
+        //   },
+        // });
         credentialKey.expiry_date = responseBody.expiry_date;
         credentialKey.access_token = responseBody.access_token;
         return credentialKey.access_token;
@@ -197,7 +197,7 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
   const fetchZoomApi = async (endpoint: string, options?: RequestInit) => {
     const auth = zoomAuth(credential);
     const accessToken = await auth.getToken();
-
+    console.log("#### fetchZoomApi accessToken ", accessToken);
     const responseBody = await fetch(`https://api.zoom.us/v2/${endpoint}`, {
       method: "GET",
       ...options,
@@ -206,7 +206,7 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
         ...options?.headers,
       },
     }).then(handleErrorsJson);
-
+    console.log("#### fetchZoomApi responseBody ", responseBody);
     return responseBody;
   };
 
