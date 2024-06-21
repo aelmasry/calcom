@@ -49,7 +49,6 @@ const createMeeting = async (credential: Credential, calEvent: CalendarEvent) =>
   });
 
   if (!createdMeeting) {
-    console.log("#### !createdMeeting", credential);
     return {
       type: credential.type,
       success: false,

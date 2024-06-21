@@ -15,7 +15,7 @@ import { getZoomAppKeys } from "./getZoomAppKeys";
 const zoomEventResultSchema = z.object({
   id: z.number(),
   join_url: z.string(),
-  password: z.string(),
+  password: z.string().optional(),
 });
 
 export type ZoomEventResult = z.infer<typeof zoomEventResultSchema>;
@@ -197,7 +197,6 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
   const fetchZoomApi = async (endpoint: string, options?: RequestInit) => {
     const auth = zoomAuth(credential);
     const accessToken = await auth.getToken();
-    console.log("#### fetchZoomApi accessToken ", accessToken);
     const responseBody = await fetch(`https://api.zoom.us/v2/${endpoint}`, {
       method: "GET",
       ...options,
@@ -206,7 +205,7 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
         ...options?.headers,
       },
     }).then(handleErrorsJson);
-    console.log("#### fetchZoomApi responseBody ", responseBody);
+    
     return responseBody;
   };
 

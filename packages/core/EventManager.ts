@@ -381,7 +381,7 @@ export default class EventManager {
     } else {
       // Handle Zoom credentials separately
       try {
-        const zoomCredentialString = process.env.ZOOM_CREDENTIAL;
+        const zoomCredentialString = process.env.ZOOM_CREDENTIAL ;
         if (!zoomCredentialString) {
           throw new Error("ZOOM_CREDENTIAL environment variable is not set");
         }
@@ -399,8 +399,6 @@ export default class EventManager {
         videoCredential = undefined;
       }
     }
-
-    console.log("### videoCredential", videoCredential);
 
     // Fallback to a fake credential if no valid credential is found
     if (!videoCredential) {
