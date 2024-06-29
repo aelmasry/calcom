@@ -119,6 +119,7 @@ export default class EventManager {
     const evt = processLocation(event);
     const isDedicated = evt.location ? isDedicatedIntegration(evt.location) : null;
 
+    console.log("### isDedicated", isDedicated);
     const results: Array<EventResult<Exclude<Event, AdditionalInformation>>> = [];
     // If and only if event type is a dedicated meeting, create a dedicated video meeting.
     if (isDedicated) {
@@ -381,7 +382,7 @@ export default class EventManager {
     } else {
       // Handle Zoom credentials separately
       try {
-        const zoomCredentialString = process.env.ZOOM_CREDENTIAL ;
+        const zoomCredentialString = process.env.ZOOM_CREDENTIAL;
         if (!zoomCredentialString) {
           throw new Error("ZOOM_CREDENTIAL environment variable is not set");
         }

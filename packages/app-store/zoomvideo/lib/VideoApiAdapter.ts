@@ -1,4 +1,5 @@
 import { Credential } from "@prisma/client";
+import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 
 import dayjs from "@calcom/dayjs";
@@ -10,6 +11,15 @@ import type { PartialReference } from "@calcom/types/EventManager";
 import type { VideoApiAdapter, VideoCallData } from "@calcom/types/VideoApiAdapter";
 
 import { getZoomAppKeys } from "./getZoomAppKeys";
+
+const generatePin = (length: number): string => {
+  let pin = "";
+  for (let i = 0; i < length; i++) {
+    const randomDigit = Math.floor(Math.random() * 10);
+    pin += randomDigit.toString();
+  }
+  return pin;
+};
 
 /** @link https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/meetingcreate */
 const zoomEventResultSchema = z.object({
@@ -164,7 +174,7 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
     };
 
     const recurrence = getRecurrence(event);
-
+    const pin_code = generatePin(7);
     // Documentation at: https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/meetingcreate
     return {
       topic: event.title,
@@ -175,6 +185,8 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
       timezone: event.attendees[0].timeZone,
       //password: "string",       TODO: Should we use a password? Maybe generate a random one?
       agenda: event.description,
+      default_password: true,
+      password: pin_code,
       settings: {
         host_video: true,
         participant_video: true,
@@ -183,10 +195,10 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
         join_before_host: true,
         mute_upon_entry: false,
         watermark: false,
-        use_pmi: false,
+        use_pmi: pin_code,
         approval_type: 2,
         audio: "both",
-        auto_recording: "none",
+        auto_recording: "cloud",
         enforce_login: false,
         registrants_email_notification: true,
       },
@@ -205,7 +217,7 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
         ...options?.headers,
       },
     }).then(handleErrorsJson);
-    
+
     return responseBody;
   };
 
@@ -226,6 +238,10 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
       }
     },
     createMeeting: async (event: CalendarEvent): Promise<VideoCallData> => {
+      console.log(
+        "### Passcode",
+        Array.from({ length: 5 }, () => Math.floor(Math.random() * 101))
+      );
       const response: ZoomEventResult = await fetchZoomApi("users/me/meetings", {
         method: "POST",
         headers: {
