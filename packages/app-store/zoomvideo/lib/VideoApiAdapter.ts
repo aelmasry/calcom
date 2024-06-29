@@ -174,7 +174,7 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
     };
 
     const recurrence = getRecurrence(event);
-    const pin_code = generatePin(7);
+    const passcode = generatePin(7);
     // Documentation at: https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/meetingcreate
     return {
       topic: event.title,
@@ -186,7 +186,7 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
       //password: "string",       TODO: Should we use a password? Maybe generate a random one?
       agenda: event.description,
       default_password: true,
-      password: pin_code,
+      password: passcode,
       settings: {
         host_video: true,
         participant_video: true,
@@ -195,7 +195,7 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
         join_before_host: true,
         mute_upon_entry: false,
         watermark: false,
-        use_pmi: pin_code,
+        use_pmi: passcode,
         approval_type: 2,
         audio: "both",
         auto_recording: "cloud",
