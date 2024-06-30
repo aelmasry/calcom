@@ -174,7 +174,6 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
     };
 
     const passcode = generatePin(7);
-    console.log("### passcode", passcode)
     const recurrence = getRecurrence(event);
     
     // Documentation at: https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/meetingcreate
@@ -198,7 +197,7 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
         mute_upon_entry: false,
         watermark: false,
         waiting_room: false,
-        use_pmi: 3,
+        use_pmi: false,
         approval_type: 2,
         audio: "both",
         auto_recording: "cloud",
