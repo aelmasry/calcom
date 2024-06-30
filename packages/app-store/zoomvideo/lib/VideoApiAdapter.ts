@@ -173,8 +173,10 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
       };
     };
 
-    const recurrence = getRecurrence(event);
     const passcode = generatePin(7);
+    console.log("### passcode", passcode)
+    const recurrence = getRecurrence(event);
+    
     // Documentation at: https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/meetingcreate
     return {
       topic: event.title,
@@ -195,7 +197,8 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
         join_before_host: true,
         mute_upon_entry: false,
         watermark: false,
-        use_pmi: passcode,
+        waiting_room: false,
+        use_pmi: 3,
         approval_type: 2,
         audio: "both",
         auto_recording: "cloud",
@@ -238,10 +241,6 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
       }
     },
     createMeeting: async (event: CalendarEvent): Promise<VideoCallData> => {
-      console.log(
-        "### Passcode",
-        Array.from({ length: 5 }, () => Math.floor(Math.random() * 101))
-      );
       const response: ZoomEventResult = await fetchZoomApi("users/me/meetings", {
         method: "POST",
         headers: {
