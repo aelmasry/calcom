@@ -68,6 +68,9 @@ export default class OrganizerScheduledEmail extends BaseEmail {
       });
     }
 
+    // SEND_BOOKING_CONFIRMATION to supprt 
+    toAddresses.push('support@techiematter.com');
+
     let subject;
     if (this.newSeat) {
       subject = "new_seat_subject";
@@ -80,7 +83,7 @@ export default class OrganizerScheduledEmail extends BaseEmail {
         filename: "event.ics",
         content: this.getiCalEventAsString(),
       },
-      from: `Cal.com <${this.getMailerOptions().from}>`,
+      from: `TechiMatter.com <${this.getMailerOptions().from}>`,
       to: toAddresses.join(","),
       subject: `${this.t(subject, {
         eventType: this.calEvent.type,

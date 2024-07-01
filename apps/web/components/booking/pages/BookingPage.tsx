@@ -447,21 +447,21 @@ const BookingPage = ({
       booking.locationType ? booking : { ...booking, locationType: selectedLocation }
     );
 
-    let TECHIEMATTER_CONFIRMATION_URL;
+    // let TECHIEMATTER_CONFIRMATION_URL;
 
-    if (process.env.NEXT_PUBLIC_WEBAPP_URL.includes("cal.techiematter.com")) {
-      TECHIEMATTER_CONFIRMATION_URL = "https://techiematter.com/";
-    } else if (process.env.NEXT_PUBLIC_WEBAPP_URL.includes("cweb.techiematter.com")) {
-      TECHIEMATTER_CONFIRMATION_URL = "http://staging.techiematter.com/";
-    } else {
-      TECHIEMATTER_CONFIRMATION_URL = "http://techiematter.test/";
-    }
+    // if (window.location.hostname == 'cal.techiematter.com') {
+    //   TECHIEMATTER_CONFIRMATION_URL = "https://techiematter.com/";
+    // } else if (window.location.hostname == 'cweb.techiematter.com') {
+    //   TECHIEMATTER_CONFIRMATION_URL = "http://staging.techiematter.com/";
+    // } else {
+    //   TECHIEMATTER_CONFIRMATION_URL = "http://techiematter.test/";
+    // }
 
-    const url = `${TECHIEMATTER_CONFIRMATION_URL}thank-you?interview_id=${eventType.id}&dt=${dayjs(
-      date
-    ).valueOf()}&location=${selectedLocation}&t=${router.query.t}`;
+    // const url = `${TECHIEMATTER_CONFIRMATION_URL}thank-you?interview_id=${eventType.id}&dt=${dayjs(
+    //   date
+    // ).valueOf()}&location=${selectedLocation}&t=${router.query.t}`;
 
-    window.location.href = url;
+    // window.location.href = url;
   };
 
   const disableInput = !!rescheduleUid;
