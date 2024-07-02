@@ -6,9 +6,7 @@ import Row from "./Row";
 const CommentIE = ({ html = "" }) => <RawHtml html={`<!--[if mso | IE]>${html}<![endif]-->`} />;
 
 const EmailBodyLogo = () => {
-  const image = IS_PRODUCTION
-    ? BASE_URL + "/emails/CalLogo@2x.png"
-    : "https://app.cal.com/emails/CalLogo@2x.png";
+  const image = IS_PRODUCTION ? BASE_URL + "/logo.png" : "http://techiematter.com/site/assets/logo.png";
 
   return (
     <>
