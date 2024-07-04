@@ -18,6 +18,7 @@ import { EventTypeCustomInput, MembershipRole, PeriodType, Prisma, SchedulingTyp
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@radix-ui/react-collapsible";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import classNames from "classnames";
+import { Console } from "console";
 import { isValidPhoneNumber } from "libphonenumber-js";
 import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
@@ -844,7 +845,8 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
 
   const membership = team?.members.find((membership) => membership.user.id === props.session.user.id);
   const isAdmin = membership?.role === MembershipRole.OWNER || membership?.role === MembershipRole.ADMIN;
-  const enteredTimeZone = typeof selectedTimeZone === "string" ? selectedTimeZone : selectedTimeZone.value;
+  // const enteredTimeZone = typeof selectedTimeZone === "string" ? selectedTimeZone : selectedTimeZone.value;
+  const enteredTimeZone = eventType.schedule.timeZone;
   return (
     <div>
       <Shell title={t("event_type_title", { eventTypeTitle: eventType.title })}>
@@ -2108,6 +2110,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
       schedule: {
         select: {
           id: true,
+          timeZone: true,
         },
       },
       userId: true,
