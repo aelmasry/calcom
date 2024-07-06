@@ -68,8 +68,8 @@ export default class OrganizerScheduledEmail extends BaseEmail {
       });
     }
 
-    // SEND_BOOKING_CONFIRMATION to supprt 
-    toAddresses.push('support@techiematter.com');
+    // SEND_BOOKING_CONFIRMATION to supprt
+    toAddresses.push("support@techiematter.com");
 
     let subject;
     if (this.newSeat) {
@@ -117,6 +117,8 @@ ${callToAction}
   }
 
   protected getTimezone(): string {
+    console.log("#### this.calEvent.organizer", this.calEvent.organizer);
+    console.log("#### this.calEvent.organizer.timeZone", this.calEvent.organizer.timeZone);
     return this.calEvent.organizer.timeZone;
   }
 
