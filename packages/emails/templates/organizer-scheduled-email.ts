@@ -121,7 +121,9 @@ ${callToAction}
   protected getTimezone(): string {
     // return this.calEvent.organizer.timeZone;
     const eventType = this.getTimezoneByEventTypeId(this.calEvent.eventTypeId);
-    return eventType.timeZone || this.calEvent.organizer.timeZone;
+    // return eventType.timeZone || this.calEvent.organizer.timeZone;
+    console.log("#### eventType.timeZone", eventType.timeZone);
+    return eventType.timeZone;
   }
 
   protected getOrganizerStart(format: string) {
