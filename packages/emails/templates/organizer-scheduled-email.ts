@@ -4,7 +4,7 @@ import rrule from "rrule";
 
 import dayjs from "@calcom/dayjs";
 import { getRichDescription } from "@calcom/lib/CalEventParser";
-import type { CalendarEvent, CalendarEventType } from "@calcom/types/Calendar";
+import type { CalendarEvent } from "@calcom/types/Calendar";
 
 import prisma from "@lib/prisma";
 
@@ -13,15 +13,13 @@ import BaseEmail from "./_base-email";
 
 export default class OrganizerScheduledEmail extends BaseEmail {
   calEvent: CalendarEvent;
-  calEventType: CalendarEventType;
   t: TFunction;
   newSeat?: boolean;
 
-  constructor(calEvent: CalendarEvent, newSeat?: boolean, calEventType: CalendarEventType) {
+  constructor(calEvent: CalendarEvent, newSeat?: boolean) {
     super();
     this.name = "SEND_BOOKING_CONFIRMATION";
     this.calEvent = calEvent;
-    this.calEventType = calEventType;
     this.t = this.calEvent.organizer.language.translate;
     this.newSeat = newSeat;
   }
@@ -120,10 +118,10 @@ ${callToAction}
 `.trim();
   }
 
-  protected async getTimezone(): Promise<string> {
+  protected getTimezone(): string {
     // return this.calEvent.organizer.timeZone;
-    const eventType = await this.getTimezoneByEventTypeId(this.calEvent.eventTypeId);
-    return eventType?.timeZone || this.calEvent.organizer.timeZone;
+    const eventType = this.getTimezoneByEventTypeId(this.calEvent.eventTypeId);
+    return eventType.timeZone || this.calEvent.organizer.timeZone;
   }
 
   protected getOrganizerStart(format: string) {
@@ -139,6 +137,7 @@ ${callToAction}
       this.getOrganizerStart("dddd").toLowerCase()
     )}, ${this.t(this.getOrganizerStart("MMMM").toLowerCase())} ${this.getOrganizerStart("D, YYYY")}`;
   }
+
   protected async getTimezoneByEventTypeId(eventTypeId: number) {
     const eventType = await prisma.eventType.findUnique({
       where: {
