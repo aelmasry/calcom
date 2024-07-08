@@ -120,10 +120,10 @@ ${callToAction}
 `.trim();
   }
 
-  protected getTimezone(): string {
-    const eventType = this.getTimezoneByEventTypeId(this.calEvent.eventTypeId);
+  protected async getTimezone(): Promise<string> {
     // return this.calEvent.organizer.timeZone;
-    return eventType ? eventType.timeZone : this.calEvent.organizer.timeZone;
+    const eventType = await this.getTimezoneByEventTypeId(this.calEvent.eventTypeId);
+    return eventType?.timeZone || this.calEvent.organizer.timeZone;
   }
 
   protected getOrganizerStart(format: string) {
@@ -139,9 +139,7 @@ ${callToAction}
       this.getOrganizerStart("dddd").toLowerCase()
     )}, ${this.t(this.getOrganizerStart("MMMM").toLowerCase())} ${this.getOrganizerStart("D, YYYY")}`;
   }
-
-<<<<<<< HEAD
-  protected async getTimezoneByEventTypeId(eventTypeId) {
+  protected async getTimezoneByEventTypeId(eventTypeId: number) {
     const eventType = await prisma.eventType.findUnique({
       where: {
         id: eventTypeId,
@@ -150,6 +148,4 @@ ${callToAction}
 
     return eventType;
   }
-=======
->>>>>>> 69d2ebd621bf3218aee9d31107603269612e2d88
 }
