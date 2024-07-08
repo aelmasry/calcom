@@ -6,6 +6,8 @@ import dayjs from "@calcom/dayjs";
 import { getRichDescription } from "@calcom/lib/CalEventParser";
 import type { CalendarEvent } from "@calcom/types/Calendar";
 
+import prisma from "@lib/prisma";
+
 import { renderEmail } from "../";
 import BaseEmail from "./_base-email";
 
@@ -117,9 +119,8 @@ ${callToAction}
   }
 
   protected getTimezone(): string {
-    console.log("#### this.calEvent.organizer", this.calEvent.organizer);
-    console.log("#### this.calEvent.organizer.timeZone", this.calEvent.organizer.timeZone);
-    return this.calEvent.organizer.timeZone;
+    const eventType = this.getTimezoneByEventTypeId(this.calEvent.eventTypeId);
+    return eventType ? eventType.timeZone : this.calEvent.organizer.timeZone;
   }
 
   protected getOrganizerStart(format: string) {
@@ -134,5 +135,15 @@ ${callToAction}
     return `${this.getOrganizerStart("h:mma")} - ${this.getOrganizerEnd("h:mma")}, ${this.t(
       this.getOrganizerStart("dddd").toLowerCase()
     )}, ${this.t(this.getOrganizerStart("MMMM").toLowerCase())} ${this.getOrganizerStart("D, YYYY")}`;
+  }
+
+  protected async getTimezoneByEventTypeId(eventTypeId) {
+    const eventType = await prisma.eventType.findUnique({
+      where: {
+        id: eventTypeId,
+      },
+    });
+
+    return eventType;
   }
 }
