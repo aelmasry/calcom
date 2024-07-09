@@ -15,6 +15,7 @@ export default class OrganizerScheduledEmail extends BaseEmail {
   calEvent: CalendarEvent;
   t: TFunction;
   newSeat?: boolean;
+  timeZone?: string;
 
   constructor(calEvent: CalendarEvent, newSeat?: boolean) {
     super();
@@ -120,10 +121,13 @@ ${callToAction}
 
   protected getTimezone(): string {
     // return this.calEvent.organizer.timeZone;
-    const eventType = this.getTimezoneByEventTypeId(this.calEvent.eventTypeId);
-    // return eventType.timeZone || this.calEvent.organizer.timeZone;
-    console.log("#### eventType.timeZone", eventType.timeZone);
-    return eventType.timeZone;
+    this.getTimezoneByEventTypeId(this.calEvent.eventTypeId);
+    console.log("#### this.timeZone", this.timeZone);
+    if (this.timeZone) {
+      return this.timeZone;
+    } else {
+      return this.calEvent.organizer.timeZone;
+    }
   }
 
   protected getOrganizerStart(format: string) {
@@ -147,6 +151,8 @@ ${callToAction}
       },
     });
 
-    return eventType;
+    if (eventType?.timeZone) {
+      this.timeZone = eventType.timeZone;
+    }
   }
 }
