@@ -7,6 +7,7 @@ import isToday from "dayjs/plugin/isToday";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import relativeTime from "dayjs/plugin/relativeTime";
 import timeZone from "dayjs/plugin/timezone";
+import tz from "dayjs/plugin/timezone";
 import toArray from "dayjs/plugin/toArray";
 import utc from "dayjs/plugin/utc";
 
@@ -16,9 +17,10 @@ dayjs.extend(isBetween);
 dayjs.extend(isToday);
 dayjs.extend(localizedFormat);
 dayjs.extend(relativeTime);
-dayjs.extend(timeZone);
 dayjs.extend(toArray);
 dayjs.extend(utc);
+dayjs.extend(tz);
+dayjs.extend(timeZone);
 
 export type Dayjs = dayjs.Dayjs;
 

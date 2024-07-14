@@ -120,14 +120,7 @@ ${callToAction}
   }
 
   protected getTimezone(): string {
-    // return this.calEvent.organizer.timeZone;
-    this.getTimezoneByEventTypeId(this.calEvent.eventTypeId);
-    console.log("#### this.timeZone", this.timeZone);
-    if (this.timeZone) {
-      return this.timeZone;
-    } else {
-      return this.calEvent.organizer.timeZone;
-    }
+    return this.calEvent.organizer.timeZone;
   }
 
   protected getOrganizerStart(format: string) {

@@ -5,7 +5,9 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // import TimezoneSelect from "@components/ui/form/TimezoneSelect";
-import TimezoneSelect, { ITimezone } from "react-timezone-select";
+// import TimezoneSelect, { ITimezone } from "react-timezone-select";
+import TimezoneSelect, { type ITimezone } from "react-timezone-select"
+
 
 import { DEFAULT_SCHEDULE, availabilityAsString } from "@calcom/lib/availability";
 import classNames from "@calcom/lib/classNames";
