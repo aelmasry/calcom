@@ -4,7 +4,7 @@ import dayjs, { Dayjs } from "@calcom/dayjs";
 import { getErrorFromUnknown } from "@calcom/lib/errors";
 import { serverConfig } from "@calcom/lib/serverConfig";
 
-import { getCairoTimeWithDST } from "@lib/timeUtils";
+import { getCairoTimeWithDST } from "@calcom/web/lib/timeUtils"
 
 export default class BaseEmail {
   name = "";
@@ -21,6 +21,7 @@ export default class BaseEmail {
 
     if (this.getTimezone().includes("Cairo")) {
       date = getCairoTimeWithDST(dayjs(time));
+      console.log("### getCairoTimeWithDST", date)
     } else {
       date = dayjs(time).tz(letTimeZone);
     }
