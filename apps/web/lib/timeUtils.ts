@@ -11,8 +11,8 @@ dayjs.extend(timezone);
 export function getCairoTimeWithDST(date: dayjs.Dayjs): dayjs.Dayjs {
   const year = date.year();
   // Define DST start and end dates for Cairo for the current year
-  const DST_START = dayjs.tz(`${year}-04-28 00:00:00`, "Africa/Cairo");
-  const DST_END = dayjs.tz(`${year}-10-27 00:00:00`, "Africa/Cairo");
+  const DST_START = dayjs.tz(`${year}-04-26 00:00:00`, "Africa/Cairo");
+  const DST_END = dayjs.tz(`${year}-10-25 00:00:00`, "Africa/Cairo");
 
   const cairoTime = date.tz("Africa/Cairo");
   if (cairoTime.isAfter(DST_START) && cairoTime.isBefore(DST_END)) {

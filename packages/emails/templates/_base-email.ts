@@ -19,7 +19,7 @@ export default class BaseEmail {
     let date: Dayjs;
     const letTimeZone = this.getTimezone();
 
-    if (this.getTimezone().includes("Cairo")) {
+    if (letTimeZone.includes("Cairo")) {
       date = getCairoTimeWithDST(dayjs(time));
     } else {
       date = dayjs(time).tz(letTimeZone);
