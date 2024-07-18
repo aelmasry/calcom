@@ -221,6 +221,51 @@ const BookingPage = ({
     [eventType.locations]
   );
 
+  const fetchConfirmation = async ({ interviewId, dt, location, t }) => {
+    let TECHIEMATTER_CONFIRMATION_URL;
+
+    console.log("### fetchConfirmation", interviewId);
+    console.log("### fetchConfirmation", location);
+
+    // Ensure window is defined to avoid errors during server-side rendering
+    if (typeof window !== "undefined") {
+      const hostname = window.location.hostname;
+      console.log("### fetchConfirmation", hostname);
+      switch (hostname) {
+        case "cal.techiematter.com":
+          TECHIEMATTER_CONFIRMATION_URL = "https://techiematter.com/thank-you";
+          break;
+        case "cweb.techiematter.com":
+          TECHIEMATTER_CONFIRMATION_URL = "http://staging.techiematter.com/thank-you";
+          break;
+        default:
+          TECHIEMATTER_CONFIRMATION_URL = "http://techiematter.test/thank-you";
+          break;
+      }
+
+      try {
+        const url = `${TECHIEMATTER_CONFIRMATION_URL}?interview_id=${interviewId}&dt=${dt}&location=${location}&t=${t}`;
+
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          // Check if the request was successful
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json(); // Assuming the response is JSON
+        console.log("#### resultURl", result);
+      } catch (error) {
+        console.error("Fetch failed:", error);
+      }
+    }
+  };
+
   useEffect(() => {
     if (router.query.guest) {
       setGuestToggle(true);
@@ -447,19 +492,18 @@ const BookingPage = ({
       booking.locationType ? booking : { ...booking, locationType: selectedLocation }
     );
 
-    // let TECHIEMATTER_CONFIRMATION_URL;
+    console.log("#### fetchConfirmation before");
 
-    // if (window.location.hostname == 'cal.techiematter.com') {
-    //   TECHIEMATTER_CONFIRMATION_URL = "https://techiematter.com/";
-    // } else if (window.location.hostname == 'cweb.techiematter.com') {
-    //   TECHIEMATTER_CONFIRMATION_URL = "http://staging.techiematter.com/";
-    // } else {
-    //   TECHIEMATTER_CONFIRMATION_URL = "http://techiematter.test/";
-    // }
+    const interviewId = eventType.id;
+    const dt = dayjs(date).valueOf();
+    const location = selectedLocation;
+    const t = router.query.t;
 
-    // const url = `${TECHIEMATTER_CONFIRMATION_URL}thank-you?interview_id=${eventType.id}&dt=${dayjs(
-    //   date
-    // ).valueOf()}&location=${selectedLocation}&t=${router.query.t}`;
+    fetchConfirmation({ interviewId, dt, location, t });
+
+    console.log("#### fetchConfirmation after");
+
+    // console.log("#### resultURl", resultURl);
 
     // window.location.href = url;
   };
