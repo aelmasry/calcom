@@ -206,9 +206,9 @@ if (true) {
         });
         const emailTemplate = Handlebars.compile(emailFile);
         transporter.sendMail({
-          from: `${process.env.EMAIL_FROM}` || "Cal.com",
+          from: `${process.env.EMAIL_FROM}` || "Techiematter.com",
           to: identifier,
-          subject: "Your sign-in link for Cal.com",
+          subject: "Your sign-in link for Techiematter.com",
           html: emailTemplate({
             base_url: WEBSITE_URL,
             signin_url: url,
