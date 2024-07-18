@@ -6,6 +6,8 @@ import dayjs from "@calcom/dayjs";
 import { getRichDescription } from "@calcom/lib/CalEventParser";
 import type { CalendarEvent } from "@calcom/types/Calendar";
 
+import prisma from "@lib/prisma";
+
 import { renderEmail } from "../";
 import BaseEmail from "./_base-email";
 
@@ -13,6 +15,7 @@ export default class OrganizerScheduledEmail extends BaseEmail {
   calEvent: CalendarEvent;
   t: TFunction;
   newSeat?: boolean;
+  timeZone?: string;
 
   constructor(calEvent: CalendarEvent, newSeat?: boolean) {
     super();
@@ -68,8 +71,8 @@ export default class OrganizerScheduledEmail extends BaseEmail {
       });
     }
 
-    // SEND_BOOKING_CONFIRMATION to supprt 
-    toAddresses.push('support@techiematter.com');
+    // SEND_BOOKING_CONFIRMATION to supprt
+    toAddresses.push("support@techiematter.com");
 
     let subject;
     if (this.newSeat) {
@@ -132,5 +135,17 @@ ${callToAction}
     return `${this.getOrganizerStart("h:mma")} - ${this.getOrganizerEnd("h:mma")}, ${this.t(
       this.getOrganizerStart("dddd").toLowerCase()
     )}, ${this.t(this.getOrganizerStart("MMMM").toLowerCase())} ${this.getOrganizerStart("D, YYYY")}`;
+  }
+
+  protected async getTimezoneByEventTypeId(eventTypeId: number) {
+    const eventType = await prisma.eventType.findUnique({
+      where: {
+        id: eventTypeId,
+      },
+    });
+
+    if (eventType?.timeZone) {
+      this.timeZone = eventType.timeZone;
+    }
   }
 }

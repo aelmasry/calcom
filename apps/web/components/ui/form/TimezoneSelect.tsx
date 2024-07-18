@@ -36,6 +36,8 @@ function TimezoneSelect({ className, ...props }: SelectProps) {
       timezones={{
         ...allTimezones,
         "America/Asuncion": "Asuncion",
+        "Europe/Berlin": "Frankfurt",
+        // "Africa/Cairo": "Cairo (UTC+3)",
       }}
       components={{
         ...components,

@@ -4,6 +4,8 @@ import dayjs, { Dayjs } from "@calcom/dayjs";
 import { getErrorFromUnknown } from "@calcom/lib/errors";
 import { serverConfig } from "@calcom/lib/serverConfig";
 
+import { getCairoTimeWithDST } from "@calcom/web/lib/timeUtils"
+
 export default class BaseEmail {
   name = "";
 
@@ -14,7 +16,16 @@ export default class BaseEmail {
   protected getRecipientTime(time: string): Dayjs;
   protected getRecipientTime(time: string, format: string): string;
   protected getRecipientTime(time: string, format?: string) {
-    const date = dayjs(time).tz(this.getTimezone());
+    let date: Dayjs;
+    const letTimeZone = this.getTimezone();
+
+    if (letTimeZone.includes("Cairo")) {
+      date = getCairoTimeWithDST(dayjs(time));
+      console.log("### getCairoTimeWithDST", date)
+    } else {
+      date = dayjs(time).tz(letTimeZone);
+    }
+
     if (typeof format === "string") return date.format(format);
     return date;
   }

@@ -53,7 +53,7 @@ export const availabilityRouter = createProtectedRouter()
           timeZone: true,
         },
       });
-      // console.log("######schedule", schedule, user);
+
       if (!schedule || schedule.userId !== user.id) {
         throw new TRPCError({
           code: "UNAUTHORIZED",

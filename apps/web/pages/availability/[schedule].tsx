@@ -5,7 +5,9 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // import TimezoneSelect from "@components/ui/form/TimezoneSelect";
-import TimezoneSelect, { ITimezone } from "react-timezone-select";
+// import TimezoneSelect, { ITimezone } from "react-timezone-select";
+import TimezoneSelect, { type ITimezone } from "react-timezone-select"
+
 
 import { DEFAULT_SCHEDULE, availabilityAsString } from "@calcom/lib/availability";
 import classNames from "@calcom/lib/classNames";
@@ -39,12 +41,12 @@ export function AvailabilityForm(props: inferQueryOutput<"viewer.availability.sc
     onSuccess: async ({ schedule }) => {
       await utils.invalidateQueries(["viewer.availability.schedule"]);
       await router.push(router.query.next);
-      // showToast(
-      //   t("availability_updated_successfully", {
-      //     scheduleName: schedule.name,
-      //   }),
-      //   "success"
-      // );
+      showToast(
+        t("availability_updated_successfully", {
+          scheduleName: schedule.name,
+        }),
+        "success"
+      );
     },
     onError: (err) => {
       if (err instanceof HttpError) {

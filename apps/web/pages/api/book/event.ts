@@ -764,7 +764,6 @@ async function handler(req: NextApiRequest) {
     evt.description = eventType.description;
 
     results = createManager.results;
-    console.log("## Events manager results", results);
     referencesToCreate = createManager.referencesToCreate;
     if (results.length > 0 && results.every((res) => !res.success)) {
       const error = {
@@ -827,10 +826,10 @@ async function handler(req: NextApiRequest) {
 
   // Send Webhook call if hooked to BOOKING_CREATED & BOOKING_RESCHEDULED
   const subscribers = await getSubscribers(subscriberOptions);
-  console.log("evt:", {
-    ...evt,
-    metadata: reqBody.metadata,
-  });
+  // console.log("evt:", {
+  //   ...evt,
+  //   metadata: reqBody.metadata,
+  // });
   const bookingId = booking?.id;
   const promises = subscribers.map((sub) =>
     sendPayload(sub.secret, eventTrigger, new Date().toISOString(), sub, {

@@ -18,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(401).json({ message: "Invalid token" });
     return;
   }
-  console.log("################TOKEN", token);
+  console.log("######### TOKEN", token);
   // decode the token
   let decoded;
   try {
@@ -27,14 +27,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(401).json({ message: "Invalid token" });
     return;
   }
-  console.log("################decoded", decoded);
+
+  console.log("####### decoded", decoded);
   const userId = decoded.data;
+
   const data = req.body;
-  console.log(" ############ Create DATA ", data);
+  console.log(" ###### Create DATA ", data);
   const { job_id, job_title, comapny_name } = data;
   const name = job_title;
   let timezone;
-  if (req.body.timezone === "" || req.body.timezone === null || req.body.timezone === undefined) {
+  if (
+    req.body.timezone === "" ||
+    req.body.timezone === null ||
+    req.body.timezone === undefined ||
+    req.body.timezone === "null"
+  ) {
     timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   } else {
     timezone = req.body.timezone;
@@ -51,7 +58,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     .replace(/\s/g, "-")
     .concat("-" + Math.floor(Math.random() * 1000000));
   const schedule = await createSchedule(name, userId, slug, timezone);
-  console.log("###########schedule", schedule);
+  console.log("####### schedule", schedule);
   const eventType = await createEventType(name, schedule.id, userId, slug, timezone);
   res.status(200).json({
     interview_id: eventType.id,
@@ -64,8 +71,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   });
 }
 
-async function createSchedule(name: string, userId: any, slug: any, timezone: any) {
-  const data = { name: slug, timeZone: timezone, user: { connect: { id: userId } } };
+async function createSchedule(name: string, userId: any, slug: any, timezone: string) {
+  const data = {
+    name: slug,
+    timeZone: timezone,
+    user: {
+      connect: {
+        id: userId,
+      },
+    },
+  };
+
+  console.log("####### schedule data", data);
+  debugger;
   return await prisma.schedule.create({ data });
 }
 
