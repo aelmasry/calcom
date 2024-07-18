@@ -224,19 +224,18 @@ const BookingPage = ({
   const fetchConfirmation = async ({ interviewId, dt, location, t }) => {
     let TECHIEMATTER_CONFIRMATION_URL;
 
-    console.log("### fetchConfirmation", interviewId);
-    console.log("### fetchConfirmation", location);
+    console.log("### fetchConfirmation", t);
 
     // Ensure window is defined to avoid errors during server-side rendering
     if (typeof window !== "undefined") {
       const hostname = window.location.hostname;
-      console.log("### fetchConfirmation", hostname);
+
       switch (hostname) {
         case "cal.techiematter.com":
           TECHIEMATTER_CONFIRMATION_URL = "https://techiematter.com/thank-you";
           break;
         case "cweb.techiematter.com":
-          TECHIEMATTER_CONFIRMATION_URL = "http://staging.techiematter.com/thank-you";
+          TECHIEMATTER_CONFIRMATION_URL = "https://staging.techiematter.com/thank-you";
           break;
         default:
           TECHIEMATTER_CONFIRMATION_URL = "http://techiematter.test/thank-you";
@@ -258,8 +257,7 @@ const BookingPage = ({
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const result = await response.json(); // Assuming the response is JSON
-        console.log("#### resultURl", result);
+        console.log("#### resultURl", response);
       } catch (error) {
         console.error("Fetch failed:", error);
       }
