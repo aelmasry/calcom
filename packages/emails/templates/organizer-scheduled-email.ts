@@ -15,7 +15,8 @@ export default class OrganizerScheduledEmail extends BaseEmail {
   calEvent: CalendarEvent;
   t: TFunction;
   newSeat?: boolean;
-  timeZone?: string;
+  eventType?: any;
+  initialized: Promise<void>;
 
   constructor(calEvent: CalendarEvent, newSeat?: boolean) {
     super();
@@ -23,9 +24,20 @@ export default class OrganizerScheduledEmail extends BaseEmail {
     this.calEvent = calEvent;
     this.t = this.calEvent.organizer.language.translate;
     this.newSeat = newSeat;
+
+    // Initialize the instance
+    this.initialized = this.initialize();
   }
 
-  protected getiCalEventAsString(): string | undefined {
+  private async initialize() {
+    // Fetch event type data and set timeZone
+    this.eventType = await this.fetchEventTypeData(this.calEvent.eventTypeId);
+
+    this.calEvent.eventType = this.eventType;
+  }
+
+  protected async getiCalEventAsString(): Promise<string | undefined> {
+    await this.initialized;
     // Taking care of recurrence rule
     let recurrenceRule: string | undefined = undefined;
     if (this.calEvent.recurringEvent?.count) {
@@ -60,7 +72,8 @@ export default class OrganizerScheduledEmail extends BaseEmail {
     return icsEvent.value;
   }
 
-  protected getNodeMailerPayload(): Record<string, unknown> {
+  protected async getNodeMailerPayload(): Promise<Record<string, unknown>> {
+    await this.initialized;
     const toAddresses = [this.calEvent.organizer.email];
     if (this.calEvent.team) {
       this.calEvent.team.members.forEach((member) => {
@@ -71,7 +84,7 @@ export default class OrganizerScheduledEmail extends BaseEmail {
       });
     }
 
-    // SEND_BOOKING_CONFIRMATION to supprt
+    // SEND_BOOKING_CONFIRMATION to support
     toAddresses.push("support@techiematter.com");
 
     let subject;
@@ -84,7 +97,7 @@ export default class OrganizerScheduledEmail extends BaseEmail {
     return {
       icalEvent: {
         filename: "event.ics",
-        content: this.getiCalEventAsString(),
+        content: await this.getiCalEventAsString(),
       },
       from: `TechieMatter <${this.getMailerOptions().from}>`,
       to: toAddresses.join(","),
@@ -120,7 +133,8 @@ ${callToAction}
   }
 
   protected getTimezone(): string {
-    return this.calEvent.organizer.timeZone;
+    // console.log("### timeZone", this.calEvent.eventType.timeZone);
+    return this.calEvent.eventType.timeZone;
   }
 
   protected getOrganizerStart(format: string) {
@@ -135,17 +149,5 @@ ${callToAction}
     return `${this.getOrganizerStart("h:mma")} - ${this.getOrganizerEnd("h:mma")}, ${this.t(
       this.getOrganizerStart("dddd").toLowerCase()
     )}, ${this.t(this.getOrganizerStart("MMMM").toLowerCase())} ${this.getOrganizerStart("D, YYYY")}`;
-  }
-
-  protected async getTimezoneByEventTypeId(eventTypeId: number) {
-    const eventType = await prisma.eventType.findUnique({
-      where: {
-        id: eventTypeId,
-      },
-    });
-
-    if (eventType?.timeZone) {
-      this.timeZone = eventType.timeZone;
-    }
   }
 }

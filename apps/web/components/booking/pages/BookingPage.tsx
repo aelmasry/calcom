@@ -224,8 +224,6 @@ const BookingPage = ({
   const fetchConfirmation = async ({ interviewId, dt, location, t }) => {
     let TECHIEMATTER_CONFIRMATION_URL;
 
-    console.log("### fetchConfirmation", t);
-
     // Ensure window is defined to avoid errors during server-side rendering
     if (typeof window !== "undefined") {
       const hostname = window.location.hostname;
@@ -258,6 +256,7 @@ const BookingPage = ({
         }
 
         console.log("#### resultURl", response);
+        return response;
       } catch (error) {
         console.error("Fetch failed:", error);
       }
@@ -490,18 +489,12 @@ const BookingPage = ({
       booking.locationType ? booking : { ...booking, locationType: selectedLocation }
     );
 
-    console.log("#### fetchConfirmation before");
-
     const interviewId = eventType.id;
     const dt = dayjs(date).valueOf();
     const location = selectedLocation;
     const t = router.query.t;
 
     fetchConfirmation({ interviewId, dt, location, t });
-
-    console.log("#### fetchConfirmation after");
-
-    // console.log("#### resultURl", resultURl);
 
     // window.location.href = url;
   };

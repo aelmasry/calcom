@@ -1,3 +1,4 @@
+// _base-email.ts
 import nodemailer from "nodemailer";
 
 import dayjs, { Dayjs } from "@calcom/dayjs";
@@ -5,8 +6,18 @@ import { getErrorFromUnknown } from "@calcom/lib/errors";
 import { serverConfig } from "@calcom/lib/serverConfig";
 import { getCairoTimeWithDST } from "@calcom/web/lib/timeUtils";
 
+import prisma from "@lib/prisma";
+
 export default class BaseEmail {
   name = "";
+
+  protected async fetchEventTypeData(eventTypeId: number) {
+    const eventType = await prisma.eventType.findUnique({
+      where: { id: eventTypeId },
+    });
+
+    return eventType;
+  }
 
   protected getTimezone() {
     return "";
@@ -17,13 +28,15 @@ export default class BaseEmail {
   protected getRecipientTime(time: string, format?: string) {
     let date: Dayjs;
     const letTimeZone = this.getTimezone();
-
+    console.log("### letTimeZone: ", letTimeZone);
+    console.log("### letTimeZone.includes('Cairo'): ", letTimeZone.includes("Cairo"));
     if (letTimeZone.includes("Cairo")) {
       date = getCairoTimeWithDST(dayjs(time));
     } else {
       date = dayjs(time).tz(letTimeZone);
     }
 
+    // console.log("### date: ", date);
     if (typeof format === "string") return date.format(format);
     return date;
   }
@@ -31,6 +44,7 @@ export default class BaseEmail {
   protected getNodeMailerPayload(): Record<string, unknown> {
     return {};
   }
+
   public sendEmail() {
     if (process.env.NEXT_PUBLIC_IS_E2E) return new Promise((r) => r("Skipped sendEmail for E2E"));
     new Promise((resolve, reject) =>

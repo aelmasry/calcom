@@ -132,6 +132,7 @@ export class CalendarEventBuilder implements ICalendarEventBuilder {
           title: true,
           length: true,
           eventName: true,
+          timeZone: true,
           schedulingType: true,
           periodType: true,
           periodStartDate: true,
