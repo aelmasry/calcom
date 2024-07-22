@@ -28,15 +28,12 @@ export default class BaseEmail {
   protected getRecipientTime(time: string, format?: string) {
     let date: Dayjs;
     const letTimeZone = this.getTimezone();
-    console.log("### letTimeZone: ", letTimeZone);
-    console.log("### letTimeZone.includes('Cairo'): ", letTimeZone.includes("Cairo"));
     if (letTimeZone.includes("Cairo")) {
       date = getCairoTimeWithDST(dayjs(time));
     } else {
       date = dayjs(time).tz(letTimeZone);
     }
 
-    // console.log("### date: ", date);
     if (typeof format === "string") return date.format(format);
     return date;
   }
