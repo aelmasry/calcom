@@ -6,8 +6,6 @@ import dayjs from "@calcom/dayjs";
 import { getRichDescription } from "@calcom/lib/CalEventParser";
 import type { CalendarEvent } from "@calcom/types/Calendar";
 
-import prisma from "@lib/prisma";
-
 import { renderEmail } from "../";
 import BaseEmail from "./_base-email";
 
@@ -23,15 +21,7 @@ export default class OrganizerScheduledEmail extends BaseEmail {
     this.calEvent = calEvent;
     this.t = this.calEvent.organizer.language.translate;
     this.newSeat = newSeat;
-
   }
-
-  // private async initialize() {
-  //   // Fetch event type data and set timeZone
-  //   this.eventType = await this.fetchEventTypeData(this.calEvent.eventTypeId);
-
-  //   this.calEvent.eventType = this.eventType;
-  // }
 
   protected getiCalEventAsString(): string | undefined {
     // Taking care of recurrence rule
@@ -128,7 +118,6 @@ ${callToAction}
   }
 
   protected getTimezone(): string {
-    // console.log("### timeZone", this.calEvent.eventType.timeZone);
     return this.calEvent.organizer.timeZone;
   }
 

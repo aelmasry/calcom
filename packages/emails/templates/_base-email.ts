@@ -6,18 +6,8 @@ import { getErrorFromUnknown } from "@calcom/lib/errors";
 import { serverConfig } from "@calcom/lib/serverConfig";
 import { getCairoTimeWithDST } from "@calcom/web/lib/timeUtils";
 
-import prisma from "@lib/prisma";
-
 export default class BaseEmail {
   name = "";
-
-  // protected async fetchEventTypeData(eventTypeId: number) {
-  //   const eventType = await prisma.eventType.findUnique({
-  //     where: { id: eventTypeId },
-  //   });
-
-  //   return eventType;
-  // }
 
   protected getTimezone() {
     return "";
