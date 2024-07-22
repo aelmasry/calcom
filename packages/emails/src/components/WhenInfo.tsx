@@ -41,7 +41,7 @@ export function WhenInfo(props: { calEvent: CalendarEvent; timeZone: string; t: 
       const date = getCairoTimeWithDST(dayjs(props.calEvent.endTime));
       return date.format(format)
     } else {
-      return dayjs(props.calEvent.startTime).tz(timeZone).format(format);
+      return dayjs(props.calEvent.endTime).tz(timeZone).format(format);
     }
     // return dayjs(props.calEvent.endTime).tz(timeZone).format(format);
   }

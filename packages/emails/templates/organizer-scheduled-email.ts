@@ -16,7 +16,6 @@ export default class OrganizerScheduledEmail extends BaseEmail {
   t: TFunction;
   newSeat?: boolean;
   eventType?: any;
-  initialized: Promise<void>;
 
   constructor(calEvent: CalendarEvent, newSeat?: boolean) {
     super();
@@ -25,19 +24,16 @@ export default class OrganizerScheduledEmail extends BaseEmail {
     this.t = this.calEvent.organizer.language.translate;
     this.newSeat = newSeat;
 
-    // Initialize the instance
-    this.initialized = this.initialize();
   }
 
-  private async initialize() {
-    // Fetch event type data and set timeZone
-    this.eventType = await this.fetchEventTypeData(this.calEvent.eventTypeId);
+  // private async initialize() {
+  //   // Fetch event type data and set timeZone
+  //   this.eventType = await this.fetchEventTypeData(this.calEvent.eventTypeId);
 
-    this.calEvent.eventType = this.eventType;
-  }
+  //   this.calEvent.eventType = this.eventType;
+  // }
 
-  protected async getiCalEventAsString(): Promise<string | undefined> {
-    await this.initialized;
+  protected getiCalEventAsString(): string | undefined {
     // Taking care of recurrence rule
     let recurrenceRule: string | undefined = undefined;
     if (this.calEvent.recurringEvent?.count) {
@@ -72,8 +68,7 @@ export default class OrganizerScheduledEmail extends BaseEmail {
     return icsEvent.value;
   }
 
-  protected async getNodeMailerPayload(): Promise<Record<string, unknown>> {
-    await this.initialized;
+  protected getNodeMailerPayload(): Record<string, unknown> {
     const toAddresses = [this.calEvent.organizer.email];
     if (this.calEvent.team) {
       this.calEvent.team.members.forEach((member) => {
@@ -97,7 +92,7 @@ export default class OrganizerScheduledEmail extends BaseEmail {
     return {
       icalEvent: {
         filename: "event.ics",
-        content: await this.getiCalEventAsString(),
+        content: this.getiCalEventAsString(),
       },
       from: `TechieMatter <${this.getMailerOptions().from}>`,
       to: toAddresses.join(","),
@@ -134,7 +129,7 @@ ${callToAction}
 
   protected getTimezone(): string {
     // console.log("### timeZone", this.calEvent.eventType.timeZone);
-    return this.calEvent.eventType.timeZone;
+    return this.calEvent.organizer.timeZone;
   }
 
   protected getOrganizerStart(format: string) {

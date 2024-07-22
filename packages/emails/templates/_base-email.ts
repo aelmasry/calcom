@@ -11,13 +11,13 @@ import prisma from "@lib/prisma";
 export default class BaseEmail {
   name = "";
 
-  protected async fetchEventTypeData(eventTypeId: number) {
-    const eventType = await prisma.eventType.findUnique({
-      where: { id: eventTypeId },
-    });
+  // protected async fetchEventTypeData(eventTypeId: number) {
+  //   const eventType = await prisma.eventType.findUnique({
+  //     where: { id: eventTypeId },
+  //   });
 
-    return eventType;
-  }
+  //   return eventType;
+  // }
 
   protected getTimezone() {
     return "";
