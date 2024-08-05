@@ -29,7 +29,8 @@ export const OrganizerScheduledEmail = (
   const t = props.calEvent.organizer.language.translate;
   return (
     <BaseScheduledEmail
-      timeZone={props.calEvent.organizer.timeZone}
+      // timeZone={props.calEvent.organizer.timeZone}
+      timeZone={props.calEvent.eventTimeZone}
       t={t}
       subject={t(subject)}
       title={t(title)}
