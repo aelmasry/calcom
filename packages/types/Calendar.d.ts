@@ -106,7 +106,6 @@ export interface CalendarEvent {
   additionalNotes?: string | null;
   customInputs?: Prisma.JsonObject | null;
   description?: string | null;
-  eventTypes?: CalendarEventType[] | null;
   team?: {
     name: string;
     members: string[];
@@ -125,6 +124,7 @@ export interface CalendarEvent {
   recurrence?: string;
   recurringEvent?: RecurringEvent | null;
   eventTypeId?: number | null;
+  eventTimeZone?: string | null;
 }
 
 export interface EntryPoint {

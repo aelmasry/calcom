@@ -51,6 +51,7 @@ async function handlePaymentSuccess(event: Stripe.Event) {
       paid: true,
       destinationCalendar: true,
       status: true,
+      // timeZone: true,
       user: {
         select: {
           id: true,
@@ -116,6 +117,7 @@ async function handlePaymentSuccess(event: Stripe.Event) {
     uid: booking.uid,
     destinationCalendar: booking.destinationCalendar || user.destinationCalendar,
     recurringEvent: parseRecurringEvent(eventTypeRaw?.recurringEvent),
+    eventTimeZone: booking.eventTimeZone,
   };
 
   if (booking.location) evt.location = booking.location;

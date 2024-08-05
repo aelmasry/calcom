@@ -13,7 +13,6 @@ export default class OrganizerScheduledEmail extends BaseEmail {
   calEvent: CalendarEvent;
   t: TFunction;
   newSeat?: boolean;
-  eventType?: any;
 
   constructor(calEvent: CalendarEvent, newSeat?: boolean) {
     super();
@@ -118,7 +117,8 @@ ${callToAction}
   }
 
   protected getTimezone(): string {
-    return this.calEvent.organizer.timeZone;
+    return this.calEvent.eventTimeZone;
+    // return this.calEvent.organizer.timeZone;
   }
 
   protected getOrganizerStart(format: string) {

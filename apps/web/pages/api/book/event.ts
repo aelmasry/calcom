@@ -362,6 +362,7 @@ async function handler(req: NextApiRequest) {
     hideCalendarNotes: eventType.hideCalendarNotes,
     requiresConfirmation: eventType.requiresConfirmation ?? false,
     eventTypeId: eventType.id,
+    eventTimeZone: eventType.timeZone,
   };
 
   // For seats, if the booking already exists then we want to add the new attendee to the existing booking
@@ -765,6 +766,7 @@ async function handler(req: NextApiRequest) {
 
     results = createManager.results;
     referencesToCreate = createManager.referencesToCreate;
+
     if (results.length > 0 && results.every((res) => !res.success)) {
       const error = {
         errorCode: "BookingCreatingMeetingFailed",

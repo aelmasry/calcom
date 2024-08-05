@@ -106,6 +106,7 @@ async function patchHandler(req: NextApiRequest) {
       eventType: {
         select: {
           id: true,
+          timeZone: true,
           recurringEvent: true,
           requiresConfirmation: true,
           workflows: {
@@ -191,6 +192,7 @@ async function patchHandler(req: NextApiRequest) {
     destinationCalendar: booking?.destinationCalendar || currentUser.destinationCalendar,
     requiresConfirmation: booking?.eventType?.requiresConfirmation ?? false,
     eventTypeId: booking.eventType?.id,
+    eventTimeZone: booking.eventType?.timeZone,
   };
 
   const recurringEvent = parseRecurringEvent(booking.eventType?.recurringEvent);
