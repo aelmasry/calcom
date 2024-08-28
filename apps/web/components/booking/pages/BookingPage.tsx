@@ -489,6 +489,7 @@ const BookingPage = ({
       booking.locationType ? booking : { ...booking, locationType: selectedLocation }
     );
 
+    console.log("### booking", booking);
     const interviewId = eventType.id;
     const dt = dayjs(date).valueOf();
     const location = selectedLocation;
