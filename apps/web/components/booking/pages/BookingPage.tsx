@@ -134,6 +134,7 @@ const BookingPage = ({
   const mutation = useMutation(createBooking, {
     onSuccess: async (responseData) => {
       const { id, attendees, paymentUid } = responseData;
+      console.log("### responseData 01", responseData);
       if (paymentUid) {
         return await router.push(
           createPaymentLink({
@@ -489,13 +490,12 @@ const BookingPage = ({
       booking.locationType ? booking : { ...booking, locationType: selectedLocation }
     );
 
-    console.log("### booking", booking);
     const interviewId = eventType.id;
     const dt = dayjs(date).valueOf();
     const location = selectedLocation;
     const t = router.query.t;
 
-    fetchConfirmation({ interviewId, dt, location, t });
+    // fetchConfirmation({ interviewId, dt, location, t });
 
     // window.location.href = url;
   };

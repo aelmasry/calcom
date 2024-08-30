@@ -211,15 +211,19 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
   const fetchZoomApi = async (endpoint: string, options?: RequestInit) => {
     const auth = zoomAuth(credential);
     const accessToken = await auth.getToken();
-    const responseBody = await fetch(`https://api.zoom.us/v2/${endpoint}`, {
+    // console.log("### fetchZoomApi ", `https://api.zoom.us/v2/${endpoint}`);
+    // console.log("### fetchZoomApi options", options);
+    const response = await fetch(`https://api.zoom.us/v2/${endpoint}`, {
       method: "GET",
       ...options,
       headers: {
         Authorization: "Bearer " + accessToken,
         ...options?.headers,
       },
-    }).then(handleErrorsJson);
+    });
 
+    const responseBody = await handleZoomResponse(response, credential.id);
+    // console.log("### responseBody", responseBody);
     return responseBody;
   };
 
@@ -268,22 +272,71 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
       return Promise.resolve();
     },
     updateMeeting: async (bookingRef: PartialReference, event: CalendarEvent): Promise<VideoCallData> => {
-      await fetchZoomApi(`meetings/${bookingRef.uid}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(translateEvent(event)),
-      });
+      try {
+        // console.log("### updateMeeting", bookingRef, event);
+        await fetchZoomApi(`meetings/${bookingRef.uid}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(translateEvent(event)),
+        });
 
-      return Promise.resolve({
-        type: "zoom_video",
-        id: bookingRef.meetingId as string,
-        password: bookingRef.meetingPassword as string,
-        url: bookingRef.meetingUrl as string,
-      });
+        return Promise.resolve({
+          type: "zoom_video",
+          id: bookingRef.meetingId as string,
+          password: bookingRef.meetingPassword as string,
+          url: bookingRef.meetingUrl as string,
+        });
+      } catch (err) {
+        console.error("Update meeting failed:", err);
+        return Promise.reject(new Error(`Failed to update meeting: ${JSON.stringify(err)}`));
+      }
     },
   };
 };
 
+const handleZoomResponse = async (response: Response, credentialId: Credential["id"]) => {
+  // console.log("### handleZoomResponse start");
+  let _response = response.clone();
+  const responseClone = response.clone();
+  // handle 204 response code with empty response (causes crash otherwise as "" is invalid JSON)
+  if (response.status === 204) {
+    return;
+  }
+
+  if (_response.headers.get("content-encoding") === "gzip") {
+    const responseString = await response.text();
+    _response = JSON.parse(responseString);
+  }
+  if (!response.ok || (response.status < 200 && response.status >= 300)) {
+    const responseBody = await _response.json();
+
+    if ((response && response.status === 124) || responseBody.error === "invalid_grant") {
+      await invalidateCredential(credentialId);
+    }
+    throw Error(response.statusText);
+  }
+
+  return responseClone.json();
+};
+
+const invalidateCredential = async (credentialId: Credential["id"]) => {
+  const credential = await prisma.credential.findUnique({
+    where: {
+      id: credentialId,
+    },
+  });
+
+  if (credential) {
+    await prisma.credential.update({
+      where: {
+        id: credentialId,
+      },
+      data: {
+        invalid: true,
+      },
+    });
+  }
+};
 export default ZoomVideoApiAdapter;

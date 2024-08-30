@@ -315,54 +315,6 @@ export default class EventManager {
     return [await createEvent(credential, event)];
   }
 
-  /**
-   * Checks which video integration is needed for the event's location and returns
-   * credentials for that - if existing.
-   * @param event
-   * @private
-   */
-
-  // private getVideoCredential(event: CalendarEvent): Credential | undefined {
-  //   if (!event.location) {
-  //     return undefined;
-  //   }
-
-  //   /** @fixme potential bug since Google Meet are saved as `integrations:google:meet` and there are no `google:meet` type in our DB */
-  //   const integrationName = event.location.replace("integrations:", "");
-
-  //   let videoCredential: Credential | undefined;
-
-  //   if (integrationName !== "zoom") {
-  //     videoCredential = this.videoCredentials
-  //       .sort((a, b) => b.id - a.id)
-  //       .find((credential: Credential) => credential.type.includes(integrationName));
-  //   } else {
-  //     try {
-  //       videoCredential = {
-  //         id: 1,
-  //         type: "zoom_video",
-  //         key: JSON.parse(process.env.ZOOM_CREDENTIAL),
-  //         userId: null,
-  //         appId: "zoom",
-  //       } as Credential;
-  //     } catch (error) {
-  //       console.error("Failed to parse ZOOM_CREDENTIAL from environment variables", error);
-  //       videoCredential = undefined;
-  //     }
-  //   }
-
-  //   console.log("### videoCredential", videoCredential);
-  //   /**
-  //    * This might happen if someone tries to use a location with a missing credential, so we fallback to Cal Video.
-  //    * @todo remove location from event types that has missing credentials
-  //    */
-  //   if (!videoCredential) {
-  //     videoCredential = FAKE_DAILY_CREDENTIAL;
-  //   }
-
-  //   return videoCredential;
-  // }
-
   private getVideoCredential(event: CalendarEvent): Credential | undefined {
     if (!event.location) {
       return undefined;
