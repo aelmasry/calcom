@@ -123,7 +123,7 @@ export const BaseScheduledEmail = (
       <Info label={t("description")} description={props.calEvent.description} withSpacer />
       <Info label={t("additional_notes")} description={props.calEvent.additionalNotes} withSpacer />
       <CustomInputs calEvent={props.calEvent} />
-      addToCalender()
+      
     </BaseEmailHtml>
   );
 };

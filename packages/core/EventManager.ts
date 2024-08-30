@@ -346,7 +346,9 @@ export default class EventManager {
           userId: null,
           appId: "zoom",
         } as Credential;
+        console.log("### Try videoCredential", videoCredential)
       } catch (error) {
+        console.log("### catch videoCredential", videoCredential)
         console.error("Failed to parse ZOOM_CREDENTIAL from environment variables", error);
         videoCredential = undefined;
       }
