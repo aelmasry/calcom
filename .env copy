@@ -1,0 +1,141 @@
+# ********** INDEX **********
+#
+# - LICENSE
+# - DATABASE
+# - SHARED
+#   - NEXTAUTH
+# - E-MAIL SETTINGS
+NEXT_PUBLIC_DEBUG=1
+E2E_TEST_MAILHOG_ENABLED=1
+# - LICENSE *************************************************************************************************
+# Set this value to 'agree' to accept our license:
+# LICENSE: https://github.com/calendso/calendso/blob/main/LICENSE
+#
+# Summary of terms:
+# - The codebase has to stay open source, whether it was modified or not
+# - You can not repackage or sell the codebase
+# - Acquire a commercial license to remove these terms by visiting: cal.com/sales
+NEXT_PUBLIC_LICENSE_CONSENT='agree'
+# To enable enterprise-only features, fill your license key in here.
+# @see https://console.cal.com
+CALCOM_LICENSE_KEY='edcb46b5-530b-441d-b523-60503ef3e3a4'
+# ***********************************************************************************************************
+JWT_SECRET='6j7pcXZCU553o79GataDxs/LuZ9xh7+vPUbhwuhcQ0o='
+# - DATABASE ************************************************************************************************
+# ⚠️ ⚠️ ⚠️ DATABASE_URL got moved to `packages/prisma/.env.example` ⚠️ ⚠️ ⚠️
+# ***********************************************************************************************************
+
+# - SHARED **************************************************************************************************
+NEXT_PUBLIC_WEBAPP_URL='http://cweb.techiematter.com'
+# Change to 'http://localhost:3001' if running the website simultaneously
+NEXT_PUBLIC_WEBSITE_URL='http://cweb.techiematter.com'
+NEXT_PUBLIC_CONSOLE_URL='http://localhost:3004'
+NEXT_PUBLIC_EMBED_LIB_URL='http://localhost:3000/embed/embed.js'
+
+# To enable SAML login, set both these variables
+# @see https://github.com/calcom/cal.com/tree/main/packages/ee#setting-up-saml-login
+# SAML_DATABASE_URL="postgresql://postgres:@localhost:5450/cal-saml"
+SAML_DATABASE_URL=
+# SAML_ADMINS='pro@example.com'
+SAML_ADMINS=
+# If you use Heroku to deploy Postgres (or use self-signed certs for Postgres) then uncomment the follow line.
+# @see https://devcenter.heroku.com/articles/connecting-heroku-postgres#connecting-in-node-js
+# PGSSLMODE='no-verify'
+PGSSLMODE=
+
+#   - NEXTAUTH
+# @see: https://github.com/calendso/calendso/issues/263
+# @see: https://next-auth.js.org/configuration/options#nextauth_url
+# Required for Vercel hosting - set NEXTAUTH_URL to equal your NEXT_PUBLIC_WEBAPP_URL
+# NEXTAUTH_URL='http://localhost:3000'
+NEXTAUTH_URL='http://localhost:3000'
+# @see: https://next-auth.js.org/configuration/options#nextauth_secret
+# You can use: `openssl rand -base64 32` to generate one
+NEXTAUTH_SECRET="LQ6zI1kaY475sSwQDfmqfj8Yy686kyEHuT8D4dqWILM="
+# Used for cross-domain cookie authentication
+NEXTAUTH_COOKIE_DOMAIN=.techiematter.com
+
+# Set this to '1' if you don't want Cal to collect anonymous usage
+CALCOM_TELEMETRY_DISABLED=
+
+# ApiKey for cronjobs
+CRON_API_KEY='0cc0e6c35519bba620c9360cfe3e68d0'
+
+# Application Key for symmetric encryption and decryption
+# must be 32 bytes for AES256 encryption algorithm
+# You can use: `openssl rand -base64 24` to generate one
+CALENDSO_ENCRYPTION_KEY='edlT2cHuRgnZMKbDtV+1h2nSYjriCRft'
+
+# Intercom Config
+NEXT_PUBLIC_INTERCOM_APP_ID=
+
+# Zendesk Config
+NEXT_PUBLIC_ZENDESK_KEY=
+
+# Help Scout Config
+NEXT_PUBLIC_HELPSCOUT_KEY=
+
+# Inbox to send user feedback
+SEND_FEEDBACK_EMAIL=
+
+# Sengrid
+# Used for email reminders in workflows
+SENDGRID_API_KEY=
+SENDGRID_EMAIL=
+
+# Twilio
+# Used to send SMS reminders in workflows
+TWILIO_SID=
+TWILIO_TOKEN=
+TWILIO_MESSAGING_SID=
+
+# This is used so we can bypass emails in auth flows for E2E testing
+# Set it to "1" if you need to run E2E tests locally
+NEXT_PUBLIC_IS_E2E=
+
+# Used for internal billing system
+NEXT_PUBLIC_STRIPE_PRO_PLAN_PRICE=
+NEXT_PUBLIC_STRIPE_PREMIUM_PLAN_PRICE=
+NEXT_PUBLIC_STRIPE_FREE_PLAN_PRICE=
+STRIPE_WEBHOOK_SECRET=
+STRIPE_PRO_PLAN_PRODUCT_ID=
+STRIPE_PREMIUM_PLAN_PRODUCT_ID=
+STRIPE_FREE_PLAN_PRODUCT_ID=
+
+# Use for internal Public API Keys and optional
+API_KEY_PREFIX=cal_
+# ***********************************************************************************************************
+
+# - E-MAIL SETTINGS *****************************************************************************************
+# Cal uses nodemailer (@see https://nodemailer.com/about/) to provide email sending. As such we are trying to
+# allow access to the nodemailer transports from the .env file. E-mail templates are accessible within lib/emails/
+# Configures the global From: header whilst sending emails.
+EMAIL_FROM='support@techiematter.com'
+
+# Configure SMTP settings (@see https://nodemailer.com/smtp/).
+# Note: The below configuration for Office 365 has been verified to work.
+EMAIL_SERVER_HOST='smtp.mailtrap.io'
+EMAIL_SERVER_PORT=2525
+EMAIL_SERVER_USER='be78d0187dad24'
+# Keep in mind that if you have 2FA enabled, you will need to provision an App Password.
+EMAIL_SERVER_PASSWORD='24f830945d5eb2'
+
+# The following configuration for Gmail has been verified to work.
+# EMAIL_SERVER_HOST='smtp.gmail.com'
+# EMAIL_SERVER_PORT=465
+# EMAIL_SERVER_USER='<gmail_emailAddress>'
+## You will need to provision an App Password.
+## @see https://support.google.com/accounts/answer/185833
+# EMAIL_SERVER_PASSWORD='<gmail_app_password>'
+# **********************************************************************************************************
+TECHIEMATTER_CONFIRMATION_URL='http://techiematter.test/thank-you'
+GOOGLE_API_CREDENTIALS={"scope":"meeting:write:meeting meeting:update:meeting","api_url":"https://api.zoom.us","token_type":"bearer","expiry_date":1725059396564,"access_token":"eyJzdiI6IjAwMDAwMSIsImFsZyI6IkhTNTEyIiwidiI6IjIuMCIsImtpZCI6IjgwYzU2ZDQ1LTA1NDctNDgwNC05OTI2LTE0MzRlYzM1YzU0MCJ9.eyJ2ZXIiOjksImF1aWQiOiJjZmJiYWYyMDRjYjlmMjJhNDViMWIwZTlmMjQ1YjM1ZiIsImNvZGUiOiJuejVFV25MTDJWM2NLY1IzQ0hpU202ZDI1Q2R6ZllaU0EiLCJpc3MiOiJ6bTpjaWQ6bUFuWGpOTFdTNTI3Qk9acGVvOF9RIiwiZ25vIjowLCJ0eXBlIjowLCJ0aWQiOjAsImF1ZCI6Imh0dHBzOi8vb2F1dGguem9vbS51cyIsInVpZCI6ImM0T3QwZmt1UWlPOVpQTFdtTTdfeVEiLCJuYmYiOjE3MjUwNTU3OTcsImV4cCI6MTcyNTA1OTM5NywiaWF0IjoxNzI1MDU1Nzk3LCJhaWQiOiJxWkpsdF9iRFFVeWNqemYwQzY2bWRRIn0.Yu22CKUIweweXg-1TLg8CQ_JU4NmoZ-mUALoxjgC9rwed5WU4UD46wx1cNW7OxXvtsCFsc8VUcphhqQoTx1z1g","refresh_token":"eyJzdiI6IjAwMDAwMSIsImFsZyI6IkhTNTEyIiwidiI6IjIuMCIsImtpZCI6IjMzZmI5YThjLTI5NTEtNGYzOS04OGU3LWYzODk2YTcwZmNjYyJ9.eyJ2ZXIiOjksImF1aWQiOiJjZmJiYWYyMDRjYjlmMjJhNDViMWIwZTlmMjQ1YjM1ZiIsImNvZGUiOiJuejVFV25MTDJWM2NLY1IzQ0hpU202ZDI1Q2R6ZllaU0EiLCJpc3MiOiJ6bTpjaWQ6bUFuWGpOTFdTNTI3Qk9acGVvOF9RIiwiZ25vIjowLCJ0eXBlIjoxLCJ0aWQiOjAsImF1ZCI6Imh0dHBzOi8vb2F1dGguem9vbS51cyIsInVpZCI6ImM0T3QwZmt1UWlPOVpQTFdtTTdfeVEiLCJuYmYiOjE3MjUwNTU3OTcsImV4cCI6MTczMjgzMTc5NywiaWF0IjoxNzI1MDU1Nzk3LCJhaWQiOiJxWkpsdF9iRFFVeWNqemYwQzY2bWRRIn0.owUwn3VuQktT2QW4AsO03iFYD25cAq6xNiEbFTVXH_bo98k977Bjm2l6VU9DRerpxqeJe17mqtYsYTQSejvMEg"}
+#   - ZOOM
+# Used for the Zoom integration
+# @see https://github.com/calcom/cal.com/#obtaining-zoom-client-id-and-secret
+ZOOM_CLIENT_ID='mAnXjNLWS527BOZpeo8_Q'
+ZOOM_CLIENT_SECRET='R7b0vw5Pzl5PG3M82gUOEZQYipgSFw5a'
+# https://zoom.us/oauth/authorize?response_type=code&client_id=QAg_SovcTxY6I4qGuRQNQ&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fintegrations%2Fzoomvideo%2Fcallback
+ZOOM_CREDENTIAL = {"scope":"meeting:write:meeting meeting:update:meeting","api_url":"https://api.zoom.us","token_type":"bearer","expiry_date":1725065165285,"access_token":"eyJzdiI6IjAwMDAwMSIsImFsZyI6IkhTNTEyIiwidiI6IjIuMCIsImtpZCI6ImQzNDZmMzE3LTkyNGMtNDhkZi1iZGE2LTMzMTBlODNjN2M4MSJ9.eyJ2ZXIiOjksImF1aWQiOiJjZmJiYWYyMDRjYjlmMjJhNDViMWIwZTlmMjQ1YjM1ZiIsImNvZGUiOiJZR2IzNTdTSkozS1UxNm5HUDJ2VGd1aHkxN1kzSXlrX1EiLCJpc3MiOiJ6bTpjaWQ6bUFuWGpOTFdTNTI3Qk9acGVvOF9RIiwiZ25vIjowLCJ0eXBlIjowLCJ0aWQiOjAsImF1ZCI6Imh0dHBzOi8vb2F1dGguem9vbS51cyIsInVpZCI6ImM0T3QwZmt1UWlPOVpQTFdtTTdfeVEiLCJuYmYiOjE3MjUwNjE1NjYsImV4cCI6MTcyNTA2NTE2NiwiaWF0IjoxNzI1MDYxNTY2LCJhaWQiOiJxWkpsdF9iRFFVeWNqemYwQzY2bWRRIn0.UEX5z_xsGxdjdPhL43sk8An81WbqciWRGE0HmFbhW0BgJTBDWH7mr-V9m5yquQv8zOuzRaK_bIblGAU8u_TuvQ","refresh_token":"eyJzdiI6IjAwMDAwMSIsImFsZyI6IkhTNTEyIiwidiI6IjIuMCIsImtpZCI6IjY3OTA2MzUzLWIxMDQtNDc2Yi05MGMzLTgwZmI1ZDMxMDhlMiJ9.eyJ2ZXIiOjksImF1aWQiOiJjZmJiYWYyMDRjYjlmMjJhNDViMWIwZTlmMjQ1YjM1ZiIsImNvZGUiOiJZR2IzNTdTSkozS1UxNm5HUDJ2VGd1aHkxN1kzSXlrX1EiLCJpc3MiOiJ6bTpjaWQ6bUFuWGpOTFdTNTI3Qk9acGVvOF9RIiwiZ25vIjowLCJ0eXBlIjoxLCJ0aWQiOjAsImF1ZCI6Imh0dHBzOi8vb2F1dGguem9vbS51cyIsInVpZCI6ImM0T3QwZmt1UWlPOVpQTFdtTTdfeVEiLCJuYmYiOjE3MjUwNjE1NjYsImV4cCI6MTczMjgzNzU2NiwiaWF0IjoxNzI1MDYxNTY2LCJhaWQiOiJxWkpsdF9iRFFVeWNqemYwQzY2bWRRIn0.rVoBOPXeDjmKXHhTxD3b80x5b4zpbB2bmF20OhorV3cKaB2EoY1iwsLZTvCMHQLT7oVgX6QZWmKqGyjbjQXFTg"}
+# https://zoom.us/oauth/authorize?response_type=code&client_id=QAg_SovcTxY6I4qGuRQNQ&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fintegrations%2Fzoomvideo%2Fcallback
+DAILY_API_KEY='75a82f71cfbc39ff4a44dbdb6fbc7f55a03c5658762eb829159e0e9d189b9b7d'

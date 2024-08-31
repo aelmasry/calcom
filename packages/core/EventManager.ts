@@ -319,12 +319,12 @@ export default class EventManager {
     if (!event.location) {
       return undefined;
     }
-
+    
     // Extract integration name from event location
     const integrationName = event.location.replace("integrations:", "");
 
     let videoCredential: Credential | undefined;
-
+    
     if (integrationName !== "zoom") {
       // Find the most recent credential matching the integration name
       videoCredential = this.videoCredentials
@@ -334,6 +334,7 @@ export default class EventManager {
       // Handle Zoom credentials separately
       try {
         const zoomCredentialString = process.env.ZOOM_CREDENTIAL;
+        
         if (!zoomCredentialString) {
           throw new Error("ZOOM_CREDENTIAL environment variable is not set");
         }
@@ -346,9 +347,7 @@ export default class EventManager {
           userId: null,
           appId: "zoom",
         } as Credential;
-        console.log("### Try videoCredential", videoCredential)
       } catch (error) {
-        console.log("### catch videoCredential", videoCredential)
         console.error("Failed to parse ZOOM_CREDENTIAL from environment variables", error);
         videoCredential = undefined;
       }
