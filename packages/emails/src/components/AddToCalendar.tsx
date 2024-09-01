@@ -101,27 +101,31 @@ export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string
           className="mx-2 h-10 w-10 rounded-sm border border-neutral-200 px-3 py-2 dark:border-neutral-700 dark:text-white"
           target="_blank"
           rel="noopener noreferrer">
-          Google Icon
+          {/* Replace 'Google' with actual Google Calendar icon */}
+          <GoogleCalendarIcon />
         </a>
         <a
           href={outlookLiveLink}
           className="mx-2 h-10 w-10 rounded-sm border border-neutral-200 px-3 py-2 dark:border-neutral-700 dark:text-white"
           target="_blank"
           rel="noopener noreferrer">
-          Outlook Live Icon
+          {/* Replace 'Outlook Live' with actual Outlook Live icon */}
+          <OutlookLiveIcon />
         </a>
         <a
           href={outlookOfficeLink}
           className="mx-2 h-10 w-10 rounded-sm border border-neutral-200 px-3 py-2 dark:border-neutral-700 dark:text-white"
           target="_blank"
           rel="noopener noreferrer">
-          Outlook Office Icon
+          {/* Replace 'Outlook Office' with actual Outlook Office icon */}
+          <OutlookOfficeIcon />
         </a>
         <a
           href={otherLink}
           className="mx-2 h-10 w-10 rounded-sm border border-neutral-200 px-3 py-2 dark:border-neutral-700 dark:text-white"
           download={`${type}.ics`}>
-          Other Icon
+          {/* Replace 'Other' with actual icon or text for other options */}
+          <OtherIcon />
         </a>
       </div>
     </div>
