@@ -4,7 +4,6 @@ import type { NextApiRequest } from "next";
 import rrule from "rrule";
 import short from "short-uuid";
 import { v5 as uuidv5 } from "uuid";
-
 import EventManager from "@calcom/core/EventManager";
 import { getUserAvailability } from "@calcom/core/getUserAvailability";
 import dayjs from "@calcom/dayjs";
@@ -212,6 +211,40 @@ const getEventTypesFromDB = async (eventTypeId: number) => {
   };
 };
 
+const fetchConfirmation = async ({ interviewId, dt, location, t }: {
+  interviewId: string;
+  dt: number;
+  location: string;
+  t: string;
+}) => {
+  let TECHIEMATTER_CONFIRMATION_URL = process.env.TECHIEMATTER_CONFIRMATION_URL || '';
+
+  console.log("### TECHIEMATTER_CONFIRMATION_URL", TECHIEMATTER_CONFIRMATION_URL);
+
+  try {
+    console.log("### fetchConfirmation function try ")
+    const url = `${TECHIEMATTER_CONFIRMATION_URL}/thank-you?interview_id=${interviewId}&dt=${dt}&location=${location}&t=${t}`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    console.log("### fetchConfirmation function response ", response)
+    // return response;
+  } catch (error) {
+    console.error("Fetch failed:", error);
+    log.error("Fetch failed:", error);
+  }
+};
+
+
 type User = Prisma.UserGetPayload<typeof userSelect>;
 
 async function handler(req: NextApiRequest) {
@@ -225,7 +258,7 @@ async function handler(req: NextApiRequest) {
   const tAttendees = await getTranslation(language ?? "en", "common");
   const tGuests = await getTranslation("en", "common");
   log.debug(`Booking eventType ${eventTypeId} started`);
-
+  
   const isTimeInPast = (time: string): boolean => {
     return dayjs(time).isBefore(new Date(), "day");
   };
@@ -818,6 +851,13 @@ async function handler(req: NextApiRequest) {
   }
 
   log.debug(`Booking ${user.username} completed`);
+
+  const interviewId = eventType.id;
+  const dt = dayjs(evt.startTime).valueOf();
+  const evtLocation = evt.videoCallData.url;
+  const t = req.query.t ?? '';
+
+  // fetchConfirmation({ interviewId, dt, evtLocation, t });
 
   const eventTrigger: WebhookTriggerEvents = rescheduleUid ? "BOOKING_RESCHEDULED" : "BOOKING_CREATED";
   const subscriberOptions = {

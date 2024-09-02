@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   CalendarIcon,
   ClockIcon,
@@ -134,7 +135,6 @@ const BookingPage = ({
   const mutation = useMutation(createBooking, {
     onSuccess: async (responseData) => {
       const { id, attendees, paymentUid } = responseData;
-      console.log("### responseData 01", responseData);
       if (paymentUid) {
         return await router.push(
           createPaymentLink({
@@ -178,6 +178,7 @@ const BookingPage = ({
 
   const recurringMutation = useMutation(createRecurringBooking, {
     onSuccess: async (responseData = []) => {
+      
       const { attendees = [], id, recurringEventId } = responseData[0] || {};
       const location = (function humanReadableLocation(location) {
         if (!location) {
@@ -223,6 +224,7 @@ const BookingPage = ({
   );
 
   const fetchConfirmation = async ({ interviewId, dt, location, t }) => {
+    
     let TECHIEMATTER_CONFIRMATION_URL;
 
     // Ensure window is defined to avoid errors during server-side rendering
@@ -256,7 +258,7 @@ const BookingPage = ({
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        console.log("#### resultURl", response);
+        // console.log("#### resultURl", response);
         return response;
       } catch (error) {
         console.error("Fetch failed:", error);
@@ -495,7 +497,7 @@ const BookingPage = ({
     const location = selectedLocation;
     const t = router.query.t;
 
-    // fetchConfirmation({ interviewId, dt, location, t });
+    fetchConfirmation({ interviewId, dt, location, t });
 
     // window.location.href = url;
   };
