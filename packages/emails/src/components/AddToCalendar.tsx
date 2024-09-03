@@ -1,10 +1,11 @@
 import { createEvent } from "ics";
 import { TFunction } from "next-i18next";
+import Link from "next/link";
 
 import dayjs from "@calcom/dayjs";
 import type { CalendarEvent } from "@calcom/types/Calendar";
 import { getCairoTimeWithDST } from "@calcom/web/lib/timeUtils";
-import Link from "next/link";
+
 // Assuming 'ics' is the package being used for creating calendar events
 
 export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string; t: TFunction }) {
@@ -91,34 +92,40 @@ export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string
   const otherLink = `data:text/calendar,${eventLink(startDate, endDate, eventName, description, location)}`;
 
   return (
-    <div className="border-bookinglightest mt-9 flex border-b pt-2 pb-4 text-center dark:border-gray-900 sm:mt-0 sm:pt-4" style={{ lineHeight: "50px" }}>
+    <div
+      className="border-bookinglightest mt-9 flex border-b pt-2 pb-4 text-center dark:border-gray-900 sm:mt-0 sm:pt-4"
+      style={{ lineHeight: "50px" }}>
       <span className="flex self-center font-medium text-gray-700 ltr:mr-2 rtl:ml-2 dark:text-gray-50">
         {t("add_to_calendar")}
       </span>
       <div className="-ml-16 flex flex-grow justify-center text-center" style={{ lineHeight: "50px" }}>
-       <Link
-          href={googleCalendarLink}>
-          <a className="mx-2 h-4 w-4 rounded-sm border border-neutral-200 px-3 py-2 dark:border-neutral-700 dark:text-white"  style={{ padding: "10px" }}>
+        <Link href={googleCalendarLink}>
+          <a
+            className="mx-2 h-4 w-4 rounded-sm border border-neutral-200 px-3 py-2 dark:border-neutral-700 dark:text-white"
+            style={{ padding: "10px" }}>
             <svg
               className="-mt-1.5 inline-block h-4 w-4"
               xmlns="http://www.w3.org/2000/svg"
-              width="24" height="24"
-              x="0px" y="0px"
+              width="24"
+              height="24"
+              x="0px"
+              y="0px"
               viewBox="0 0 24 24">
               <title>Google</title>
               <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z" />
             </svg>
           </a>
         </Link>
-        
-        <Link
-          href={outlookLiveLink}>
+
+        <Link href={outlookLiveLink}>
           <a
             className="mx-2 h-4 w-4 rounded-sm border border-neutral-200 px-3 py-2 dark:border-neutral-700 dark:text-white"
-            target="_blank" style={{ padding: "10px" }}>
+            target="_blank"
+            style={{ padding: "10px" }}>
             <svg
               className="mr-1 -mt-1.5 inline-block h-4 w-4"
-              width="24" height="24"
+              width="24"
+              height="24"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24">
               <title>Microsoft Outlook</title>
@@ -126,14 +133,15 @@ export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string
             </svg>
           </a>
         </Link>
-        <Link
-          href={outlookOfficeLink}>
+        <Link href={outlookOfficeLink}>
           <a
             className="mx-2 h-4 w-4 rounded-sm border border-neutral-200 px-3 py-2 dark:border-neutral-700 dark:text-white"
-            target="_blank" style={{ padding: "10px" }}>
+            target="_blank"
+            style={{ padding: "10px" }}>
             <svg
               className="mr-1 -mt-1.5 inline-block h-4 w-4"
-              width="24" height="24"
+              width="24"
+              height="24"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24">
               <title>Microsoft Office</title>
@@ -142,23 +150,22 @@ export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string
           </a>
         </Link>
         <Link href={otherLink}>
-  <a
-    className="mx-2 h-10 w-10 rounded-sm border border-neutral-200 px-3 py-2 dark:border-neutral-700 dark:text-white flex items-center justify-center"
-    download={type + ".ics"}
-    style={{ padding: "10px" }}
-  >
-    <svg
-      className="mr-1 -mt-1.5 inline-block h-4 w-4"
-      width="24" height="24"
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 1024 1024"  // Adjusted viewBox if needed
-    >
-      <title>{t("other")}</title>
-      <path d="M971.3,154.9c0-34.7-28.2-62.9-62.9-62.9H611.7c-1.3,0-2.6,0.1-3.9,0.2V10L28.7,87.3v823.4L607.8,990v-84.6c1.3,0.1,2.6,0.2,3.9,0.2h296.7c34.7,0,62.9-28.2,62.9-62.9V154.9z M607.8,636.1h44.6v-50.6h-44.6v-21.9h44.6v-50.6h-44.6v-92h277.9v230.2c0,3.8-3.1,7-7,7H607.8V636.1z M117.9,644.7l-50.6-2.4V397.5l50.6-2.2V644.7z M288.6,607.3c17.6,0.6,37.3-2.8,49.1-7.2l9.1,48c-11,5.1-35.6,9.9-66.9,8.3c-85.4-4.3-127.5-60.7-127.5-132.6c0-86.2,57.8-136.7,133.2-140.1c30.3-1.3,53.7,4,64.3,9.2l-12.2,48.9c-12.1-4.9-28.8-9.2-49.5-8.6c-45.3,1.2-79.5,30.1-79.5,87.4C208.8,572.2,237.8,605.7,288.6,607.3z M455.5,665.2c-32.4-1.6-63.7-11.3-79.1-20.5l12.6-50.7c16.8,9.1,42.9,18.5,70.4,19.4c30.1,1,46.3-10.7,46.3-29.3c0-17.8-14-28.1-48.8-40.6c-46.9-16.4-76.8-41.7-76.8-81.5c0-46.6,39.3-84.1,106.8-87.1c33.3-1.5,58.3,4.2,76.5,11.2l-15.4,53.3c-12.1-5.3-33.5-12.8-62.3-12c-28.3,0.8-41.9,13.6-41.9,28.1c0,17.8,16.1,25.5,53.6,39c52.9,18.5,78.4,45.3,78.4,86.4C575.6,629.7,536.2,669.2,455.5,665.2z M935.3,842.7c0,14.9-12.1,27-27,27H611.7c-1.3,0-2.6-0.2-3.9-0.4V686.2h270.9c19.2,0,34.9-15.6,34.9-34.9V398.4c0-19.2-15.6-34.9-34.9-34.9h-47.1v-32.3H808v32.3h-44.8v-32.3h-22.7v32.3h-43.3v-32.3h-22.7v32.3H628v-32.3h-20.2v-203c1.31.2,2.6-0.4,3.9-0.4h296.7c14.9,0,27,12.1,27,27L935.3,842.7L935.3,842.7z" />
-    </svg>
-  </a>
-</Link>
-
+          <a
+            className="mx-2 flex h-10 w-10 items-center justify-center rounded-sm border border-neutral-200 px-3 py-2 dark:border-neutral-700 dark:text-white"
+            download={type + ".ics"}
+            style={{ padding: "10px" }}>
+            <svg
+              className="mr-1 -mt-1.5 inline-block h-4 w-4"
+              width="24"
+              height="24"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 1024 1024" // Adjusted viewBox if needed
+            >
+              <title>{t("other")}</title>
+              <path d="M971.3,154.9c0-34.7-28.2-62.9-62.9-62.9H611.7c-1.3,0-2.6,0.1-3.9,0.2V10L28.7,87.3v823.4L607.8,990v-84.6c1.3,0.1,2.6,0.2,3.9,0.2h296.7c34.7,0,62.9-28.2,62.9-62.9V154.9z M607.8,636.1h44.6v-50.6h-44.6v-21.9h44.6v-50.6h-44.6v-92h277.9v230.2c0,3.8-3.1,7-7,7H607.8V636.1z M117.9,644.7l-50.6-2.4V397.5l50.6-2.2V644.7z M288.6,607.3c17.6,0.6,37.3-2.8,49.1-7.2l9.1,48c-11,5.1-35.6,9.9-66.9,8.3c-85.4-4.3-127.5-60.7-127.5-132.6c0-86.2,57.8-136.7,133.2-140.1c30.3-1.3,53.7,4,64.3,9.2l-12.2,48.9c-12.1-4.9-28.8-9.2-49.5-8.6c-45.3,1.2-79.5,30.1-79.5,87.4C208.8,572.2,237.8,605.7,288.6,607.3z M455.5,665.2c-32.4-1.6-63.7-11.3-79.1-20.5l12.6-50.7c16.8,9.1,42.9,18.5,70.4,19.4c30.1,1,46.3-10.7,46.3-29.3c0-17.8-14-28.1-48.8-40.6c-46.9-16.4-76.8-41.7-76.8-81.5c0-46.6,39.3-84.1,106.8-87.1c33.3-1.5,58.3,4.2,76.5,11.2l-15.4,53.3c-12.1-5.3-33.5-12.8-62.3-12c-28.3,0.8-41.9,13.6-41.9,28.1c0,17.8,16.1,25.5,53.6,39c52.9,18.5,78.4,45.3,78.4,86.4C575.6,629.7,536.2,669.2,455.5,665.2z M935.3,842.7c0,14.9-12.1,27-27,27H611.7c-1.3,0-2.6-0.2-3.9-0.4V686.2h270.9c19.2,0,34.9-15.6,34.9-34.9V398.4c0-19.2-15.6-34.9-34.9-34.9h-47.1v-32.3H808v32.3h-44.8v-32.3h-22.7v32.3h-43.3v-32.3h-22.7v32.3H628v-32.3h-20.2v-203c1.31.2,2.6-0.4,3.9-0.4h296.7c14.9,0,27,12.1,27,27L935.3,842.7L935.3,842.7z" />
+            </svg>
+          </a>
+        </Link>
       </div>
     </div>
   );

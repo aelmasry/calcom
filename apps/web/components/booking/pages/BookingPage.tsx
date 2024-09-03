@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   CalendarIcon,
   ClockIcon,
@@ -17,6 +16,7 @@ import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { FormattedNumber, IntlProvider } from "react-intl";
@@ -171,6 +171,7 @@ const BookingPage = ({
           eventName: profile.eventName || "",
           bookingId: id,
           isSuccessBookingPage: true,
+          t: router.query.t,
         },
       });
     },
@@ -178,7 +179,6 @@ const BookingPage = ({
 
   const recurringMutation = useMutation(createRecurringBooking, {
     onSuccess: async (responseData = []) => {
-      
       const { attendees = [], id, recurringEventId } = responseData[0] || {};
       const location = (function humanReadableLocation(location) {
         if (!location) {
@@ -204,6 +204,7 @@ const BookingPage = ({
           location,
           eventName: profile.eventName || "",
           bookingId: id,
+          t: router.query.t,
         },
       });
     },
@@ -222,49 +223,6 @@ const BookingPage = ({
     () => (eventType.locations as LocationObject[]) || [],
     [eventType.locations]
   );
-
-  const fetchConfirmation = async ({ interviewId, dt, location, t }) => {
-    
-    let TECHIEMATTER_CONFIRMATION_URL;
-
-    // Ensure window is defined to avoid errors during server-side rendering
-    if (typeof window !== "undefined") {
-      const hostname = window.location.hostname;
-
-      switch (hostname) {
-        case "cal.techiematter.com":
-          TECHIEMATTER_CONFIRMATION_URL = "https://techiematter.com/thank-you";
-          break;
-        case "cweb.techiematter.com":
-          TECHIEMATTER_CONFIRMATION_URL = "https://staging.techiematter.com/thank-you";
-          break;
-        default:
-          TECHIEMATTER_CONFIRMATION_URL = "http://techiematter.test/thank-you";
-          break;
-      }
-
-      try {
-        const url = `${TECHIEMATTER_CONFIRMATION_URL}?interview_id=${interviewId}&dt=${dt}&location=${location}&t=${t}`;
-
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          // Check if the request was successful
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        // console.log("#### resultURl", response);
-        return response;
-      } catch (error) {
-        console.error("Fetch failed:", error);
-      }
-    }
-  };
 
   useEffect(() => {
     if (router.query.guest) {
@@ -484,22 +442,10 @@ const BookingPage = ({
         hashedLink,
         smsReminderNumber:
           selectedLocation === LocationType.Phone ? booking.phone : booking.smsReminderNumber,
+        date,
+        t: router.query.t,
       });
     }
-
-    //redirect to external success url
-    const selectedLocation = getLocationValue(
-      booking.locationType ? booking : { ...booking, locationType: selectedLocation }
-    );
-
-    const interviewId = eventType.id;
-    const dt = dayjs(date).valueOf();
-    const location = selectedLocation;
-    const t = router.query.t;
-
-    fetchConfirmation({ interviewId, dt, location, t });
-
-    // window.location.href = url;
   };
 
   const disableInput = !!rescheduleUid;
