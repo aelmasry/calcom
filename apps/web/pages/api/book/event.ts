@@ -223,7 +223,7 @@ const fetchConfirmation = async ({
   evtLocation: string;
   t: string;
 }) => {
-  console.log("### location", evtLocation);
+  // console.log("### location", evtLocation);
   const TECHIEMATTER_URL = process.env.TECHIEMATTER_URL || "";
 
   try {
@@ -231,7 +231,7 @@ const fetchConfirmation = async ({
       evtLocation || ""
     )}&t=${t}`;
 
-    console.log("### URL ", url);
+    // console.log("### URL ", url);
 
     const response = await fetch(url, {
       method: "GET",
@@ -863,7 +863,7 @@ async function handler(req: NextApiRequest) {
   const dt = dayjs(req.body.date).valueOf();
   const evtLocation = encodeURIComponent(evt.videoCallData.url || evt.location);
 
-  console.log("### Url paramters: ", { interviewId, dt, evtLocation, t });
+  // console.log("### Url paramters: ", { interviewId, dt, evtLocation, t });
 
   fetchConfirmation({ interviewId, dt, evtLocation, t });
 
