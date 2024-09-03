@@ -215,20 +215,24 @@ const getEventTypesFromDB = async (eventTypeId: number) => {
 const fetchConfirmation = async ({
   interviewId,
   dt,
-  location,
+  evtLocation,
   t,
 }: {
   interviewId: string;
   dt: number;
-  location: string;
+  evtLocation: string;
   t: string;
 }) => {
+  console.log("### location", evtLocation);
   const TECHIEMATTER_URL = process.env.TECHIEMATTER_URL || "";
 
   try {
-    const url = `${TECHIEMATTER_URL}/thank-you?interview_id=${interviewId}&dt=${dt}&location=${location}&t=${t}`;
+    const url = `${TECHIEMATTER_URL}/thank-you?interview_id=${interviewId}&dt=${dt}&location=${encodeURIComponent(
+      evtLocation || ""
+    )}&t=${t}`;
 
     console.log("### URL ", url);
+
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -240,10 +244,8 @@ const fetchConfirmation = async ({
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    console.log("### fetchConfirmation function response ", response);
     // return response;
   } catch (error) {
-    console.error("Fetch failed:", error);
     log.error("Fetch failed:", error);
   }
 };
@@ -855,13 +857,11 @@ async function handler(req: NextApiRequest) {
 
   log.debug(`Booking ${user.username} completed`);
 
-  console.log("### req.body", req.body);
-
   // Usage
   const interviewId = req.body.eventTypeId;
   const t = req.body.t;
   const dt = dayjs(req.body.date).valueOf();
-  const evtLocation = evt.videoCallData.url ?? evt.location;
+  const evtLocation = encodeURIComponent(evt.videoCallData.url || evt.location);
 
   console.log("### Url paramters: ", { interviewId, dt, evtLocation, t });
 
