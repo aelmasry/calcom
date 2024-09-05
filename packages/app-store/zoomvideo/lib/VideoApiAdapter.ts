@@ -9,8 +9,10 @@ import { Frequency } from "@calcom/prisma/zod-utils";
 import type { CalendarEvent } from "@calcom/types/Calendar";
 import type { PartialReference } from "@calcom/types/EventManager";
 import type { VideoApiAdapter, VideoCallData } from "@calcom/types/VideoApiAdapter";
-
+import logger from "@calcom/lib/logger";
 import { getZoomAppKeys } from "./getZoomAppKeys";
+
+const log = logger.getChildLogger({ prefix: ["[api] Zoom video api"] });
 
 const generatePin = (length: number): string => {
   let pin = "";
@@ -211,6 +213,8 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
   const fetchZoomApi = async (endpoint: string, options?: RequestInit) => {
     const auth = zoomAuth(credential);
     const accessToken = await auth.getToken();
+    console.log("### accessToken", accessToken);
+    console.log("### URL", `https://api.zoom.us/v2/${endpoint}`);
     const response = await fetch(`https://api.zoom.us/v2/${endpoint}`, {
       method: "GET",
       ...options,
@@ -220,8 +224,9 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
       },
     });
 
+    console.log("### response", response);
     const responseBody = await handleZoomResponse(response, credential.id);
-    // console.log("### responseBody", responseBody);
+    console.log("### responseBody", responseBody);
     return responseBody;
   };
 
@@ -263,11 +268,15 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
       return Promise.reject(new Error("Failed to create meeting"));
     },
     deleteMeeting: async (uid: string): Promise<void> => {
-      await fetchZoomApi(`meetings/${uid}`, {
-        method: "DELETE",
-      });
-
-      return Promise.resolve();
+      try {
+        await fetchZoomApi(`meetings/${uid}`, {
+          method: "DELETE",
+        });
+        return Promise.resolve();
+      } catch (err) {
+        log.error(err);
+        // return Promise.reject(new Error("Failed to delete meeting"));
+      }
     },
     updateMeeting: async (bookingRef: PartialReference, event: CalendarEvent): Promise<VideoCallData> => {
       try {

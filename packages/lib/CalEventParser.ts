@@ -18,10 +18,19 @@ ${calEvent.type}
 };
 
 export const getWhen = (calEvent: CalendarEvent) => {
-  return `
-${calEvent.organizer.language.translate("invitee_timezone")}:
-${calEvent.attendees[0].timeZone}
-  `;
+//   return `
+// ${calEvent.organizer.language.translate("invitee_timezone")}:
+// ${calEvent.attendees[0].timeZone}
+//   `;
+const attendee = calEvent.attendees?.[0]; // Safely access the first attendee
+  const timeZone = attendee?.timeZone; // Safely access timeZone
+
+  if (timeZone) {
+    return `
+    ${calEvent.organizer.language.translate("invitee_timezone")}:
+    ${timeZone}
+    `;
+  }
 };
 
 export const getWho = (calEvent: CalendarEvent) => {

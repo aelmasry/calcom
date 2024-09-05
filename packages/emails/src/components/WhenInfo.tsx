@@ -27,7 +27,7 @@ export function WhenInfo(props: { calEvent: CalendarEvent; timeZone: string; t: 
   const { timeZone, t, calEvent: { recurringEvent } = {} } = props;
 
   function getRecipientStart(format: string) {
-    if (timeZone.includes("Cairo")) {
+    if (timeZone !== null && timeZone !== undefined && timeZone.includes("Cairo")) {
       const date = getCairoTimeWithDST(dayjs(props.calEvent.startTime));
       return date.format(format)
     } else {
@@ -37,7 +37,7 @@ export function WhenInfo(props: { calEvent: CalendarEvent; timeZone: string; t: 
   }
 
   function getRecipientEnd(format: string) {
-    if (timeZone.includes("Cairo")) {
+    if (timeZone !== null && timeZone !== undefined && timeZone.includes("Cairo")) {
       const date = getCairoTimeWithDST(dayjs(props.calEvent.endTime));
       return date.format(format)
     } else {

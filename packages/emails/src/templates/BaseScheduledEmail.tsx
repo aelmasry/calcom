@@ -21,10 +21,11 @@ export const BaseScheduledEmail = (
     attendee: Person;
     timeZone: string;
     t: TFunction;
+    isCancelled?: boolean; // Optional property to indicate if the event is canceled
   } & Partial<React.ComponentProps<typeof BaseEmailHtml>>
 ) => {
   const { t, timeZone } = props;
-
+  
   function getRecipientStart(format: string) {
     return dayjs(props.calEvent.startTime).utc().tz(timeZone).format(format);
   }
@@ -61,13 +62,17 @@ export const BaseScheduledEmail = (
       <Info label={t("cancellation_reason")} description={props.calEvent.cancellationReason} withSpacer />
       <Info label={t("rejection_reason")} description={props.calEvent.rejectionReason} withSpacer />
       <Info label={t("what")} description={props.calEvent.type} withSpacer />
-      <WhenInfo calEvent={props.calEvent} t={t} timeZone={timeZone} />
+      {!props.isCancelled && (
+        <WhenInfo calEvent={props.calEvent} t={t} timeZone={timeZone} />
+      )}
       <WhoInfo calEvent={props.calEvent} t={t} />
       <LocationInfo calEvent={props.calEvent} t={t} />
       <Info label={t("description")} description={props.calEvent.description} withSpacer />
       <Info label={t("additional_notes")} description={props.calEvent.additionalNotes} withSpacer />
       <CustomInputs calEvent={props.calEvent} />
-      <AddToCalendar calEvent={props.calEvent} t={t} timeZone={timeZone} />
+      {!props.isCancelled && (
+        <AddToCalendar calEvent={props.calEvent} t={t} timeZone={timeZone} />
+      )}
     </BaseEmailHtml>
   );
 };

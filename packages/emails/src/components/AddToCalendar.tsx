@@ -11,7 +11,7 @@ import { getCairoTimeWithDST } from "@calcom/web/lib/timeUtils";
 export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string; t: TFunction }) {
   const { timeZone, t, calEvent } = props;
   const { type, description, attendees, startTime, endTime } = calEvent;
-  const location = props.calEvent.videoCallData.url;
+  const location = props.calEvent.videoCallData.url ?? '';
   function eventLink(
     startDate: dayjs.Dayjs,
     endDate: dayjs.Dayjs,
@@ -21,7 +21,7 @@ export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string
   ): string {
     const optional: { location?: string } = {};
     if (location) {
-      optional["location"] = location;
+      optional["location"] = location ?? '';
     }
 
     const event = createEvent({
