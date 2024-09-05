@@ -21,6 +21,14 @@ export const metadata = {
   trending: true,
   email: "help@cal.com",
   isGlobal: true,
+  appData: {
+    location: {
+      default: false,
+      linkType: "dynamic",
+      type: "integrations:zoom",
+      label: "Zoom Video",
+    },
+  },
   locationType: LocationType.Zoom,
   locationLabel: "Zoom Video",
 } as App;
