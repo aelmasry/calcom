@@ -83,8 +83,6 @@ export function getWorkingHours(
 
   if (letTimeZone && letTimeZone.includes("Cairo")) {
     const cairoTime = getCairoTimeWithDST(dayjs(availability[0].startTime));
-    console.log("### cairoTime", cairoTime);
-    console.log("### cairoTime utcOffset() 02 ", cairoTime.utcOffset() + 60);
     utcOffset = relativeTimeUnit.utcOffset ?? cairoTime.utcOffset() + 60;
   } else {
     utcOffset = relativeTimeUnit.utcOffset ?? dayjs().tz(relativeTimeUnit.timeZone).utcOffset();

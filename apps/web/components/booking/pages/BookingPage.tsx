@@ -171,7 +171,8 @@ const BookingPage = ({
           eventName: profile.eventName || "",
           bookingId: id,
           isSuccessBookingPage: true,
-          t: router.query.t,
+          // t: router.query.t,
+          // recruiter_email: router.query.recruiter_email,
         },
       });
     },
@@ -204,7 +205,8 @@ const BookingPage = ({
           location,
           eventName: profile.eventName || "",
           bookingId: id,
-          t: router.query.t,
+          // t: router.query.t,
+          // recruiter_email: router.query.recruiter_email,
         },
       });
     },
@@ -444,6 +446,7 @@ const BookingPage = ({
           selectedLocation === LocationType.Phone ? booking.phone : booking.smsReminderNumber,
         date,
         t: router.query.t,
+        recruiter_email: router.query.recruiter_email,
       });
     }
   };

@@ -65,6 +65,7 @@ export default class AttendeeScheduledEmail extends BaseEmail {
         content: this.getiCalEventAsString(),
       },
       to: `${this.attendee.name} <${this.attendee.email}>`,
+      cc: `<${this.attendee.recruiterEmail}>`,
       from: `${this.calEvent.organizer.name} <${this.getMailerOptions().from}>`,
       replyTo: this.calEvent.organizer.email,
       subject: `${this.t("confirmed_event_type_subject", {

@@ -223,7 +223,6 @@ const fetchConfirmation = async ({
   evtLocation: string;
   t: string;
 }) => {
-  // console.log("### location", evtLocation);
   const TECHIEMATTER_URL = process.env.TECHIEMATTER_URL || "";
 
   try {
@@ -231,7 +230,7 @@ const fetchConfirmation = async ({
       evtLocation || ""
     )}&t=${t}`;
 
-    // console.log("### URL ", url);
+    console.log("### URL ", url);
 
     const response = await fetch(url, {
       method: "GET",
@@ -332,13 +331,16 @@ async function handler(req: NextApiRequest) {
       name: reqBody.name,
       timeZone: reqBody.timeZone,
       language: { translate: tAttendees, locale: language ?? "en" },
+      recruiterEmail: req.body.recruiter_email,
     },
   ];
+
   const guests = (reqBody.guests || []).map((guest) => ({
     email: guest,
     name: "",
     timeZone: reqBody.timeZone,
     language: { translate: tGuests, locale: "en" },
+    recruiterEmail: req.body.recruiter_email,
   }));
 
   const seed = `${organizerUser.username}:${dayjs(reqBody.start).utc().format()}:${new Date().getTime()}`;
@@ -360,6 +362,7 @@ async function handler(req: NextApiRequest) {
               translate: await getTranslation(user.locale ?? "en", "common"),
               locale: user.locale ?? "en",
             },
+            recruiterEmail: req.body.recruiter_email,
           };
         })
       : [];
@@ -403,8 +406,10 @@ async function handler(req: NextApiRequest) {
     eventTimeZone: eventType.timeZone,
   };
 
+  console.log(`### evt: ${evt}`);
   // For seats, if the booking already exists then we want to add the new attendee to the existing booking
   if (reqBody.bookingUid) {
+    console.log("### reqBody.bookingUid");
     if (!eventType.seatsPerTimeSlot)
       throw new HttpError({ statusCode: 404, message: "Event type does not have seats" });
 
@@ -427,6 +432,7 @@ async function handler(req: NextApiRequest) {
         },
       },
     });
+
     if (!booking) throw new HttpError({ statusCode: 404, message: "Booking not found" });
 
     // Need to add translation for attendees to pass type checks. Since these values are never written to the db we can just use the new attendee language
@@ -434,8 +440,10 @@ async function handler(req: NextApiRequest) {
       return { ...attendee, language: { translate: tAttendees, locale: language ?? "en" } };
     });
 
+    console.log(`### Attendees: ${bookingAttendees}`);
     evt = { ...evt, attendees: [...bookingAttendees, invitee[0]] };
 
+    console.log(`### evt: ${evt}`);
     if (eventType.seatsPerTimeSlot <= booking.attendees.length)
       throw new HttpError({ statusCode: 409, message: "Booking seats are full" });
 
@@ -453,6 +461,7 @@ async function handler(req: NextApiRequest) {
             name: invitee[0].name,
             timeZone: invitee[0].timeZone,
             locale: invitee[0].language.locale,
+            recruiterEmail: invitee[0].recruiterEmail,
           },
         },
       },
@@ -508,6 +517,7 @@ async function handler(req: NextApiRequest) {
             email: true,
             locale: true,
             timeZone: true,
+            recruiterEmail: true,
           },
         },
         user: {
@@ -574,6 +584,7 @@ async function handler(req: NextApiRequest) {
               email: attendee.email,
               timeZone: attendee.timeZone,
               locale: attendee.language.locale,
+              recruiterEmail: attendee.recruiterEmail,
             };
             return retObj;
           }),

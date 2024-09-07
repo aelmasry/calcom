@@ -149,20 +149,14 @@ export const slotsRouter = createRouter().query("getSchedule", {
     // console.log("### schedule timeZone", eventType.schedule.timeZone)
     // eventType.schedule.timeZone = "Asia/Kuwait";
     // console.log("### schedule timeZone 02", eventType.schedule.timeZone)
-    
+
     const startTime =
       input.timeZone === "Etc/GMT"
         ? dayjs.utc(input.startTime)
         : dayjs(input.startTime).utc().tz(input.timeZone);
-        
+
     const endTime =
       input.timeZone === "Etc/GMT" ? dayjs.utc(input.endTime) : dayjs(input.endTime).utc().tz(input.timeZone);
-
-    console.log("### startTime", startTime)
-    console.log("### endTime", endTime)
-
-    console.log("### startTime.format()", startTime.format())
-    console.log("### endTime.format()", endTime.format())
 
     if (!startTime.isValid() || !endTime.isValid()) {
       throw new TRPCError({ message: "Invalid time range given.", code: "BAD_REQUEST" });
@@ -195,7 +189,7 @@ export const slotsRouter = createRouter().query("getSchedule", {
     );
 
     const workingHours = userSchedules.flatMap((s) => s.workingHours);
-    
+
     const slots: Record<string, Slot[]> = {};
     const availabilityCheckProps = {
       eventLength: eventType.length,
@@ -228,8 +222,6 @@ export const slotsRouter = createRouter().query("getSchedule", {
         frequency: eventType.slotInterval || eventType.length,
       });
 
-
-      console.log("####### times", times);
       const endGetSlots = performance.now();
       getSlotsTime += endGetSlots - startGetSlots;
       getSlotsCount++;
@@ -238,7 +230,7 @@ export const slotsRouter = createRouter().query("getSchedule", {
         !eventType.schedulingType || eventType.schedulingType === SchedulingType.COLLECTIVE
           ? ("every" as const)
           : ("some" as const);
-      
+
       const filteredTimes = times.filter(isWithinBounds).filter((time) =>
         userSchedules[filterStrategy]((schedule) => {
           const startCheckForAvailability = performance.now();
@@ -249,9 +241,6 @@ export const slotsRouter = createRouter().query("getSchedule", {
           return result;
         })
       );
-
-
-    console.log("####### endGetSlots", endGetSlots);
 
       slots[time.format("YYYY-MM-DD")] = filteredTimes.map((time) => ({
         time: time.toISOString(),
@@ -271,12 +260,6 @@ export const slotsRouter = createRouter().query("getSchedule", {
       time = time.add(1, "day");
     } while (time.isBefore(endTime));
 
-
-    console.log("####### getSlotsTime", getSlotsTime);
-    console.log("####### getSlotsCount 002", getSlotsCount);
-    console.log("####### checkForAvailabilityTime", checkForAvailabilityTime);
-    console.log("####### checkForAvailabilityCount", checkForAvailabilityCount);
-    console.log("####### slots", slots);
     logger.debug(`getSlots took ${getSlotsTime}ms and executed ${getSlotsCount} times`);
 
     logger.debug(

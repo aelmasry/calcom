@@ -258,7 +258,7 @@ export const sendRequestRescheduleEmail = async (
         const requestRescheduleEmail = new AttendeeRequestRescheduledEmail(calEvent, metadata);
         resolve(requestRescheduleEmail.sendEmail());
       } catch (e) {
-        console.error("AttendeeRequestRescheduledEmail.sendEmail failed", e)
+        console.error("AttendeeRequestRescheduledEmail.sendEmail failed", e);
         reject(console.error("AttendeeRequestRescheduledEmail.sendEmail failed", e));
       }
     })
