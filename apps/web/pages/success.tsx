@@ -441,7 +441,7 @@ export default function Success(props: SuccessProps) {
                         theme={isSuccessBookingPage ? props.profile.theme : "light"}
                       />
                     ))}
-                  {userIsOwner && !needsConfirmation && !isCancellationMode && !isCancelled && (
+                  {!needsConfirmation && !isCancellationMode && !isCancelled && (
                     <div className="border-bookinglightest mt-9 flex border-b pt-2 pb-4 text-center dark:border-gray-900 sm:mt-0 sm:pt-4">
                       <span className="flex self-center font-medium text-gray-700 ltr:mr-2 rtl:ml-2 dark:text-gray-50">
                         {t("add_to_calendar")}
@@ -546,7 +546,7 @@ export default function Success(props: SuccessProps) {
                       </div>
                     </div>
                   )}
-                  {session === null && !(userIsOwner || props.hideBranding) && (
+                  {/* {session === null && !(userIsOwner || props.hideBranding) && (
                     <div className="border-bookinglightest text-booking-lighter pt-4 text-center text-xs dark:border-gray-900 dark:text-white">
                       <a href="https://cal.com/signup">{t("create_booking_link_with_calcom")}</a>
 
@@ -571,7 +571,7 @@ export default function Success(props: SuccessProps) {
                         </Button>
                       </form>
                     </div>
-                  )}
+                  )} */}
                 </div>
               </div>
             </div>
