@@ -406,7 +406,7 @@ async function handler(req: NextApiRequest) {
     eventTimeZone: eventType.timeZone,
   };
 
-  console.log(`### evt: ${evt}`);
+  console.log('### evt', evt);
   // For seats, if the booking already exists then we want to add the new attendee to the existing booking
   if (reqBody.bookingUid) {
     console.log("### reqBody.bookingUid");
@@ -440,10 +440,9 @@ async function handler(req: NextApiRequest) {
       return { ...attendee, language: { translate: tAttendees, locale: language ?? "en" } };
     });
 
-    console.log(`### Attendees: ${bookingAttendees}`);
+    console.log('### Attendees:', bookingAttendees);
     evt = { ...evt, attendees: [...bookingAttendees, invitee[0]] };
 
-    console.log(`### evt: ${evt}`);
     if (eventType.seatsPerTimeSlot <= booking.attendees.length)
       throw new HttpError({ statusCode: 409, message: "Booking seats are full" });
 
@@ -550,7 +549,10 @@ async function handler(req: NextApiRequest) {
       evt.title = originalRescheduledBooking?.title || evt.title;
       evt.description = originalRescheduledBooking?.description || evt.additionalNotes;
       evt.location = originalRescheduledBooking?.location;
+      evt.attendees[0].recruiterEmail = originalRescheduledBooking?.attendees[0].recruiterEmail;
     }
+
+    console.log('### evt:', evt);
 
     const eventTypeRel = !eventTypeId
       ? {}

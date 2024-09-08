@@ -3,7 +3,7 @@ import AttendeeScheduledEmail from "./attendee-scheduled-email";
 
 export default class AttendeeRescheduledEmail extends AttendeeScheduledEmail {
   protected getNodeMailerPayload(): Record<string, unknown> {
-    console.log("### getNodeMailerPayload this.attendee", this.attendee)
+    
     const ccAddresses = [this.attendee.recruiterEmail];
     ccAddresses.push('support@techiematter.com');
 

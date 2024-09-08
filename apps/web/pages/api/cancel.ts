@@ -125,6 +125,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         translate: await getTranslation(attendee.locale ?? "en", "common"),
         locale: attendee.locale ?? "en",
       },
+      recruiterEmail: attendee.recruiterEmail,
     };
   });
 
