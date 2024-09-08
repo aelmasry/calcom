@@ -62,9 +62,7 @@ export const BaseScheduledEmail = (
       <Info label={t("cancellation_reason")} description={props.calEvent.cancellationReason} withSpacer />
       <Info label={t("rejection_reason")} description={props.calEvent.rejectionReason} withSpacer />
       <Info label={t("what")} description={props.calEvent.type} withSpacer />
-      {!props.isCancelled && (
-        <WhenInfo calEvent={props.calEvent} t={t} timeZone={timeZone} />
-      )}
+      <WhenInfo calEvent={props.calEvent} t={t} timeZone={timeZone} />
       <WhoInfo calEvent={props.calEvent} t={t} />
       <LocationInfo calEvent={props.calEvent} t={t} />
       <Info label={t("description")} description={props.calEvent.description} withSpacer />

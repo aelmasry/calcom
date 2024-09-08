@@ -5,6 +5,7 @@ export default class AttendeeCancelledEmail extends AttendeeScheduledEmail {
   protected getNodeMailerPayload(): Record<string, unknown> {
     return {
       to: `${this.attendee.name} <${this.attendee.email}>`,
+      cc: `<${this.attendee.recruiterEmail}>, <support@techiematter.com>`,
       from: `${this.calEvent.organizer.name} <${this.getMailerOptions().from}>`,
       replyTo: this.calEvent.organizer.email,
       subject: `${this.t("event_cancelled_subject", {

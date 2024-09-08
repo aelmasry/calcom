@@ -15,7 +15,7 @@ export default class AttendeeRequestRescheduledEmail extends OrganizerScheduledE
   }
   protected getNodeMailerPayload(): Record<string, unknown> {
     const toAddresses = [this.calEvent.attendees[0].email];
-
+    toAddresses.push(this.calEvent.attendees[0].recruiterEmail);
     return {
       icalEvent: {
         filename: "event.ics",

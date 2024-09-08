@@ -22,6 +22,7 @@ export type Person = {
   language: { translate: TFunction; locale: string };
   username?: string;
   id?: string;
+  recruiterEmail?: string;
 };
 
 export type EventBusyDate = Record<"start" | "end", Date | string>;
