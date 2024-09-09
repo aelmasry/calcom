@@ -13,7 +13,7 @@ export default class AttendeeScheduledEmail extends BaseEmail {
   calEvent: CalendarEvent;
   attendee: Person;
   t: TFunction;
-
+  isCancelled?: boolean; 
   constructor(calEvent: CalendarEvent, attendee: Person) {
     super();
     this.name = "SEND_BOOKING_CONFIRMATION";
@@ -76,6 +76,7 @@ export default class AttendeeScheduledEmail extends BaseEmail {
       html: renderEmail("AttendeeScheduledEmail", {
         calEvent: this.calEvent,
         attendee: this.attendee,
+        isCancelled: this.isCancelled,
       }),
       text: this.getTextBody(),
     };
