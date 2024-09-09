@@ -157,7 +157,7 @@ export const sendDeclinedEmails = async (calEvent: CalendarEvent) => {
 
 export const sendCancelledEmails = async (calEvent: CalendarEvent) => {
   const emailsToSend: Promise<unknown>[] = [];
-
+  
   emailsToSend.push(
     ...calEvent.attendees.map((attendee) => {
       return new Promise((resolve, reject) => {

@@ -79,8 +79,6 @@ const zoomAuth = (credential: CredentialPayload) => {
     const { client_id, client_secret } = await getZoomAppKeys();
     const authHeader = `Basic ${Buffer.from(`${client_id}:${client_secret}`).toString("base64")}`;
 
-    console.log("### authHeader", authHeader);
-    console.log("### refreshToken", refreshToken);
     const response = await refreshOAuthTokens(
       async () =>
         await fetch("https://zoom.us/oauth/token", {
@@ -98,10 +96,7 @@ const zoomAuth = (credential: CredentialPayload) => {
       credential.userId
     );
 
-    console.log("### refreshOAuthTokens response", response);
     const responseBody = await handleZoomResponse(response, credential.id);
-
-    console.log("### refreshOAuthTokens responseBody", responseBody);
 
     if (responseBody.error) {
       if (responseBody.error === "invalid_grant") {
@@ -123,10 +118,10 @@ const zoomAuth = (credential: CredentialPayload) => {
         ? Math.round(Date.now() + newTokens.expires_in * 1000)
         : key.expiry_date;
     // Store new tokens in database.
-    await prisma.credential.update({
-      where: { id: credential.id },
-      data: { key: { ...key, ...newTokens } },
-    });
+    // await prisma.credential.update({
+    //   where: { id: credential.id },
+    //   data: { key: { ...key, ...newTokens } },
+    // });
     return newTokens.access_token;
   };
 
@@ -235,6 +230,7 @@ const ZoomVideoApiAdapter = (credential: CredentialPayload): VideoApiAdapter => 
   const fetchZoomApi = async (endpoint: string, options?: RequestInit) => {
     const auth = zoomAuth(credential);
     const accessToken = await auth.getToken();
+    // console.log(`https://api.zoom.us/v2/${endpoint}`);
     const response = await fetch(`https://api.zoom.us/v2/${endpoint}`, {
       method: "GET",
       ...options,
@@ -243,6 +239,7 @@ const ZoomVideoApiAdapter = (credential: CredentialPayload): VideoApiAdapter => 
         ...options?.headers,
       },
     });
+
     const responseBody = await handleZoomResponse(response, credential.id);
     return responseBody;
   };
@@ -304,7 +301,9 @@ const ZoomVideoApiAdapter = (credential: CredentialPayload): VideoApiAdapter => 
         });
         return Promise.resolve();
       } catch (err) {
-        return Promise.reject(new Error("Failed to delete meeting"));
+        console.error(`Failed to delete meeting : ${err}`);
+        // throw err;  // Re-throw the error
+        // return Promise.reject(new Error("Failed to delete meeting"));
       }
     },
     updateMeeting: async (bookingRef: PartialReference, event: CalendarEvent): Promise<VideoCallData> => {
@@ -344,7 +343,8 @@ const handleZoomResponse = async (response: Response, credentialId: Credential["
     if ((response && response.status === 124) || responseBody.error === "invalid_grant") {
       await invalidateCredential(credentialId);
     }
-    throw Error(response.statusText);
+    console.error(response.statusText)
+    // throw Error(response.statusText);
   }
   // handle 204 response code with empty response (causes crash otherwise as "" is invalid JSON)
   if (response.status === 204) {

@@ -23,7 +23,7 @@ function getRecurringWhen({ calEvent }: { calEvent: CalendarEvent }) {
   return "";
 }
 
-export function WhenInfo(props: { calEvent: CalendarEvent; timeZone: string; t: TFunction }) {
+export function WhenInfo(props: { calEvent: CalendarEvent; timeZone: string; t: TFunction; lineThrough?: boolean }) {
   const { timeZone, t, calEvent: { recurringEvent } = {} } = props;
 
   function getRecipientStart(format: string) {
@@ -50,7 +50,7 @@ export function WhenInfo(props: { calEvent: CalendarEvent; timeZone: string; t: 
     <div>
       <Info
         label={`${t("when")} ${getRecurringWhen(props)}`}
-        lineThrough={!!props.calEvent.cancellationReason}
+        lineThrough={props.lineThrough ?? ''}
         description={
           <>
             {recurringEvent?.count ? `${t("starting")} ` : ""}
