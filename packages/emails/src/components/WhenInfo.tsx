@@ -23,11 +23,11 @@ function getRecurringWhen({ calEvent }: { calEvent: CalendarEvent }) {
   return "";
 }
 
-export function WhenInfo(props: { calEvent: CalendarEvent; timeZone: string; t: TFunction }) {
+export function WhenInfo(props: { calEvent: CalendarEvent; timeZone: string; t: TFunction; lineThrough?: boolean }) {
   const { timeZone, t, calEvent: { recurringEvent } = {} } = props;
 
   function getRecipientStart(format: string) {
-    if (timeZone.includes("Cairo")) {
+    if (timeZone !== null && timeZone !== undefined && timeZone.includes("Cairo")) {
       const date = getCairoTimeWithDST(dayjs(props.calEvent.startTime));
       return date.format(format)
     } else {
@@ -37,7 +37,7 @@ export function WhenInfo(props: { calEvent: CalendarEvent; timeZone: string; t: 
   }
 
   function getRecipientEnd(format: string) {
-    if (timeZone.includes("Cairo")) {
+    if (timeZone !== null && timeZone !== undefined && timeZone.includes("Cairo")) {
       const date = getCairoTimeWithDST(dayjs(props.calEvent.endTime));
       return date.format(format)
     } else {
@@ -50,7 +50,7 @@ export function WhenInfo(props: { calEvent: CalendarEvent; timeZone: string; t: 
     <div>
       <Info
         label={`${t("when")} ${getRecurringWhen(props)}`}
-        lineThrough={!!props.calEvent.cancellationReason}
+        lineThrough={props.lineThrough ?? ''}
         description={
           <>
             {recurringEvent?.count ? `${t("starting")} ` : ""}

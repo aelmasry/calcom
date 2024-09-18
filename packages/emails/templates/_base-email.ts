@@ -18,12 +18,12 @@ export default class BaseEmail {
   protected getRecipientTime(time: string, format?: string) {
     let date: Dayjs;
     const letTimeZone = this.getTimezone();
-    if (letTimeZone.includes("Cairo")) {
+    if (letTimeZone !== null && letTimeZone !== undefined && letTimeZone.includes("Cairo")) {
       date = getCairoTimeWithDST(dayjs(time));
     } else {
       date = dayjs(time).tz(letTimeZone);
     }
-
+    
     if (typeof format === "string") return date.format(format);
     return date;
   }

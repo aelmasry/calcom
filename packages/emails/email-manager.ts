@@ -55,7 +55,6 @@ export const sendScheduledEmails = async (calEvent: CalendarEvent) => {
 
 export const sendRescheduledEmails = async (calEvent: CalendarEvent) => {
   const emailsToSend: Promise<unknown>[] = [];
-
   emailsToSend.push(
     ...calEvent.attendees.map((attendee) => {
       return new Promise((resolve, reject) => {
@@ -158,7 +157,7 @@ export const sendDeclinedEmails = async (calEvent: CalendarEvent) => {
 
 export const sendCancelledEmails = async (calEvent: CalendarEvent) => {
   const emailsToSend: Promise<unknown>[] = [];
-
+  
   emailsToSend.push(
     ...calEvent.attendees.map((attendee) => {
       return new Promise((resolve, reject) => {
@@ -253,13 +252,13 @@ export const sendRequestRescheduleEmail = async (
   metadata: { rescheduleLink: string }
 ) => {
   const emailsToSend: Promise<unknown>[] = [];
-
   emailsToSend.push(
     new Promise((resolve, reject) => {
       try {
         const requestRescheduleEmail = new AttendeeRequestRescheduledEmail(calEvent, metadata);
         resolve(requestRescheduleEmail.sendEmail());
       } catch (e) {
+        console.error("AttendeeRequestRescheduledEmail.sendEmail failed", e);
         reject(console.error("AttendeeRequestRescheduledEmail.sendEmail failed", e));
       }
     })

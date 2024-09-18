@@ -15,13 +15,13 @@ export default class AttendeeRequestRescheduledEmail extends OrganizerScheduledE
   }
   protected getNodeMailerPayload(): Record<string, unknown> {
     const toAddresses = [this.calEvent.attendees[0].email];
-
+    toAddresses.push(this.calEvent.attendees[0].recruiterEmail);
     return {
       icalEvent: {
         filename: "event.ics",
         content: this.getiCalEventAsString(),
       },
-      from: `Cal.com <${this.getMailerOptions().from}>`,
+      from: `Techiematter.com <${this.getMailerOptions().from}>`,
       to: toAddresses.join(","),
       subject: `${this.t("requested_to_reschedule_subject_attendee", {
         eventType: this.calEvent.type,

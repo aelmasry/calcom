@@ -441,7 +441,7 @@ export default function Success(props: SuccessProps) {
                         theme={isSuccessBookingPage ? props.profile.theme : "light"}
                       />
                     ))}
-                  {userIsOwner && !needsConfirmation && !isCancellationMode && !isCancelled && (
+                  {!needsConfirmation && !isCancellationMode && !isCancelled && (
                     <div className="border-bookinglightest mt-9 flex border-b pt-2 pb-4 text-center dark:border-gray-900 sm:mt-0 sm:pt-4">
                       <span className="flex self-center font-medium text-gray-700 ltr:mr-2 rtl:ml-2 dark:text-gray-50">
                         {t("add_to_calendar")}
@@ -544,32 +544,6 @@ export default function Success(props: SuccessProps) {
                           </a>
                         </Link>
                       </div>
-                    </div>
-                  )}
-                  {session === null && !(userIsOwner || props.hideBranding) && (
-                    <div className="border-bookinglightest text-booking-lighter pt-4 text-center text-xs dark:border-gray-900 dark:text-white">
-                      <a href="https://cal.com/signup">{t("create_booking_link_with_calcom")}</a>
-
-                      <form
-                        onSubmit={(e) => {
-                          e.preventDefault();
-                          const target = e.target as typeof e.target & {
-                            email: { value: string };
-                          };
-                          router.push(`https://cal.com/signup?email=${target.email.value}`);
-                        }}
-                        className="mt-4 flex">
-                        <EmailInput
-                          name="email"
-                          id="email"
-                          defaultValue={router.query.email}
-                          className="focus:border-brand border-bookinglightest mt-0 block w-full rounded-sm border-gray-300 focus:ring-black dark:border-gray-900 dark:bg-black dark:text-white sm:text-sm"
-                          placeholder="rick.astley@cal.com"
-                        />
-                        <Button size="lg" type="submit" className="min-w-max" color="primary">
-                          {t("try_for_free")}
-                        </Button>
-                      </form>
                     </div>
                   )}
                 </div>

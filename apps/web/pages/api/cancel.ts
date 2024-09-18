@@ -72,6 +72,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         select: {
           recurringEvent: true,
           title: true,
+          timeZone: true,
           workflows: {
             include: {
               workflow: {
@@ -125,6 +126,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         translate: await getTranslation(attendee.locale ?? "en", "common"),
         locale: attendee.locale ?? "en",
       },
+      recruiterEmail: attendee.recruiterEmail,
     };
   });
 
@@ -150,7 +152,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     location: bookingToDelete?.location,
     destinationCalendar: bookingToDelete?.destinationCalendar || bookingToDelete?.user.destinationCalendar,
     cancellationReason: cancellationReason,
+    eventTimeZone:bookingToDelete?.eventType?.timeZone
   };
+
   // Hook up the webhook logic here
   const eventTrigger: WebhookTriggerEvents = "BOOKING_CANCELLED";
   // Send Webhook call if hooked to BOOKING.CANCELLED
@@ -231,7 +235,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       attendees: attendeesList,
       location: bookingToDelete.location ?? "",
       uid: bookingToDelete.uid ?? "",
+      cancellationReason: bookingToDelete?.cancellationReason,
       destinationCalendar: bookingToDelete?.destinationCalendar || bookingToDelete?.user.destinationCalendar,
+      eventTimeZone: bookingToDelete?.eventType?.timeZone ?? "",
     };
     await refund(bookingToDelete, evt);
     await prisma.booking.update({

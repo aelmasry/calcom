@@ -1,11 +1,13 @@
+import { Credential } from "@prisma/client";
+import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 
 import dayjs from "@calcom/dayjs";
+import { handleErrorsJson } from "@calcom/lib/errors";
+import logger from "@calcom/lib/logger";
 import prisma from "@calcom/prisma";
-import type { Credential } from "@calcom/prisma/client";
 import { Frequency } from "@calcom/prisma/zod-utils";
 import type { CalendarEvent } from "@calcom/types/Calendar";
-import type { CredentialPayload } from "@calcom/types/Credential";
 import type { PartialReference } from "@calcom/types/EventManager";
 import type { VideoApiAdapter, VideoCallData } from "@calcom/types/VideoApiAdapter";
 
@@ -15,16 +17,38 @@ import refreshOAuthTokens from "../../_utils/oauth/refreshOAuthTokens";
 import metadata from "../_metadata";
 import { getZoomAppKeys } from "./getZoomAppKeys";
 
+const log = logger.getChildLogger({ prefix: ["[api] Zoom video api"] });
+
+const generatePin = (length: number): string => {
+  let pin = "";
+  for (let i = 0; i < length; i++) {
+    const randomDigit = Math.floor(Math.random() * 10);
+    pin += randomDigit.toString();
+  }
+  return pin;
+};
+
+/** @link https://marketplace.zoom.us/docs/guides/auth/oauth/#request */
+const zoomRefreshedTokenSchema = z.object({
+  access_token: z.string(),
+  token_type: z.literal("bearer"),
+  refresh_token: z.string(),
+  expires_in: z.number(),
+  scope: z.string(),
+});
+
+const isTokenValid = (token: Partial<ZoomToken>) =>
+  zoomTokenSchema.safeParse(token).success && (token.expires_in || token.expiry_date || 0) > Date.now();
+
 /** @link https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/meetingcreate */
 const zoomEventResultSchema = z.object({
   id: z.number(),
   join_url: z.string(),
-  password: z.string().optional().default(""),
+  password: z.string().optional(),
 });
 
 export type ZoomEventResult = z.infer<typeof zoomEventResultSchema>;
 
-/** @link https://marketplace.zoom.us/docs/api-reference/zoom-api/methods/#operation/meetings */
 export const zoomMeetingsSchema = z.object({
   next_page_token: z.string(),
   page_count: z.number(),
@@ -49,8 +73,6 @@ export const zoomMeetingsSchema = z.object({
   ),
 });
 
-// Successful API response
-// @TODO: add link to the docs
 const zoomTokenSchema = z.object({
   scope: z.string().regex(new RegExp("meeting:write")),
   expiry_date: z.number(),
@@ -62,19 +84,53 @@ const zoomTokenSchema = z.object({
 
 type ZoomToken = z.infer<typeof zoomTokenSchema>;
 
-const isTokenValid = (token: Partial<ZoomToken>) =>
-  zoomTokenSchema.safeParse(token).success && (token.expires_in || token.expiry_date || 0) > Date.now();
+const zoomAuth = (credential: Credential) => {
+  const credentialKey = zoomTokenSchema.parse(credential.key);
+  const isTokenValid = (token: ZoomToken) =>
+    token && token.token_type && token.access_token && (token.expires_in || token.expiry_date) < Date.now();
 
-/** @link https://marketplace.zoom.us/docs/guides/auth/oauth/#request */
-const zoomRefreshedTokenSchema = z.object({
-  access_token: z.string(),
-  token_type: z.literal("bearer"),
-  refresh_token: z.string(),
-  expires_in: z.number(),
-  scope: z.string(),
-});
+  //   const refreshAccessToken = async (refreshToken: string) => {
+  //     const { client_id, client_secret } = await getZoomAppKeys();
+  //     const authHeader = "Basic " + Buffer.from(client_id + ":" + client_secret).toString("base64");
+  //     return fetch("https://zoom.us/oauth/token", {
+  //       method: "POST",
+  //       headers: {
+  //         Authorization: authHeader,
+  //         "Content-Type": "application/x-www-form-urlencoded",
+  //       },
+  //       body: new URLSearchParams({
+  //         refresh_token: refreshToken,
+  //         grant_type: "refresh_token",
+  //       }),
+  //     })
+  //       .then(handleErrorsJson)
+  //       .then(async (responseBody) => {
+  //         // set expiry date as offset from current time.
+  //         responseBody.expiry_date = Math.round(Date.now() + responseBody.expires_in * 1000);
+  //         delete responseBody.expires_in;
+  //         // Store new tokens in database.
+  //         // await prisma.credential.update({
+  //         //   where: {
+  //         //     id: credential.id,
+  //         //   },
+  //         //   data: {
+  //         //     key: responseBody,
+  //         //   },
+  //         // });
+  //         credentialKey.expiry_date = responseBody.expiry_date;
+  //         credentialKey.access_token = responseBody.access_token;
+  //         return credentialKey.access_token;
+  //       });
+  //   };
 
-const zoomAuth = (credential: CredentialPayload) => {
+  //   return {
+  //     getToken: () =>
+  //       !isTokenValid(credentialKey)
+  //         ? Promise.resolve(credentialKey.access_token)
+  //         : refreshAccessToken(credentialKey.refresh_token),
+  //   };
+  // };
+
   const refreshAccessToken = async (refreshToken: string) => {
     const { client_id, client_secret } = await getZoomAppKeys();
     const authHeader = `Basic ${Buffer.from(`${client_id}:${client_secret}`).toString("base64")}`;
@@ -92,7 +148,7 @@ const zoomAuth = (credential: CredentialPayload) => {
             grant_type: "refresh_token",
           }),
         }),
-      metadata.slug,
+      metadata?.slug ?? "",
       credential.userId
     );
 
@@ -145,7 +201,7 @@ type ZoomRecurrence = {
   monthly_day?: number; // 1-31
 };
 
-const ZoomVideoApiAdapter = (credential: CredentialPayload): VideoApiAdapter => {
+const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
   const translateEvent = (event: CalendarEvent) => {
     const getRecurrence = ({
       recurringEvent,
@@ -197,17 +253,21 @@ const ZoomVideoApiAdapter = (credential: CredentialPayload): VideoApiAdapter => 
       };
     };
 
+    const passcode = generatePin(7);
     const recurrence = getRecurrence(event);
+
     // Documentation at: https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/meetingcreate
     return {
       topic: event.title,
       type: 2, // Means that this is a scheduled meeting
-      start_time: dayjs(event.startTime).utc().format(),
+      start_time: event.startTime,
       duration: (new Date(event.endTime).getTime() - new Date(event.startTime).getTime()) / 60000,
       //schedule_for: "string",   TODO: Used when scheduling the meeting for someone else (needed?)
-      timezone: event.organizer.timeZone,
+      timezone: event.attendees[0].timeZone,
       //password: "string",       TODO: Should we use a password? Maybe generate a random one?
       agenda: event.description,
+      default_password: true,
+      password: passcode,
       settings: {
         host_video: true,
         participant_video: true,
@@ -216,6 +276,7 @@ const ZoomVideoApiAdapter = (credential: CredentialPayload): VideoApiAdapter => 
         join_before_host: true,
         mute_upon_entry: false,
         watermark: false,
+        waiting_room: false,
         use_pmi: false,
         approval_type: 2,
         audio: "both",
@@ -230,17 +291,21 @@ const ZoomVideoApiAdapter = (credential: CredentialPayload): VideoApiAdapter => 
   const fetchZoomApi = async (endpoint: string, options?: RequestInit) => {
     const auth = zoomAuth(credential);
     const accessToken = await auth.getToken();
-    // console.log(`https://api.zoom.us/v2/${endpoint}`);
+    console.log("### accessToken", accessToken);
+    console.log("### URL", `https://api.zoom.us/v2/${endpoint}`);
     const response = await fetch(`https://api.zoom.us/v2/${endpoint}`, {
       method: "GET",
       ...options,
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: "Bearer " + accessToken,
         ...options?.headers,
       },
     });
 
+    console.log("### response", response);
+
     const responseBody = await handleZoomResponse(response, credential.id);
+    console.log("### responseBody", responseBody);
     return responseBody;
   };
 
@@ -249,7 +314,6 @@ const ZoomVideoApiAdapter = (credential: CredentialPayload): VideoApiAdapter => 
       try {
         // TODO Possibly implement pagination for cases when there are more than 300 meetings already scheduled.
         const responseBody = await fetchZoomApi("users/me/meetings?type=scheduled&page_size=300");
-
         const data = zoomMeetingsSchema.parse(responseBody);
         return data.meetings.map((meeting) => ({
           start: meeting.start_time,
@@ -262,48 +326,36 @@ const ZoomVideoApiAdapter = (credential: CredentialPayload): VideoApiAdapter => 
       }
     },
     createMeeting: async (event: CalendarEvent): Promise<VideoCallData> => {
-      try {
-        const response = await fetchZoomApi("users/me/meetings", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(translateEvent(event)),
+      const response: ZoomEventResult = await fetchZoomApi("users/me/meetings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(translateEvent(event)),
+      });
+
+      const result = zoomEventResultSchema.parse(response);
+
+      if (result.id && result.join_url) {
+        return Promise.resolve({
+          type: "zoom_video",
+          id: result.id.toString(),
+          password: result.password || "",
+          url: result.join_url,
         });
-        if (response.error) {
-          if (response.error === "invalid_grant") {
-            await invalidateCredential(credential.id);
-            return Promise.reject(new Error("Invalid grant for Cal.com zoom app"));
-          }
-        }
-
-        const result = zoomEventResultSchema.parse(response);
-
-        if (result.id && result.join_url) {
-          return {
-            type: "zoom_video",
-            id: result.id.toString(),
-            password: result.password || "",
-            url: result.join_url,
-          };
-        }
-        throw new Error(`Failed to create meeting. Response is ${JSON.stringify(result)}`);
-      } catch (err) {
-        console.error(err);
-        /* Prevents meeting creation failure when Zoom Token is expired */
-        throw new Error("Unexpected error");
       }
+      return Promise.reject(new Error("Failed to create meeting"));
     },
     deleteMeeting: async (uid: string): Promise<void> => {
+      console.log("### deleteMeeting", uid);
       try {
         await fetchZoomApi(`meetings/${uid}`, {
           method: "DELETE",
         });
         return Promise.resolve();
       } catch (err) {
-        console.error(`Failed to delete meeting : ${err}`);
-        // throw err;  // Re-throw the error
-        // return Promise.reject(new Error("Failed to delete meeting"));
+        log.error(err);
+        // return Promise.reject(new Error(`Failed to delete meeting: ${JSON.stringify(err)}`));
       }
     },
     updateMeeting: async (bookingRef: PartialReference, event: CalendarEvent): Promise<VideoCallData> => {
@@ -323,16 +375,21 @@ const ZoomVideoApiAdapter = (credential: CredentialPayload): VideoApiAdapter => 
           url: bookingRef.meetingUrl as string,
         });
       } catch (err) {
-        return Promise.reject(new Error("Failed to update meeting"));
+        console.error("Update meeting failed:", err);
+        return Promise.reject(new Error(`Failed to update meeting: ${JSON.stringify(err)}`));
       }
     },
   };
 };
 
 const handleZoomResponse = async (response: Response, credentialId: Credential["id"]) => {
-  console.log("### handleZoomResponse starting");
   let _response = response.clone();
   const responseClone = response.clone();
+  // handle 204 response code with empty response (causes crash otherwise as "" is invalid JSON)
+  if (response.status === 204) {
+    return;
+  }
+
   if (_response.headers.get("content-encoding") === "gzip") {
     const responseString = await response.text();
     _response = JSON.parse(responseString);
@@ -343,13 +400,17 @@ const handleZoomResponse = async (response: Response, credentialId: Credential["
     if ((response && response.status === 124) || responseBody.error === "invalid_grant") {
       await invalidateCredential(credentialId);
     }
-    console.error(response.statusText)
-    // throw Error(response.statusText);
+
+    // Handle 401 Unauthorized by invalidating the credential or refreshing the token
+    if (response.status === 401) {
+      console.error("Unauthorized: Token may be expired or invalid. Invalidating credential...");
+      await invalidateCredential(credentialId);
+      throw new Error("Unauthorized: Token has expired or is invalid.");
+    }
+
+    throw Error(response.statusText);
   }
-  // handle 204 response code with empty response (causes crash otherwise as "" is invalid JSON)
-  if (response.status === 204) {
-    return;
-  }
+
   return responseClone.json();
 };
 
@@ -360,16 +421,15 @@ const invalidateCredential = async (credentialId: Credential["id"]) => {
     },
   });
 
-  if (credential) {
-    await prisma.credential.update({
-      where: {
-        id: credentialId,
-      },
-      data: {
-        invalid: true,
-      },
-    });
-  }
+  // if (credential) {
+  //   await prisma.credential.update({
+  //     where: {
+  //       id: credentialId,
+  //     },
+  //     data: {
+  //       invalid: true,
+  //     },
+  //   });
+  // }
 };
-
 export default ZoomVideoApiAdapter;

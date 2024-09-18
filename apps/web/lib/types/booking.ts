@@ -27,6 +27,9 @@ export type BookingCreateBody = {
   hasHashedBookingLink: boolean;
   hashedLink?: string | null;
   smsReminderNumber?: string;
+  date?: string;
+  t?: string;
+  recruiter_email?: string;
 };
 
 export type BookingResponse = Booking & {

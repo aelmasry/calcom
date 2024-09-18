@@ -14,16 +14,17 @@ export default class OrganizerCancelledEmail extends OrganizerScheduledEmail {
     }
 
     return {
-      from: `Cal.com <${this.getMailerOptions().from}>`,
+      from: `Techiematter.com <${this.getMailerOptions().from}>`,
       to: toAddresses.join(","),
       subject: `${this.t("event_cancelled_subject", {
         eventType: this.calEvent.type,
-        name: this.calEvent.attendees[0].name,
+        name: this.calEvent.organizer.name,
         date: this.getFormattedDate(),
       })}`,
       html: renderEmail("OrganizerCancelledEmail", {
         attendee: this.calEvent.organizer,
         calEvent: this.calEvent,
+        isCancelled: true
       }),
       text: this.getTextBody("event_request_cancelled"),
     };

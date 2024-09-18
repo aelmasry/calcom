@@ -140,14 +140,21 @@ export const slotsRouter = createRouter().query("getSchedule", {
     });
     const endPrismaEventTypeGet = performance.now();
     logger.debug(`Prisma eventType get took ${endPrismaEventTypeGet - startPrismaEventTypeGet}ms`);
+
     if (!eventType) {
       throw new TRPCError({ code: "NOT_FOUND" });
     }
+
+    // console.log("### eventType", eventType)
+    // console.log("### schedule timeZone", eventType.schedule.timeZone)
+    // eventType.schedule.timeZone = "Asia/Kuwait";
+    // console.log("### schedule timeZone 02", eventType.schedule.timeZone)
 
     const startTime =
       input.timeZone === "Etc/GMT"
         ? dayjs.utc(input.startTime)
         : dayjs(input.startTime).utc().tz(input.timeZone);
+
     const endTime =
       input.timeZone === "Etc/GMT" ? dayjs.utc(input.endTime) : dayjs(input.endTime).utc().tz(input.timeZone);
 
@@ -189,6 +196,7 @@ export const slotsRouter = createRouter().query("getSchedule", {
       beforeBufferTime: eventType.beforeEventBuffer,
       currentSeats,
     };
+
     const isWithinBounds = (_time: Parameters<typeof isOutOfBounds>[0]) =>
       !isOutOfBounds(_time, {
         periodType: eventType.periodType,
@@ -213,6 +221,7 @@ export const slotsRouter = createRouter().query("getSchedule", {
         minimumBookingNotice: eventType.minimumBookingNotice,
         frequency: eventType.slotInterval || eventType.length,
       });
+
       const endGetSlots = performance.now();
       getSlotsTime += endGetSlots - startGetSlots;
       getSlotsCount++;

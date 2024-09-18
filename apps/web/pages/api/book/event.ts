@@ -212,6 +212,43 @@ const getEventTypesFromDB = async (eventTypeId: number) => {
   };
 };
 
+const fetchConfirmation = async ({
+  interviewId,
+  dt,
+  evtLocation,
+  t,
+}: {
+  interviewId: string;
+  dt: number;
+  evtLocation: string;
+  t: string;
+}) => {
+  const TECHIEMATTER_URL = process.env.TECHIEMATTER_URL || "";
+
+  try {
+    const url = `${TECHIEMATTER_URL}/thank-you?interview_id=${interviewId}&dt=${dt}&location=${encodeURIComponent(
+      evtLocation || ""
+    )}&t=${t}`;
+
+    console.log("### URL ", url);
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // return response;
+  } catch (error) {
+    log.error("Fetch failed:", error);
+  }
+};
+
 type User = Prisma.UserGetPayload<typeof userSelect>;
 
 async function handler(req: NextApiRequest) {
@@ -294,13 +331,16 @@ async function handler(req: NextApiRequest) {
       name: reqBody.name,
       timeZone: reqBody.timeZone,
       language: { translate: tAttendees, locale: language ?? "en" },
+      recruiterEmail: req.body.recruiter_email,
     },
   ];
+
   const guests = (reqBody.guests || []).map((guest) => ({
     email: guest,
     name: "",
     timeZone: reqBody.timeZone,
     language: { translate: tGuests, locale: "en" },
+    recruiterEmail: req.body.recruiter_email,
   }));
 
   const seed = `${organizerUser.username}:${dayjs(reqBody.start).utc().format()}:${new Date().getTime()}`;
@@ -322,6 +362,7 @@ async function handler(req: NextApiRequest) {
               translate: await getTranslation(user.locale ?? "en", "common"),
               locale: user.locale ?? "en",
             },
+            recruiterEmail: req.body.recruiter_email,
           };
         })
       : [];
@@ -365,8 +406,10 @@ async function handler(req: NextApiRequest) {
     eventTimeZone: eventType.timeZone,
   };
 
+  console.log('### evt', evt);
   // For seats, if the booking already exists then we want to add the new attendee to the existing booking
   if (reqBody.bookingUid) {
+    console.log("### reqBody.bookingUid");
     if (!eventType.seatsPerTimeSlot)
       throw new HttpError({ statusCode: 404, message: "Event type does not have seats" });
 
@@ -389,6 +432,7 @@ async function handler(req: NextApiRequest) {
         },
       },
     });
+
     if (!booking) throw new HttpError({ statusCode: 404, message: "Booking not found" });
 
     // Need to add translation for attendees to pass type checks. Since these values are never written to the db we can just use the new attendee language
@@ -396,6 +440,7 @@ async function handler(req: NextApiRequest) {
       return { ...attendee, language: { translate: tAttendees, locale: language ?? "en" } };
     });
 
+    console.log('### Attendees:', bookingAttendees);
     evt = { ...evt, attendees: [...bookingAttendees, invitee[0]] };
 
     if (eventType.seatsPerTimeSlot <= booking.attendees.length)
@@ -415,6 +460,7 @@ async function handler(req: NextApiRequest) {
             name: invitee[0].name,
             timeZone: invitee[0].timeZone,
             locale: invitee[0].language.locale,
+            recruiterEmail: invitee[0].recruiterEmail,
           },
         },
       },
@@ -470,6 +516,7 @@ async function handler(req: NextApiRequest) {
             email: true,
             locale: true,
             timeZone: true,
+            recruiterEmail: true,
           },
         },
         user: {
@@ -502,7 +549,10 @@ async function handler(req: NextApiRequest) {
       evt.title = originalRescheduledBooking?.title || evt.title;
       evt.description = originalRescheduledBooking?.description || evt.additionalNotes;
       evt.location = originalRescheduledBooking?.location;
+      evt.attendees[0].recruiterEmail = originalRescheduledBooking?.attendees[0].recruiterEmail;
     }
+
+    console.log('### evt:', evt);
 
     const eventTypeRel = !eventTypeId
       ? {}
@@ -536,6 +586,7 @@ async function handler(req: NextApiRequest) {
               email: attendee.email,
               timeZone: attendee.timeZone,
               locale: attendee.language.locale,
+              recruiterEmail: attendee.recruiterEmail,
             };
             return retObj;
           }),
@@ -818,6 +869,16 @@ async function handler(req: NextApiRequest) {
   }
 
   log.debug(`Booking ${user.username} completed`);
+
+  // Usage
+  const interviewId = req.body.eventTypeId;
+  const t = req.body.t;
+  const dt = dayjs(req.body.date).valueOf();
+  const evtLocation = encodeURIComponent(evt.videoCallData.url || evt.location);
+
+  // console.log("### Url paramters: ", { interviewId, dt, evtLocation, t });
+
+  fetchConfirmation({ interviewId, dt, evtLocation, t });
 
   const eventTrigger: WebhookTriggerEvents = rescheduleUid ? "BOOKING_RESCHEDULED" : "BOOKING_CREATED";
   const subscriberOptions = {

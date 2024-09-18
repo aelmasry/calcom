@@ -2,6 +2,7 @@ import type { Availability } from "@prisma/client";
 
 import dayjs, { ConfigType } from "@calcom/dayjs";
 import type { Schedule, TimeRange, WorkingHours } from "@calcom/types/schedule";
+import { getCairoTimeWithDST } from "@calcom/web/lib/timeUtils";
 
 import { nameOfDay } from "./weekday";
 
@@ -77,7 +78,15 @@ export function getWorkingHours(
     ];
   }
 
-  const utcOffset = relativeTimeUnit.utcOffset ?? dayjs().tz(relativeTimeUnit.timeZone).utcOffset();
+  const letTimeZone = relativeTimeUnit.timeZone;
+  let utcOffset; // Declare utcOffset outside the blocks
+
+  if (letTimeZone && letTimeZone.includes("Cairo")) {
+    const cairoTime = getCairoTimeWithDST(dayjs(availability[0].startTime));
+    utcOffset = relativeTimeUnit.utcOffset ?? cairoTime.utcOffset() + 60;
+  } else {
+    utcOffset = relativeTimeUnit.utcOffset ?? dayjs().tz(relativeTimeUnit.timeZone).utcOffset();
+  }
 
   const workingHours = availability.reduce((workingHours: WorkingHours[], schedule) => {
     // Get times localised to the given utcOffset/timeZone

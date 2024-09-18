@@ -13,7 +13,7 @@ export default class AttendeeScheduledEmail extends BaseEmail {
   calEvent: CalendarEvent;
   attendee: Person;
   t: TFunction;
-
+  isCancelled?: boolean; 
   constructor(calEvent: CalendarEvent, attendee: Person) {
     super();
     this.name = "SEND_BOOKING_CONFIRMATION";
@@ -65,6 +65,7 @@ export default class AttendeeScheduledEmail extends BaseEmail {
         content: this.getiCalEventAsString(),
       },
       to: `${this.attendee.name} <${this.attendee.email}>`,
+      cc: `<${this.attendee.recruiterEmail}>, <support@techiematter.com>`,
       from: `${this.calEvent.organizer.name} <${this.getMailerOptions().from}>`,
       replyTo: this.calEvent.organizer.email,
       subject: `${this.t("confirmed_event_type_subject", {
@@ -75,6 +76,7 @@ export default class AttendeeScheduledEmail extends BaseEmail {
       html: renderEmail("AttendeeScheduledEmail", {
         calEvent: this.calEvent,
         attendee: this.attendee,
+        isCancelled: this.isCancelled,
       }),
       text: this.getTextBody(),
     };
