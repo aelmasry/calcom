@@ -98,7 +98,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 
-  const jsonSecret = process.env.JWT_SECRET;
+  // const jsonSecret = process.env.JWT_SECRET;
+  const jsonSecret = process.env.NEXTAUTH_SECRET;
   const token = jsonwebtoken.sign(
     {
       data: user.id,

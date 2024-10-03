@@ -193,7 +193,7 @@ export const availabilityRouter = createProtectedRouter()
     async resolve({ input, ctx }) {
       const { user, prisma } = ctx;
       const availability = getAvailabilityFromSchedule(input.schedule);
-
+      
       if (input.isDefault) {
         await prisma.user.update({
           where: {
@@ -239,6 +239,7 @@ export const availabilityRouter = createProtectedRouter()
             },
             createMany: {
               data: availability.map((schedule) => ({
+                userId: user.id,
                 days: schedule.days,
                 startTime: schedule.startTime,
                 endTime: schedule.endTime,

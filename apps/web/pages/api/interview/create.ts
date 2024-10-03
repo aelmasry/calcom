@@ -22,7 +22,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // decode the token
   let decoded;
   try {
-    decoded = jsonwebtoken.decode(token, process.env.JWT_SECRET);
+    // decoded = jsonwebtoken.decode(token, process.env.JWT_SECRET);
+    decoded = jsonwebtoken.decode(token, process.env.NEXTAUTH_SECRET);
   } catch (err) {
     res.status(401).json({ message: "Invalid token" });
     return;

@@ -20,13 +20,25 @@ export async function getBusyTimes(params: {
   const busyTimes: EventBusyDate[] = await prisma.booking
     .findMany({
       where: {
-        userId,
-        eventTypeId,
-        startTime: { gte: new Date(startTime) },
-        endTime: { lte: new Date(endTime) },
-        status: {
-          in: [BookingStatus.ACCEPTED],
-        },
+        AND: [
+          {
+            OR: [
+              { userId }, // userId = $1
+              { eventTypeId }, // eventTypeId = $2
+            ],
+          },
+          {
+            startTime: { gte: startTime }, // startTime >= $3
+          },
+          {
+            endTime: { lte: endTime }, // endTime <= $4
+          },
+          {
+            status: {
+              in: [BookingStatus.ACCEPTED], // status IN ('ACCEPTED')
+            },
+          },
+        ],
       },
       select: {
         startTime: true,
@@ -39,7 +51,7 @@ export async function getBusyTimes(params: {
   if (credentials.length > 0) {
     const calendarBusyTimes = await getBusyCalendarTimes(credentials, startTime, endTime, selectedCalendars);
     // console.log("calendarBusyTimes", calendarBusyTimes);
-    busyTimes.push(...calendarBusyTimes); /* 
+    busyTimes.push(...calendarBusyTimes); /*
     // TODO: Disabled until we can filter Zoom events by date. Also this is adding too much latency.
     const videoBusyTimes = (await getBusyVideoTimes(credentials)).filter(notEmpty);
     console.log("videoBusyTimes", videoBusyTimes);
