@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { EventTypeGuestInput } from "@prisma/client";
+import { EventTypeGuests } from "@prisma/client";
 import React, { FC } from "react";
 import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
@@ -18,7 +18,7 @@ type EventTypeFormValues = zod.infer<typeof eventTypeSchema>;
 interface Props {
   onSubmit: SubmitHandler<EventTypeFormValues>;
   onCancel: () => void;
-  selectedCustomInput?: EventTypeGuestInput;
+  selectedCustomInput?: EventTypeGuests;
 }
 
 const EventTypeGuestForm: FC<Props> = (props) => {
@@ -30,6 +30,7 @@ const EventTypeGuestForm: FC<Props> = (props) => {
     { value: "EMAIL", label: t("email") },
   ];
 
+  const { selectedCustomInput } = props;
   const defaultValues: EventTypeFormValues = {
     email: props.selectedCustomInput?.email || "",
   };
@@ -64,6 +65,18 @@ const EventTypeGuestForm: FC<Props> = (props) => {
           )}
         />
       </div>
+      <input
+        type="hidden"
+        id="eventTypeId"
+        value={selectedCustomInput?.eventTypeId || -1}
+        {...register("eventTypeId", { valueAsNumber: true })}
+      />
+      <input
+        type="hidden"
+        id="id"
+        value={selectedCustomInput?.id || -1}
+        {...register("id", { valueAsNumber: true })}
+      />
       <div className="mt-5 flex space-x-2 sm:mt-4">
         <Button type="button" color="secondary" onClick={props.onCancel}>
           {t("cancel")}

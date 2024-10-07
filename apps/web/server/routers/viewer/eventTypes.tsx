@@ -1,9 +1,14 @@
-import { EventTypeCustomInput, MembershipRole, PeriodType, Prisma } from "@prisma/client";
+import { EventTypeCustomInput, MembershipRole, PeriodType, Prisma, EventTypeGuests } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { z } from "zod";
 
 import getAppKeysFromSlug from "@calcom/app-store/_utils/getAppKeysFromSlug";
-import { _DestinationCalendarModel, _EventTypeCustomInputModel, _EventTypeModel } from "@calcom/prisma/zod";
+import {
+  _DestinationCalendarModel,
+  _EventTypeCustomInputModel,
+  _EventTypeModel,
+  _EventTypeGuestsModel,
+} from "@calcom/prisma/zod";
 import { stringOrNumber } from "@calcom/prisma/zod-utils";
 import { createEventTypeInput } from "@calcom/prisma/zod/custom/eventtype";
 import { stripeDataSchema } from "@calcom/stripe/server";
@@ -40,7 +45,9 @@ function handlePeriodType(periodType: string | undefined): PeriodType | undefine
 }
 
 function handleCustomInputs(customInputs: EventTypeCustomInput[], eventTypeId: number) {
+  console.log("### handleCustomInputs", customInputs);
   const cInputsIdsToDelete = customInputs.filter((input) => input.id > 0).map((e) => e.id);
+  console.log("### cInputsIdsToDelete", cInputsIdsToDelete);
   const cInputsToCreate = customInputs
     .filter((input) => input.id < 0)
     .map((input) => ({
@@ -77,10 +84,46 @@ function handleCustomInputs(customInputs: EventTypeCustomInput[], eventTypeId: n
   };
 }
 
+function handleGuests(guests: EventTypeGuests[], eventTypeId: number) {
+  const cInputsIdsToDelete = guests.filter((guest) => guest.id > 0).map((e) => e.id);
+  console.log("### cInputsIdsToDelete", cInputsIdsToDelete);
+  const cInputsToCreate = guests
+    .filter((guest) => guest.id < 0)
+    .map((guest) => ({
+      email: guest.email,
+    }));
+
+  console.log("### cInputsToCreate", cInputsToCreate);
+  const cInputsToUpdate = guests
+    .filter((guest) => guest.id > 0)
+    .map((guest) => ({
+      data: {
+        email: guest.email,
+      },
+      where: {
+        id: guest.id,
+      },
+    }));
+
+  return {
+    deleteMany: {
+      eventTypeId,
+      NOT: {
+        id: { in: cInputsIdsToDelete },
+      },
+    },
+    createMany: {
+      data: cInputsToCreate,
+    },
+    update: cInputsToUpdate,
+  };
+}
+
 const EventTypeUpdateInput = _EventTypeModel
   /** Optional fields */
   .extend({
     customInputs: z.array(_EventTypeCustomInputModel),
+    guests: z.array(_EventTypeGuestsModel),
     destinationCalendar: _DestinationCalendarModel.pick({
       integration: true,
       externalId: true,
@@ -256,12 +299,14 @@ export const eventTypesRouter = createProtectedRouter()
   .mutation("update", {
     input: EventTypeUpdateInput.strict(),
     async resolve({ ctx, input }) {
+      console.log("#### input", input);
       const {
         schedule,
         periodType,
         locations,
         destinationCalendar,
         customInputs,
+        guests,
         recurringEvent,
         users,
         id,
@@ -298,6 +343,10 @@ export const eventTypesRouter = createProtectedRouter()
 
       if (customInputs) {
         data.customInputs = handleCustomInputs(customInputs, id);
+      }
+
+      if (guests) {
+        data.guests = handleGuests(guests, id);
       }
 
       if (schedule) {

@@ -14,7 +14,14 @@ import {
   UsersIcon,
 } from "@heroicons/react/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { EventTypeCustomInput, MembershipRole, PeriodType, Prisma, SchedulingType } from "@prisma/client";
+import {
+  EventTypeCustomInput,
+  MembershipRole,
+  PeriodType,
+  Prisma,
+  SchedulingType,
+  EventTypeGuests,
+} from "@prisma/client";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@radix-ui/react-collapsible";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import classNames from "classnames";
@@ -68,6 +75,7 @@ import ConfirmationDialogContent from "@components/dialog/ConfirmationDialogCont
 import { EditLocationDialog } from "@components/dialog/EditLocationDialog";
 import RecurringEventController from "@components/eventtype/RecurringEventController";
 import CustomInputTypeForm from "@components/pages/eventtypes/CustomInputTypeForm";
+import EventTypeGuestForm from "@components/pages/eventtypes/EventTypeGuestForm";
 import Badge from "@components/ui/Badge";
 import InfoBadge from "@components/ui/InfoBadge";
 import CheckboxField from "@components/ui/form/CheckboxField";
@@ -123,6 +131,7 @@ export type FormValues = {
     displayLocationPublicly?: boolean;
   }[];
   customInputs: EventTypeCustomInput[];
+  guests: EventTypeGuests[];
   users: string[];
   schedule: number;
   periodType: PeriodType;
@@ -318,6 +327,13 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
   const [customInputs, setCustomInputs] = useState<EventTypeCustomInput[]>(
     eventType.customInputs.sort((a, b) => a.id - b.id) || []
   );
+
+  const [selectedEventTypeGuest, setSelectedEventTypeGuest] = useState<EventTypeGuests | undefined>(
+    undefined
+  );
+  const [SelectedEventTypeGuestModalOpen, setSelectedEventTypeGuestModalOpen] = useState(false);
+  const [guests, setGuests] = useState<EventTypeGuests[]>(eventType.guests.sort((a, b) => a.id - b.id) || []);
+
   const [tokensList, setTokensList] = useState<Array<Token>>([]);
 
   const defaultSeatsPro = 6;
@@ -396,6 +412,12 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
     setCustomInputs([...customInputs]);
   };
 
+  const removeGuest = (index: number) => {
+    formMethods.getValues("guests").splice(index, 1);
+    guests.splice(index, 1);
+    setGuests([...guests]);
+  };
+
   const schedulingTypeOptions: {
     value: SchedulingType;
     label: string;
@@ -444,6 +466,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
     defaultValues: {
       locations: eventType.locations || [],
       recurringEvent: eventType.recurringEvent || null,
+      guests: eventType.guests || null,
       schedule: eventType.schedule?.id,
       length: eventType.length?.valueOf() || 30,
       periodDates: {
@@ -857,6 +880,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                 <Form
                   form={formMethods}
                   handleSubmit={async (values) => {
+                    console.log("Form submission started");
                     const {
                       periodDates,
                       periodCountCalendarDays,
@@ -893,6 +917,20 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                       },
                       "*"
                     );
+
+                    console.log("Extracted values:", {
+                      periodDates,
+                      periodCountCalendarDays,
+                      smartContractAddress,
+                      giphyThankYouPage,
+                      beforeBufferTime,
+                      afterBufferTime,
+                      seatsPerTimeSlot,
+                      recurringEvent,
+                      locations,
+                      timeZone,
+                      ...input,
+                    });
 
                     updateMutation.mutate({
                       ...input,
@@ -1060,7 +1098,8 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                       </div>
                     </div>
                   </div> */}
-                  {team && <hr className="border-neutral-200" />}
+
+                  {/* team && <hr className="border-neutral-200" />}
                   {team && (
                     <div className="space-y-3">
                       <div className="block sm:flex">
@@ -1122,8 +1161,55 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                         </div>
                       </div>
                     </div>
-                  )}
+                  ) */}
 
+                  <div className="block items-center sm:flex">
+                    <div
+                      className="min-w-48 mb-4 sm:mb-0"
+                      style={{ height: "75vh", verticalAlign: "middle" }}>
+                      <label
+                        htmlFor="additionalFields"
+                        className="mt-2 flex items-center text-sm font-medium text-neutral-700">
+                        {t("Guests")}
+                      </label>
+                    </div>
+                    <div className="w-full">
+                      <ul className="mt-1">
+                        <li style={{ marginBottom: "10px" }}>
+                          <Button
+                            onClick={() => {
+                              setSelectedEventTypeGuest(undefined);
+                              setSelectedEventTypeGuestModalOpen(true);
+                            }}
+                            color="secondary"
+                            type="button"
+                            StartIcon={PlusIcon}>
+                            {t("add_guest")}
+                          </Button>
+                        </li>
+                        {guests.map((guest: EventTypeGuests, idx: number) => (
+                          <li key={idx} className="bg-secondary-50 mb-2 border p-2">
+                            <div className="flex justify-between">
+                              <div className="w-0 flex-1">
+                                <div className="truncate">
+                                  <span
+                                    className="text-sm ltr:ml-2 rtl:mr-2"
+                                    title={`${t("email")}: ${guest.email}`}>
+                                    {guest.email}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="flex">
+                                <button type="button" onClick={() => removeGuest(idx)}>
+                                  <XIcon className="h-6 w-6 border-l-2 pl-1 hover:text-red-500 " />
+                                </button>
+                              </div>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
                   <Collapsible
                     open={advancedSettingsVisible}
                     onOpenChange={() => setAdvancedSettingsVisible(!advancedSettingsVisible)}>
@@ -1982,6 +2068,59 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
               </Dialog>
             )}
           />
+          <Controller
+            name="guests"
+            control={formMethods.control}
+            defaultValue={eventType.guests.sort((a, b) => a.id - b.id) || []}
+            render={() => (
+              <Dialog
+                open={SelectedEventTypeGuestModalOpen}
+                onOpenChange={setSelectedEventTypeGuestModalOpen}>
+                <DialogContent asChild>
+                  <div
+                    className="inline-block transform rounded-sm bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 sm:align-middle"
+                    style={{ height: "550px" }}>
+                    <div className="mb-4 sm:flex sm:items-start">
+                      <div className="bg-secondary-100 mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 sm:h-10 sm:w-10">
+                        <PlusIcon className="text-primary-600 h-6 w-6" />
+                      </div>
+                      <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3 className="text-lg font-medium leading-6 text-gray-900" id="modal-title">
+                          {t("add_guest_email")}
+                        </h3>
+                        <div>
+                          <p className="text-sm text-gray-400">
+                            {t("this_input_will_shown_booking_this_event")}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <EventTypeGuestForm
+                      selectedEventTypeGuest={selectedEventTypeGuest}
+                      onSubmit={(values) => {
+                        const guest: EventTypeGuests = {
+                          id: -1,
+                          eventTypeId: -1,
+                          email: values.email,
+                        };
+
+                        if (selectedEventTypeGuest) {
+                          selectedEventTypeGuest.email = guest.email;
+                        } else {
+                          setGuests(guests.concat(guest));
+                          formMethods.setValue("guests", formMethods.getValues("guests").concat(guest));
+                        }
+                        setSelectedEventTypeGuestModalOpen(false);
+                      }}
+                      onCancel={() => {
+                        setSelectedEventTypeGuestModalOpen(false);
+                      }}
+                    />
+                  </div>
+                </DialogContent>
+              </Dialog>
+            )}
+          />
           {isAdmin && (
             <WebhookListContainer
               title={t("team_webhooks")}
@@ -2111,6 +2250,12 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
         select: {
           id: true,
           timeZone: true,
+        },
+      },
+      guests: {
+        select: {
+          id: true,
+          email: true,
         },
       },
       userId: true,
