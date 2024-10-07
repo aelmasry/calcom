@@ -76,6 +76,8 @@ model EventType {
   metadata                Json?
   successRedirectUrl      String?
   workflows               WorkflowsOnEventTypes[]
+  guests           EventTypeGuests[]  // One-to-many relationship with EventTypeGuests
+
 
   @@unique([userId, slug])
   @@unique([teamId, slug])
@@ -597,4 +599,13 @@ enum WorkflowTemplates {
 enum WorkflowMethods {
   EMAIL
   SMS
+}
+
+model EventTypeGuests {
+  id           Int      @id @default(autoincrement()) // Primary key
+  eventTypeId  Int                                       // Foreign key for EventType
+  email        String                                    // Email of the guest
+
+  // Define relationship to EventType model
+  EventType    EventType @relation(fields: [eventTypeId], references: [id])
 }

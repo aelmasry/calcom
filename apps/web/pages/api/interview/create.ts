@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const data = req.body;
   console.log(" ###### Create DATA ", data);
-  const { job_id, job_title, comapny_name } = data;
+  const { job_id, job_title, comapny_name, guests } = data;
   const name = job_title;
   let timezone;
   if (
@@ -61,6 +61,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const schedule = await createSchedule(name, userId, slug, timezone);
   console.log("####### schedule", schedule);
   const eventType = await createEventType(name, schedule.id, userId, slug, timezone);
+  await createEventTypeGuests(eventType.id, guests);
   res.status(200).json({
     interview_id: eventType.id,
     interview_slug: slug,
@@ -83,8 +84,6 @@ async function createSchedule(name: string, userId: any, slug: any, timezone: st
     },
   };
 
-  console.log("####### schedule data", data);
-  debugger;
   return await prisma.schedule.create({ data });
 }
 
@@ -111,4 +110,31 @@ async function createEventType(title: any, scheduleId: any, userId: any, slug: a
   };
 
   return await prisma.eventType.create({ data });
+}
+
+async function createEventTypeGuests(eventTypeId: any, guests: any) {
+  try {
+    for (const guest of guests) {
+      // Check if the guest already exists for this eventTypeId
+      const existingGuest = await prisma.eventTypeGuests.findFirst({
+        where: {
+          eventTypeId,
+          email: guest,
+        },
+      });
+      // If the guest does not exist, create a new entry
+      if (!existingGuest) {
+        await prisma.eventTypeGuests.create({
+          data: {
+            email: guest,
+            eventTypeId,
+          },
+        });
+      }
+    }
+    return true; // Return success
+  } catch (error) {
+    console.error("Error creating EventTypeGuests:", error);
+    return false;
+  }
 }
