@@ -13,6 +13,10 @@ export default class OrganizerRescheduledEmail extends OrganizerScheduledEmail {
       });
     }
 
+    this.calEvent.guests.forEach((guest) => {
+      toAddresses.push(guest.email); // Assuming guests have an 'email' field
+    });
+
     return {
       icalEvent: {
         filename: "event.ics",

@@ -371,6 +371,15 @@ async function handler(req: NextApiRequest) {
 
   const attendeesList = [...invitee, ...guests, ...teamMembers];
 
+  const eventTypeGuests = await prisma.eventTypeGuests.findMany({
+    where: {
+      eventTypeId,
+    },
+    select: {
+      email: true,
+    },
+  });
+
   const eventNameObject = {
     attendeeName: reqBody.name || "Nameless",
     eventType: eventType.title,
@@ -396,6 +405,7 @@ async function handler(req: NextApiRequest) {
       timeZone: organizerUser.timeZone,
       language: { translate: tOrganizer, locale: organizer?.locale ?? "en" },
     },
+    guests: eventTypeGuests,
     attendees: attendeesList,
     location: reqBody.location, // Will be processed by the EventManager later.
     /** For team events & dynamic collective events, we will need to handle each member destinationCalendar eventually */
@@ -406,7 +416,6 @@ async function handler(req: NextApiRequest) {
     eventTimeZone: eventType.timeZone,
   };
 
-  console.log('### evt', evt);
   // For seats, if the booking already exists then we want to add the new attendee to the existing booking
   if (reqBody.bookingUid) {
     console.log("### reqBody.bookingUid");
@@ -440,7 +449,7 @@ async function handler(req: NextApiRequest) {
       return { ...attendee, language: { translate: tAttendees, locale: language ?? "en" } };
     });
 
-    console.log('### Attendees:', bookingAttendees);
+    console.log("### Attendees:", bookingAttendees);
     evt = { ...evt, attendees: [...bookingAttendees, invitee[0]] };
 
     if (eventType.seatsPerTimeSlot <= booking.attendees.length)
@@ -552,7 +561,7 @@ async function handler(req: NextApiRequest) {
       evt.attendees[0].recruiterEmail = originalRescheduledBooking?.attendees[0].recruiterEmail;
     }
 
-    console.log('### evt:', evt);
+    console.log("### evt:", evt);
 
     const eventTypeRel = !eventTypeId
       ? {}

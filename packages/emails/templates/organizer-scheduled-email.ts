@@ -70,7 +70,11 @@ export default class OrganizerScheduledEmail extends BaseEmail {
 
     // SEND_BOOKING_CONFIRMATION to support
     toAddresses.push("support@techiematter.com");
+    this.calEvent.guests.forEach((guest) => {
+      toAddresses.push(guest.email); // Assuming guests have an 'email' field
+    });
 
+    console.log("### TO ADDRESSES ", toAddresses);
     let subject;
     if (this.newSeat) {
       subject = "new_seat_subject";

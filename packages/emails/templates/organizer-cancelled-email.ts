@@ -13,6 +13,10 @@ export default class OrganizerCancelledEmail extends OrganizerScheduledEmail {
       });
     }
 
+    this.calEvent.guests.forEach((guest) => {
+      toAddresses.push(guest.email); // Assuming guests have an 'email' field
+    });
+
     return {
       from: `Techiematter.com <${this.getMailerOptions().from}>`,
       to: toAddresses.join(","),
@@ -24,7 +28,7 @@ export default class OrganizerCancelledEmail extends OrganizerScheduledEmail {
       html: renderEmail("OrganizerCancelledEmail", {
         attendee: this.calEvent.organizer,
         calEvent: this.calEvent,
-        isCancelled: true
+        isCancelled: true,
       }),
       text: this.getTextBody("event_request_cancelled"),
     };
