@@ -232,7 +232,7 @@ const ZoomVideoApiAdapter = (credential: CredentialPayload): VideoApiAdapter => 
   const fetchZoomApi = async (endpoint: string, options?: RequestInit) => {
     const auth = zoomAuth(credential);
     const accessToken = await auth.getToken();
-    // console.log(`https://api.zoom.us/v2/${endpoint}`);
+
     const response = await fetch(`https://api.zoom.us/v2/${endpoint}`, {
       method: "GET",
       ...options,
@@ -279,8 +279,6 @@ const ZoomVideoApiAdapter = (credential: CredentialPayload): VideoApiAdapter => 
           }
         }
 
-        console.info(response);
-        console.log(JSON.stringify(response));
         const result = zoomEventResultSchema.parse(response);
 
         if (result.id && result.join_url) {
