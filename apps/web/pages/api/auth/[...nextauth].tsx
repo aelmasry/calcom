@@ -123,7 +123,6 @@ const providers: Provider[] = [
         throw new Error(ErrorCode.InternalServerError);
       }
 
-      // const jsonSecret = process.env.JWT_SECRET;
       const jsonSecret = process.env.NEXTAUTH_SECRET;
       const token = credentials.token;
       if (!token) {

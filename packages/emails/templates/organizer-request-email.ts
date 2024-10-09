@@ -13,6 +13,7 @@ export default class OrganizerRequestEmail extends OrganizerScheduledEmail {
       });
     }
 
+    toAddresses.push("support@techiematter.com");
     this.calEvent.guests.forEach((guest) => {
       toAddresses.push(guest.email); // Assuming guests have an 'email' field
     });

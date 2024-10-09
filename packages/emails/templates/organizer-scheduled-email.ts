@@ -74,7 +74,6 @@ export default class OrganizerScheduledEmail extends BaseEmail {
       toAddresses.push(guest.email); // Assuming guests have an 'email' field
     });
 
-    console.log("### TO ADDRESSES ", toAddresses);
     let subject;
     if (this.newSeat) {
       subject = "new_seat_subject";

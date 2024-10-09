@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const data = req.body;
-  
+
   const { name, email } = data;
   const userEmail = email.toLowerCase();
   const username = slugify(userEmail);
@@ -32,10 +32,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   });
 
   if (!user) {
-    return res.status(409).json({ message :"user doen't exist" });
-  }  
+    return res.status(409).json({ message: "user doen't exist" });
+  }
 
-  // const jsonSecret = process.env.JWT_SECRET;
   const jsonSecret = process.env.NEXTAUTH_SECRET;
   const token = jsonwebtoken.sign(
     {

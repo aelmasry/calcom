@@ -213,9 +213,9 @@ const ZoomVideoApiAdapter = (credential: CredentialPayload): VideoApiAdapter => 
         participant_video: true,
         cn_meeting: false, // TODO: true if host meeting in China
         in_meeting: false, // TODO: true if host meeting in India
-        // jbh_time: 5, // If the value of the join_before_host field is true, this field indicates the time limits when a participant can join a meeting before the meeting's host.
+        jbh_time: 0, // If the value of the join_before_host field is true, this field indicates the time limits when a participant can join a meeting before the meeting's host.
         join_before_host: true,
-        mute_upon_entry: false, 
+        mute_upon_entry: false,
         watermark: false,
         use_pmi: false,
         approval_type: 2,
@@ -279,6 +279,8 @@ const ZoomVideoApiAdapter = (credential: CredentialPayload): VideoApiAdapter => 
           }
         }
 
+        console.info(response);
+        console.log(JSON.stringify(response));
         const result = zoomEventResultSchema.parse(response);
 
         if (result.id && result.join_url) {
@@ -332,7 +334,6 @@ const ZoomVideoApiAdapter = (credential: CredentialPayload): VideoApiAdapter => 
 };
 
 const handleZoomResponse = async (response: Response, credentialId: Credential["id"]) => {
-  console.log("### handleZoomResponse starting");
   let _response = response.clone();
   const responseClone = response.clone();
   if (_response.headers.get("content-encoding") === "gzip") {
@@ -345,7 +346,7 @@ const handleZoomResponse = async (response: Response, credentialId: Credential["
     if ((response && response.status === 124) || responseBody.error === "invalid_grant") {
       await invalidateCredential(credentialId);
     }
-    console.error(response.statusText)
+    console.error(response.statusText);
     // throw Error(response.statusText);
   }
   // handle 204 response code with empty response (causes crash otherwise as "" is invalid JSON)

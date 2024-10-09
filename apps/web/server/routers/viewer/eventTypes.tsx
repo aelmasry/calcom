@@ -45,9 +45,7 @@ function handlePeriodType(periodType: string | undefined): PeriodType | undefine
 }
 
 function handleCustomInputs(customInputs: EventTypeCustomInput[], eventTypeId: number) {
-  console.log("### handleCustomInputs", customInputs);
   const cInputsIdsToDelete = customInputs.filter((input) => input.id > 0).map((e) => e.id);
-  console.log("### cInputsIdsToDelete", cInputsIdsToDelete);
   const cInputsToCreate = customInputs
     .filter((input) => input.id < 0)
     .map((input) => ({
@@ -86,14 +84,12 @@ function handleCustomInputs(customInputs: EventTypeCustomInput[], eventTypeId: n
 
 function handleGuests(guests: EventTypeGuests[], eventTypeId: number) {
   const cInputsIdsToDelete = guests.filter((guest) => guest.id > 0).map((e) => e.id);
-  console.log("### cInputsIdsToDelete", cInputsIdsToDelete);
   const cInputsToCreate = guests
     .filter((guest) => guest.id < 0)
     .map((guest) => ({
       email: guest.email,
     }));
 
-  console.log("### cInputsToCreate", cInputsToCreate);
   const cInputsToUpdate = guests
     .filter((guest) => guest.id > 0)
     .map((guest) => ({
