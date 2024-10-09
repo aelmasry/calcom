@@ -561,7 +561,7 @@ async function handler(req: NextApiRequest) {
       evt.attendees[0].recruiterEmail = originalRescheduledBooking?.attendees[0].recruiterEmail;
     }
 
-    console.log("### evt:", evt);
+    // console.log("### evt:", evt);
 
     const eventTypeRel = !eventTypeId
       ? {}

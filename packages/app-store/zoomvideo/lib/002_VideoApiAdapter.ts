@@ -305,7 +305,7 @@ const ZoomVideoApiAdapter = (credential: Credential): VideoApiAdapter => {
     console.log("### response", response);
 
     const responseBody = await handleZoomResponse(response, credential.id);
-    console.log("### responseBody", responseBody);
+    // console.log("### responseBody", responseBody);
     return responseBody;
   };
 
