@@ -30,6 +30,7 @@ export function AvailabilityForm(props: inferQueryOutput<"viewer.availability.sc
   const router = useRouter();
   const utils = trpc.useContext();
 
+  
   const form = useForm({
     defaultValues: {
       schedule: props.availability || DEFAULT_SCHEDULE,
@@ -110,6 +111,7 @@ export function AvailabilityForm(props: inferQueryOutput<"viewer.availability.sc
 
 export default function Availability() {
   const router = useRouter();
+  
   const { i18n } = useLocale();
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const jsonwebtoken = require("jsonwebtoken");
@@ -117,9 +119,12 @@ export default function Availability() {
   const { data: session, status } = useSession();
   const loading = status === "loading";
 
+  // console.log("### router", router.query.token)
   let token = null;
   if (typeof window !== "undefined") {
     token = window.location.search.split("token=")[1];
+  }else {
+    token = router.query.token
   }
 
   const userFromToken = jsonwebtoken.decode(token);

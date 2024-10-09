@@ -1163,10 +1163,10 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                     </div>
                   ) */}
 
-                  <div className="block items-center sm:flex">
+                  <div className="block sm:flex">
                     <div
                       className="min-w-48 mb-4 sm:mb-0"
-                      style={{ height: "75vh", verticalAlign: "middle" }}>
+                      style={{ verticalAlign: "middle" }}>
                       <label
                         htmlFor="additionalFields"
                         className="mt-2 flex items-center text-sm font-medium text-neutral-700">
