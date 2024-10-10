@@ -107,11 +107,25 @@ export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string
       <span className="flex self-center font-medium text-gray-700 ltr:mr-2 rtl:ml-2 dark:text-gray-50">
         {t("add_to_calendar")}
       </span>
-      <div className="-ml-16 flex flex-grow justify-center text-center" style={{ lineHeight: "50px" }}>
+      <div
+        style={{
+          display: "flex",
+          flexGrow: 1,
+          justifyContent: "center",
+          textAlign: "center",
+          lineHeight: "50px",
+        }}>
         <Link href={googleCalendarLink}>
           <a
-            className="mx-2 h-4 w-4 rounded-sm border border-neutral-200 px-3 py-2 dark:border-neutral-700 dark:text-white"
-            style={{ padding: "10px" }}>
+            style={{
+              margin: "0 8px",
+              height: "40px",
+              width: "40px",
+              borderRadius: "4px",
+              border: "1px solid #e5e7eb",
+              padding: "8px",
+              color: "#000",
+            }}>
             <svg
               className="-mt-1.5 inline-block h-4 w-4"
               xmlns="http://www.w3.org/2000/svg"
@@ -120,6 +134,14 @@ export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string
               x="0px"
               y="0px"
               viewBox="0 0 24 24">
+              <title>Google</title>
+              <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z" />
+            </svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              style={{ marginTop: "-6px", display: "inline-block", height: "16px", width: "16px" }}>
               <title>Google</title>
               <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z" />
             </svg>
