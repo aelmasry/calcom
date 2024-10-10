@@ -138,10 +138,13 @@ export default function Availability() {
     });
   }
 
+  const scheduleId = parseInt(router.query.schedule as string)
+  
   const query = trpc.useQuery([
     "viewer.availability.schedule",
     {
-      scheduleId: parseInt(router.query.schedule as string),
+      // scheduleId: parseInt(router.query.schedule as string),
+      scheduleId: scheduleId,
     },
   ]);
   const [name, setName] = useState<string>();

@@ -35,7 +35,7 @@ export const availabilityRouter = createProtectedRouter()
   })
   .query("schedule", {
     input: z.object({
-      scheduleId: z.number(),
+      scheduleId: z.number().int(),
     }),
     async resolve({ ctx, input }) {
       const { prisma, user } = ctx;
