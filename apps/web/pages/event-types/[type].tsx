@@ -918,20 +918,6 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                       "*"
                     );
 
-                    console.log("Extracted values:", {
-                      periodDates,
-                      periodCountCalendarDays,
-                      smartContractAddress,
-                      giphyThankYouPage,
-                      beforeBufferTime,
-                      afterBufferTime,
-                      seatsPerTimeSlot,
-                      recurringEvent,
-                      locations,
-                      timeZone,
-                      ...input,
-                    });
-
                     updateMutation.mutate({
                       ...input,
                       locations,
