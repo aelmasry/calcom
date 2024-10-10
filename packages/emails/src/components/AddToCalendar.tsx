@@ -147,7 +147,7 @@ export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string
             title="Microsoft office 360"
             style={{ margin: '0 8px', height: '40px', width: '40px', borderRadius: '4px', color: '#000' }}
             target="_blank"
-          >
+          >##
 
             <img src="https://img.icons8.com/?size=100&id=117062&format=png&color=000000" alt="Microsoft Outlook" style={{ width: '28px', height: '28px', borderRadius: '4px' }} />
 
