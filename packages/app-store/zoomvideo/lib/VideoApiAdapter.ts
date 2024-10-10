@@ -213,7 +213,7 @@ const ZoomVideoApiAdapter = (credential: CredentialPayload): VideoApiAdapter => 
         participant_video: true,
         cn_meeting: false, // TODO: true if host meeting in China
         in_meeting: false, // TODO: true if host meeting in India
-        // jbh_time: 0, // If the value of the join_before_host field is true, this field indicates the time limits when a participant can join a meeting before the meeting's host.
+        jbh_time: 0, // If the value of the join_before_host field is true, this field indicates the time limits when a participant can join a meeting before the meeting's host.
         join_before_host: true,
         mute_upon_entry: false,
         watermark: false,
@@ -243,7 +243,7 @@ const ZoomVideoApiAdapter = (credential: CredentialPayload): VideoApiAdapter => 
     });
 
     const responseBody = await handleZoomResponse(response, credential.id);
-    // console.log("### responseBody", responseBody);
+    
     return responseBody;
   };
 
