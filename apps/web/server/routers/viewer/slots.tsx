@@ -145,11 +145,6 @@ export const slotsRouter = createRouter().query("getSchedule", {
       throw new TRPCError({ code: "NOT_FOUND" });
     }
 
-    // console.log("### eventType", eventType)
-    // console.log("### schedule timeZone", eventType.schedule.timeZone)
-    // eventType.schedule.timeZone = "Asia/Kuwait";
-    // console.log("### schedule timeZone 02", eventType.schedule.timeZone)
-
     const startTime =
       input.timeZone === "Etc/GMT"
         ? dayjs.utc(input.startTime)

@@ -418,7 +418,6 @@ async function handler(req: NextApiRequest) {
 
   // For seats, if the booking already exists then we want to add the new attendee to the existing booking
   if (reqBody.bookingUid) {
-    console.log("### reqBody.bookingUid");
     if (!eventType.seatsPerTimeSlot)
       throw new HttpError({ statusCode: 404, message: "Event type does not have seats" });
 
@@ -449,7 +448,6 @@ async function handler(req: NextApiRequest) {
       return { ...attendee, language: { translate: tAttendees, locale: language ?? "en" } };
     });
 
-    console.log("### Attendees:", bookingAttendees);
     evt = { ...evt, attendees: [...bookingAttendees, invitee[0]] };
 
     if (eventType.seatsPerTimeSlot <= booking.attendees.length)
@@ -560,8 +558,6 @@ async function handler(req: NextApiRequest) {
       evt.location = originalRescheduledBooking?.location;
       evt.attendees[0].recruiterEmail = originalRescheduledBooking?.attendees[0].recruiterEmail;
     }
-
-    // console.log("### evt:", evt);
 
     const eventTypeRel = !eventTypeId
       ? {}
@@ -884,8 +880,6 @@ async function handler(req: NextApiRequest) {
   const t = req.body.t;
   const dt = dayjs(req.body.date).valueOf();
   const evtLocation = encodeURIComponent(evt.videoCallData.url || evt.location);
-
-  // console.log("### Url paramters: ", { interviewId, dt, evtLocation, t });
 
   fetchConfirmation({ interviewId, dt, evtLocation, t });
 
