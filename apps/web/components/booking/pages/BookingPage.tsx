@@ -889,7 +889,7 @@ const BookingPage = ({
                         rows={3}
                         className={inputClassName}
                         placeholder={t("reschedule_placeholder")}
-                        disabled={disabledExceptForOwner}
+                        // disabled={disabledExceptForOwner}
                       />
                     ) : (
                       <textarea
