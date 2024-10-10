@@ -39,7 +39,6 @@ export const availabilityRouter = createProtectedRouter()
     }),
     async resolve({ ctx, input }) {
       const { prisma, user } = ctx;
-
       const schedule = await prisma.schedule.findUnique({
         where: {
           id: input.scheduleId,
