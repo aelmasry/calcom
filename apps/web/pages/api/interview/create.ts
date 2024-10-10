@@ -58,7 +58,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     .replace(/\s/g, "-")
     .concat("-" + Math.floor(Math.random() * 1000000));
   const schedule = await createSchedule(name, userId, slug, timezone);
-  console.log("####### schedule", schedule);
   const eventType = await createEventType(name, schedule.id, userId, slug, timezone);
   await createEventTypeGuests(eventType.id, guests);
   res.status(200).json({
