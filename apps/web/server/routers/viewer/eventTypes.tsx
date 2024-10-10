@@ -295,7 +295,6 @@ export const eventTypesRouter = createProtectedRouter()
   .mutation("update", {
     input: EventTypeUpdateInput.strict(),
     async resolve({ ctx, input }) {
-      // console.log("#### input", input);
       const {
         schedule,
         periodType,

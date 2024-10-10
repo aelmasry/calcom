@@ -1150,9 +1150,7 @@ const EventTypePage = (props: inferSSRProps<typeof getServerSideProps>) => {
                   ) */}
 
                   <div className="block sm:flex">
-                    <div
-                      className="min-w-48 mb-4 sm:mb-0"
-                      style={{ verticalAlign: "middle" }}>
+                    <div className="min-w-48 mb-4 sm:mb-0" style={{ verticalAlign: "middle" }}>
                       <label
                         htmlFor="additionalFields"
                         className="mt-2 flex items-center text-sm font-medium text-neutral-700">
@@ -2241,6 +2239,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
       guests: {
         select: {
           id: true,
+          eventTypeId: true,
           email: true,
         },
       },
