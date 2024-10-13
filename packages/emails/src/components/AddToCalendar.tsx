@@ -100,7 +100,6 @@ export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string
 
   const otherLink = `data:text/calendar,${eventLink(startDate, endDate, eventName, description, location)}`;
 
-  console.log("### otherLink", otherLink)
   return (
     <div
       className="border-bookinglightest mt-9 flex border-b pt-2 pb-4 text-center dark:border-gray-900 sm:mt-0 sm:pt-4"
