@@ -147,7 +147,7 @@ export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string
             title="Microsoft office 360"
             style={{ margin: '0 8px', height: '40px', width: '40px', borderRadius: '4px', color: '#000' }}
             target="_blank"
-          >##
+          >
 
             <img src="https://img.icons8.com/?size=100&id=117062&format=png&color=000000" alt="Microsoft Outlook" style={{ width: '28px', height: '28px', borderRadius: '4px' }} />
 
@@ -156,9 +156,10 @@ export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string
 
         <Link href={otherLink}>
           <a
-            className="mx-2 flex h-10 w-10 items-center justify-center rounded-sm border border-neutral-200 px-3 py-2 dark:border-neutral-700 dark:text-white"
+            title="ICloud calendar"
             download={type + ".ics"}
-            style={{ padding: "10px" }}>
+            style={{ margin: '0 8px', height: '40px', width: '40px', borderRadius: '4px', color: '#000' }}
+          >
             <img src="https://img.icons8.com/?size=100&id=890&format=png&color=000000" alt={t("other")} style={{ width: '28px', height: '28px', borderRadius: '4px' }} />
           </a>
         </Link>
