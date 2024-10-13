@@ -100,7 +100,6 @@ export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string
 
   const otherLink = `data:text/calendar,${eventLink(startDate, endDate, eventName, description, location)}`;
 
-  console.log("### otherLink", otherLink)
   return (
     <div
       className="border-bookinglightest mt-9 flex border-b pt-2 pb-4 text-center dark:border-gray-900 sm:mt-0 sm:pt-4"
@@ -156,11 +155,14 @@ export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string
 
         <Link href={otherLink}>
           <a
-            title="ICloud calendar"
-            download={type + ".ics"}
+            title={t("other")}
             style={{ margin: '0 8px', height: '40px', width: '40px', borderRadius: '4px', color: '#000' }}
+            download={type + ".ics"}
+            target="_blank"
           >
+
             <img src="https://img.icons8.com/?size=100&id=890&format=png&color=000000" alt={t("other")} style={{ width: '28px', height: '28px', borderRadius: '4px' }} />
+            
           </a>
         </Link>
       </div>
