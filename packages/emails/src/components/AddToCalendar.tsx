@@ -153,7 +153,7 @@ export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string
           </a>
         </Link>
 
-        <Link href={otherLink}>
+        <Link href={otherLink} target="_blank" aria-label={t("other")}>
           <a
             title={t("other")}
             style={{ margin: '0 8px', height: '40px', width: '40px', borderRadius: '4px', color: '#000' }}
@@ -165,6 +165,7 @@ export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string
             
           </a>
         </Link>
+
       </div>
     </div>
   );
