@@ -230,8 +230,6 @@ const fetchConfirmation = async ({
       evtLocation || ""
     )}&t=${t}`;
 
-    console.log("### URL ", url);
-
     const response = await fetch(url, {
       method: "GET",
       headers: {

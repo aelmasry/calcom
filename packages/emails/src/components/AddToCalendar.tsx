@@ -100,7 +100,6 @@ export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string
 
   const otherLink = `data:text/calendar,${eventLink(startDate, endDate, eventName, description, location)}`;
 
-  console.log("### otherLink", otherLink)
   return (
     <div
       className="border-bookinglightest mt-9 flex border-b pt-2 pb-4 text-center dark:border-gray-900 sm:mt-0 sm:pt-4"
@@ -115,8 +114,9 @@ export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string
           lineHeight: "50px",
         }}>
         <Link href={googleCalendarLink}>
-          <a target="_blank"
-          title="Google calendar"
+          <a
+            target="_blank"
+            title="Google calendar"
             style={{
               margin: "0 8px",
               height: "40px",
@@ -124,33 +124,37 @@ export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string
               borderRadius: "4px",
               color: "#000",
             }}>
-
-            <img src="https://img.icons8.com/?size=100&id=17935&format=png&color=000000" alt="Google Calendar" style={{ width: '28px', height: '28px', borderRadius: '4px' }} />
-
+            <img
+              src="https://img.icons8.com/?size=100&id=17935&format=png&color=000000"
+              alt="Google Calendar"
+              style={{ width: "28px", height: "28px", borderRadius: "4px" }}
+            />
           </a>
         </Link>
 
         <Link href={outlookLiveLink}>
           <a
             title="Microsoft Outlook"
-            style={{ margin: '0 8px', height: '40px', width: '40px', borderRadius: '4px', color: '#000' }}
-            target="_blank"
-          >
-
-            <img src="https://img.icons8.com/?size=100&id=24035&format=png&color=000000" alt="Microsoft Outlook" style={{ width: '28px', height: '28px', borderRadius: '4px' }} />
-
-
+            style={{ margin: "0 8px", height: "40px", width: "40px", borderRadius: "4px", color: "#000" }}
+            target="_blank">
+            <img
+              src="https://img.icons8.com/?size=100&id=24035&format=png&color=000000"
+              alt="Microsoft Outlook"
+              style={{ width: "28px", height: "28px", borderRadius: "4px" }}
+            />
           </a>
         </Link>
         <Link href={outlookOfficeLink}>
           <a
             title="Microsoft office 360"
-            style={{ margin: '0 8px', height: '40px', width: '40px', borderRadius: '4px', color: '#000' }}
-            target="_blank"
-          >##
-
-            <img src="https://img.icons8.com/?size=100&id=117062&format=png&color=000000" alt="Microsoft Outlook" style={{ width: '28px', height: '28px', borderRadius: '4px' }} />
-
+            style={{ margin: "0 8px", height: "40px", width: "40px", borderRadius: "4px", color: "#000" }}
+            target="_blank">
+            ##
+            <img
+              src="https://img.icons8.com/?size=100&id=117062&format=png&color=000000"
+              alt="Microsoft Outlook"
+              style={{ width: "28px", height: "28px", borderRadius: "4px" }}
+            />
           </a>
         </Link>
 
@@ -159,7 +163,11 @@ export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string
             className="mx-2 flex h-10 w-10 items-center justify-center rounded-sm border border-neutral-200 px-3 py-2 dark:border-neutral-700 dark:text-white"
             download={type + ".ics"}
             style={{ padding: "10px" }}>
-            <img src="https://img.icons8.com/?size=100&id=890&format=png&color=000000" alt={t("other")} style={{ width: '28px', height: '28px', borderRadius: '4px' }} />
+            <img
+              src="https://img.icons8.com/?size=100&id=890&format=png&color=000000"
+              alt={t("other")}
+              style={{ width: "28px", height: "28px", borderRadius: "4px" }}
+            />
           </a>
         </Link>
       </div>
