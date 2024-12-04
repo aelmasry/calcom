@@ -119,7 +119,6 @@ export default function Availability() {
   const { data: session, status } = useSession();
   const loading = status === "loading";
 
-  // console.log("### router", router.query.token)
   let token = null;
   if (typeof window !== "undefined") {
     token = window.location.search.split("token=")[1];

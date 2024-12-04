@@ -147,29 +147,28 @@ export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string
         <Link href={outlookOfficeLink}>
           <a
             title="Microsoft office 360"
-            style={{ margin: "0 8px", height: "40px", width: "40px", borderRadius: "4px", color: "#000" }}
-            target="_blank">
-            ##
-            <img
-              src="https://img.icons8.com/?size=100&id=117062&format=png&color=000000"
-              alt="Microsoft Outlook"
-              style={{ width: "28px", height: "28px", borderRadius: "4px" }}
-            />
+            style={{ margin: '0 8px', height: '40px', width: '40px', borderRadius: '4px', color: '#000' }}
+            target="_blank"
+          >
+
+            <img src="https://img.icons8.com/?size=100&id=117062&format=png&color=000000" alt="Microsoft Outlook" style={{ width: '28px', height: '28px', borderRadius: '4px' }} />
+
           </a>
         </Link>
 
-        <Link href={otherLink}>
+        <Link href={otherLink} target="_blank" aria-label={t("other")}>
           <a
-            className="mx-2 flex h-10 w-10 items-center justify-center rounded-sm border border-neutral-200 px-3 py-2 dark:border-neutral-700 dark:text-white"
+            title={t("other")}
+            style={{ margin: '0 8px', height: '40px', width: '40px', borderRadius: '4px', color: '#000' }}
             download={type + ".ics"}
-            style={{ padding: "10px" }}>
-            <img
-              src="https://img.icons8.com/?size=100&id=890&format=png&color=000000"
-              alt={t("other")}
-              style={{ width: "28px", height: "28px", borderRadius: "4px" }}
-            />
+            target="_blank"
+          >
+
+            <img src="https://img.icons8.com/?size=100&id=890&format=png&color=000000" alt={t("other")} style={{ width: '28px', height: '28px', borderRadius: '4px' }} />
+
           </a>
         </Link>
+
       </div>
     </div>
   );
