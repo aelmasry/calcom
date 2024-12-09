@@ -453,7 +453,7 @@ const BookingPage = ({
     }
   };
 
-  const disableInput = !!rescheduleUid || !!(candidateName || candidateEmail);
+  const disableInput = !!rescheduleUid;
   const disabledExceptForOwner = disableInput && !loggedInIsOwner;
   const inputClassName =
     "focus:border-brand block w-full rounded-sm border-gray-300 focus:ring-black disabled:bg-gray-200 disabled:hover:cursor-not-allowed dark:border-gray-900 dark:bg-gray-700 dark:text-white dark:selection:bg-green-500 disabled:dark:text-gray-500 sm:text-sm";
@@ -641,7 +641,7 @@ const BookingPage = ({
                         required
                         className={inputClassName}
                         placeholder={t("example_name")}
-                        disabled={disableInput}
+                        disabled={candidateName || ""}
                       />
                     </div>
                   </div>
@@ -663,7 +663,7 @@ const BookingPage = ({
                         )}
                         placeholder="you@example.com"
                         type="search" // Disables annoying 1password intrusive popup (non-optimal, I know I know...)
-                        disabled={disableInput}
+                        disabled={candidateEmail || ""}
                       />
                       {bookingForm.formState.errors.email && (
                         <div className="mt-2 flex items-center text-sm text-red-700 ">
