@@ -147,6 +147,7 @@ const BookingPage = ({
         );
       }
 
+      console.log("## responseData", responseData)
       const location = (function humanReadableLocation(location) {
         if (!location) {
           return;

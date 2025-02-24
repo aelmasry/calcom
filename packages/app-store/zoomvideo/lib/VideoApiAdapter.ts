@@ -97,7 +97,7 @@ const zoomAuth = (credential: CredentialPayload) => {
     );
 
     const responseBody = await handleZoomResponse(response, credential.id);
-
+    console.log("## refreshAccessToken", responseBody)
     if (responseBody.error) {
       if (responseBody.error === "invalid_grant") {
         return Promise.reject(new Error("Invalid grant for Cal.com zoom app"));
@@ -279,7 +279,7 @@ const ZoomVideoApiAdapter = (credential: CredentialPayload): VideoApiAdapter => 
             return Promise.reject(new Error("Invalid grant for Cal.com zoom app"));
           }
         }
-
+        console.log("## Zoom createMeeting response", response)
         const result = zoomEventResultSchema.parse(response);
 
         if (result.id && result.join_url) {
@@ -362,16 +362,16 @@ const invalidateCredential = async (credentialId: Credential["id"]) => {
     },
   });
 
-  if (credential) {
-    await prisma.credential.update({
-      where: {
-        id: credentialId,
-      },
-      data: {
-        invalid: true,
-      },
-    });
-  }
+  // if (credential) {
+  //   await prisma.credential.update({
+  //     where: {
+  //       id: credentialId,
+  //     },
+  //     data: {
+  //       invalid: true,
+  //     },
+  //   });
+  // }
 };
 
 export default ZoomVideoApiAdapter;

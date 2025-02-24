@@ -758,11 +758,12 @@ async function handler(req: NextApiRequest) {
   }
 
   if (!user) throw new HttpError({ statusCode: 404, message: "Can't continue, user not found." });
-
+  
   // After polling videoBusyTimes, credentials might have been changed due to refreshment, so query them again.
   const credentials = await refreshCredentials(user.credentials);
+  
   const eventManager = new EventManager({ ...user, credentials });
-
+  
   if (originalRescheduledBooking?.uid) {
     // Use EventManager to conditionally use all needed integrations.
     const updateManager = await eventManager.reschedule(
@@ -813,7 +814,7 @@ async function handler(req: NextApiRequest) {
   } else if (!eventType.requiresConfirmation && !eventType.price) {
     // Use EventManager to conditionally use all needed integrations.
     const createManager = await eventManager.create(evt);
-
+    
     // This gets overridden when creating the event - to check if notes have been hidden or not. We just reset this back
     // to the default description when we are sending the emails.
     evt.description = eventType.description;
