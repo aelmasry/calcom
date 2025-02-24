@@ -114,8 +114,9 @@ export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string
           lineHeight: "50px",
         }}>
         <Link href={googleCalendarLink}>
-          <a target="_blank"
-          title="Google calendar"
+          <a
+            target="_blank"
+            title="Google calendar"
             style={{
               margin: "0 8px",
               height: "40px",
@@ -123,22 +124,24 @@ export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string
               borderRadius: "4px",
               color: "#000",
             }}>
-
-            <img src="https://img.icons8.com/?size=100&id=17935&format=png&color=000000" alt="Google Calendar" style={{ width: '28px', height: '28px', borderRadius: '4px' }} />
-
+            <img
+              src="https://img.icons8.com/?size=100&id=17935&format=png&color=000000"
+              alt="Google Calendar"
+              style={{ width: "28px", height: "28px", borderRadius: "4px" }}
+            />
           </a>
         </Link>
 
         <Link href={outlookLiveLink}>
           <a
             title="Microsoft Outlook"
-            style={{ margin: '0 8px', height: '40px', width: '40px', borderRadius: '4px', color: '#000' }}
-            target="_blank"
-          >
-
-            <img src="https://img.icons8.com/?size=100&id=24035&format=png&color=000000" alt="Microsoft Outlook" style={{ width: '28px', height: '28px', borderRadius: '4px' }} />
-
-
+            style={{ margin: "0 8px", height: "40px", width: "40px", borderRadius: "4px", color: "#000" }}
+            target="_blank">
+            <img
+              src="https://img.icons8.com/?size=100&id=24035&format=png&color=000000"
+              alt="Microsoft Outlook"
+              style={{ width: "28px", height: "28px", borderRadius: "4px" }}
+            />
           </a>
         </Link>
         <Link href={outlookOfficeLink}>
@@ -162,7 +165,7 @@ export function AddToCalendar(props: { calEvent: CalendarEvent; timeZone: string
           >
 
             <img src="https://img.icons8.com/?size=100&id=890&format=png&color=000000" alt={t("other")} style={{ width: '28px', height: '28px', borderRadius: '4px' }} />
-            
+
           </a>
         </Link>
 

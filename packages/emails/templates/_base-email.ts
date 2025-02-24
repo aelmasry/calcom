@@ -23,7 +23,7 @@ export default class BaseEmail {
     } else {
       date = dayjs(time).tz(letTimeZone);
     }
-    
+
     if (typeof format === "string") return date.format(format);
     return date;
   }

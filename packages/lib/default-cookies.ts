@@ -17,13 +17,13 @@ import { isENVDev } from "@calcom/lib/env";
 const NEXTAUTH_COOKIE_DOMAIN = process.env.NEXTAUTH_COOKIE_DOMAIN || "";
 export function defaultCookies(useSecureCookies: boolean): CookiesOptions {
   const cookiePrefix = useSecureCookies ? "__Secure-" : "";
-
   const defaultOptions: CookieOption["options"] = {
     domain: isENVDev ? undefined : NEXTAUTH_COOKIE_DOMAIN,
     // To enable cookies on widgets,
     // https://stackoverflow.com/questions/45094712/iframe-not-reading-cookies-in-chrome
     // But we need to set it as `lax` in development
     // sameSite: useSecureCookies ? "none" : "lax",
+    expires: new Date(Date.now() + 7 * 24 * 3600 * 1000), // Set expiry as Date object
     sameSite: "none",
     path: "/",
     // secure: useSecureCookies,

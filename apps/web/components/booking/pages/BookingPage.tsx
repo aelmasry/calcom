@@ -214,6 +214,8 @@ const BookingPage = ({
   });
 
   const rescheduleUid = router.query.rescheduleUid as string;
+  const candidateEmail = router.query.email as string;
+  const candidateName = router.query.name as string;
   const { isReady, Theme } = useTheme(profile.theme);
   const date = asStringOrNull(router.query.date);
 
@@ -640,7 +642,7 @@ const BookingPage = ({
                         required
                         className={inputClassName}
                         placeholder={t("example_name")}
-                        disabled={disableInput}
+                        disabled={candidateName || ""}
                       />
                     </div>
                   </div>
@@ -662,7 +664,7 @@ const BookingPage = ({
                         )}
                         placeholder="you@example.com"
                         type="search" // Disables annoying 1password intrusive popup (non-optimal, I know I know...)
-                        disabled={disableInput}
+                        disabled={candidateEmail || ""}
                       />
                       {bookingForm.formState.errors.email && (
                         <div className="mt-2 flex items-center text-sm text-red-700 ">
