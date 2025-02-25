@@ -124,17 +124,38 @@ const providers: Provider[] = [
       }
 
       const jsonSecret = process.env.NEXTAUTH_SECRET;
+      if (!credentials) {
+        console.error('Missing NEXTAUTH_SECRET');
+        throw new Error(ErrorCode.InternalServerError);
+      }
+
       const token = credentials.token;
       if (!token) {
+        console.error('token not found');
         throw new Error("token not found");
       }
 
       console.log("###################### decoding");
-      const jwtUser = jsonwebtoken.decode(token, jsonSecret);
+      // const jwtUser = jsonwebtoken.decode(token, jsonSecret);
+
+      // if (!jwtUser) {
+      //   throw new Error(ErrorCode.UserNotFound);
+      // }
+      let jwtUser;
+      try {
+        // استخدم verify للتحقق من التوقيع أو decode فقط إذا كنت لا تهتم بالتحقق
+        jwtUser = jsonwebtoken.verify(credentials.token, jsonSecret);
+      } catch (error) {
+        console.error("❌ JWT decoding failed:", error.message);
+        throw new Error("Invalid token");
+      }
 
       if (!jwtUser) {
-        throw new Error(ErrorCode.UserNotFound);
+        console.error("❌ User not found in token");
+        throw new Error("User not found");
       }
+
+      console.log("✅ User authenticated:", jwtUser.email);
 
       return {
         id: jwtUser.id,
