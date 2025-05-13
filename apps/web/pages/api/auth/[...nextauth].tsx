@@ -136,19 +136,20 @@ const providers: Provider[] = [
       }
 
       console.log("###################### decoding");
-      // const jwtUser = jsonwebtoken.decode(token, jsonSecret);
+      const jwtUser = jsonwebtoken.decode(token, jsonSecret);
 
       // if (!jwtUser) {
       //   throw new Error(ErrorCode.UserNotFound);
       // }
-      let jwtUser;
-      try {
-        // استخدم verify للتحقق من التوقيع أو decode فقط إذا كنت لا تهتم بالتحقق
-        jwtUser = jsonwebtoken.verify(credentials.token, jsonSecret);
-      } catch (error) {
-        console.error("❌ JWT decoding failed:", error.message);
-        throw new Error("Invalid token");
-      }
+      
+      // let jwtUser;
+      // try {
+      //   // استخدم verify للتحقق من التوقيع أو decode فقط إذا كنت لا تهتم بالتحقق
+      //   jwtUser = jsonwebtoken.verify(credentials.token, jsonSecret);
+      // } catch (error) {
+      //   console.error("❌ JWT decoding failed:", error);
+      //   throw new Error("Invalid token");
+      // }
 
       if (!jwtUser) {
         console.error("❌ User not found in token");
